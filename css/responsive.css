@@ -68,9 +68,25 @@
         padding: 8px 12px;
     }
 
+    .header-logo .logo-sub {
+        display: none;
+    }
+
+    .header-logo .logo-text {
+        font-size: 1.1rem;
+    }
+
+    .header-action-btn .action-label {
+        display: none;
+    }
+
+    .header-action-btn {
+        padding: var(--space-2);
+    }
+
     .category-nav-item a {
-        padding: 10px 14px;
-        font-size: 0.78rem;
+        padding: 8px 12px;
+        font-size: 0.72rem;
     }
 
     .hero-carousel {
@@ -96,7 +112,20 @@
     }
 
     .section {
-        padding: var(--space-6) 0;
+        padding: var(--space-4) 0;
+    }
+
+    .top-bar-inner {
+        gap: var(--space-4);
+        justify-content: flex-start;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding: 0 var(--space-4);
+    }
+    .top-bar-inner::-webkit-scrollbar { display: none; }
+    
+    .top-bar-text {
+        font-size: 0.65rem;
     }
 
     .section-header h2 {
@@ -122,15 +151,25 @@
     }
 
     .feature-item {
-        flex-direction: column;
-        text-align: center;
-        padding: var(--space-3);
+        flex-direction: row;
+        text-align: left;
+        padding: var(--space-3) var(--space-4);
+        align-items: center;
+        gap: var(--space-4);
     }
 
     .feature-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+    
+    .feature-text h4 {
+        font-size: 0.8rem;
+    }
+    
+    .feature-text p {
+        font-size: 0.68rem;
     }
 
     .footer-grid {
@@ -203,7 +242,7 @@
     }
 
     .category-grid-homepage {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: var(--space-2);
     }
 }
@@ -247,6 +286,7 @@
 
     .features-strip {
         grid-template-columns: 1fr;
+        gap: var(--space-2);
     }
 
     .brand-card {
