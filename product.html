@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details — Kidvana Shopping</title>
+    <meta name="description" content="View product details and buy at the best prices at Kidvana.">
+
+    <!-- OpenGraph SEO -->
+    <meta property="og:title" content="Kidvana — Premium Shopping Experience">
+    <meta property="og:description" content="Shop the latest trends with fast delivery and easy returns.">
+    <meta property="og:type" content="product">
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%237B2D8E'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='18' font-weight='bold'>S</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/homepage.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+    <!-- HEADER (same as index) -->
+    <div class="top-bar">
+        <div class="top-bar-inner container"><span class="top-bar-text"><span class="top-bar-icon">💰</span> Best Prices
+                Guaranteed</span><span class="top-bar-text"><span class="top-bar-icon">🚚</span> Free Delivery on
+                ₹499+</span><span class="top-bar-text"><span class="top-bar-icon">🔒</span> 100% Secure Payments</span>
+        </div>
+    </div>
+    <header class="header" id="mainHeader">
+        <div class="header-main">
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="index.html" class="header-logo">
+                <div class="logo-icon">S</div>
+                <div>
+                    <div class="logo-text">GenZeLoot</div>
+                    <span class="logo-sub">Shop Smart, Live Bold</span>
+                </div>
+            </a>
+            <div class="header-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search for products..." autocomplete="off">
+                <button class="search-btn">→</button>
+                <div class="search-suggestions"></div>
+            </div>
+            <div class="header-actions">
+                <a href="wishlist.html" class="header-action-btn"><span class="action-icon">❤️</span></a>
+                <a href="cart.html" class="header-action-btn">
+                    <span class="action-icon">🛒</span>
+                    <span class="cart-count" style="display:none">0</span>
+                </a>
+                <button class="header-login-btn" onclick="openLoginModal()"><span>Login</span></button>
+            </div>
+        </div>
+        <nav class="category-nav">
+            <ul class="category-nav-list">
+                <!-- Rendered by JS -->
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <div class="mobile-sidebar-header">
+            <h3>Menu</h3>
+            <button class="mobile-sidebar-close">✕</button>
+        </div>
+        <nav class="mobile-sidebar-nav">
+            <!-- Rendered by JS -->
+        </nav>
+    </div>
+
+    <!-- PRODUCT DETAIL -->
+    <section class="product-detail-section">
+        <div class="container">
+            <div class="product-detail-grid" id="productDetail">
+                <div style="text-align:center;padding:60px;grid-column:1/-1">
+                    <div class="skeleton" style="width:200px;height:200px;margin:0 auto 16px;border-radius:16px">
+                    </div>
+                    <p style="color:var(--gray-400)">Loading product...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RELATED PRODUCTS -->
+    <section class="section scroll-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>You May Also Like</h2>
+            </div>
+            <div class="product-scroll-row" id="relatedProducts"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--gray-800);">
+                <div class="footer-brand">
+                    <div class="footer-logo" style="margin-bottom:20px;">
+                        <img src="IMG DATA/logo/kidvana logo.svg" alt="Kidvana Logo" class="logo-img" style="height: 40px; width: auto; margin-right: 12px;">
+                        <span class="footer-logo-text"
+                            style="color:var(--white); font-size:1.4rem; font-weight:800;">Kidvana</span>
+                    </div>
+                    <p style="color:var(--gray-400); font-size:0.9rem; line-height:1.6; max-width:300px;">India's
+                        trendiest online shopping destination. Curating the best for the bold.</p>
+                </div>
+
+                <div class="footer-newsletter">
+                    <h4 style="color:var(--white); margin-bottom:20px; font-size:1.1rem;">Stay in the Loop!</h4>
+                    <p style="color:var(--gray-400); font-size:0.9rem; margin-bottom:16px;">Get early access to
+                        drops &
+                        exclusive loot.</p>
+                    <div style="display:flex; gap:8px;">
+                        <input type="email" placeholder="Your email"
+                            style="flex:1; padding:12px; border-radius:10px; border:none; background:var(--gray-800); color:var(--white); font-size:0.9rem;">
+                        <button class="btn btn-primary" style="padding:10px 20px;"
+                            onclick="showToast('Welcome to the Loot Fam! 🎉', 'success')">Join</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom"
+                style="text-align:center; padding-top:40px; border-top:1px solid var(--gray-800);">
+                <p style="color:var(--gray-500); font-size:0.85rem;">© 2026 Kidvana. All rights reserved. Made
+                    with ❤️
+                    for the next generation.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/quickview.js"></script>
+    <script src="js/reviews.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        function renderProductDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+            const product = getProductById(productId);
+
+            if (!product) {
+                // If PRODUCTS is empty (not loaded yet), don't show "Not Found" immediately
+                if (PRODUCTS.length === 0 || PRODUCTS === FALLBACK_PRODUCTS) {
+                    document.getElementById('productDetail').innerHTML = '<div style="text-align:center;padding:80px"><h2>Loading product...</h2></div>';
+                    return;
+                }
+                document.getElementById('productDetail').innerHTML = '<div style="text-align:center;padding:80px;grid-column:1/-1"><h2>Product Not Found</h2><p style="margin:8px 0 16px;color:var(--gray-500)">The product you are looking for doesn\'t exist.</p><a href="index.html" class="btn btn-primary">Go to Home</a></div>';
+                return;
+            }
+
+            document.title = `${product.name} — Kidvana`;
+            const discount = getDiscount(product.mrp, product.price);
+
+
+            document.getElementById('productDetail').innerHTML = `
+        <div class="product-gallery">
+          <div class="product-main-image" style="background-color:${product.color}">
+            <img id="mainProductImage" src="${product.image}" alt="${product.name}">
+          </div>
+          <div class="product-thumbnails">
+            ${(product.images || [product.image]).map((img, index) => `
+              <div class="product-thumb ${index === 0 ? 'active' : ''}" 
+                   style="background:${index === 0 ? product.color : 'var(--gray-50)'}"
+                   onclick="document.getElementById('mainProductImage').src='${img}'; 
+                            document.querySelectorAll('.product-thumb').forEach(t => {t.classList.remove('active'); t.style.background='var(--gray-50)'}); 
+                            this.classList.add('active'); this.style.background='${product.color}';">
+                <img src="${img}" alt="thumb" style="opacity:${index === 0 ? 1 : 0.6}" 
+                     onload="this.style.opacity=1">
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">${product.brand}</div>
+          <h1>${product.name}</h1>
+          <div class="product-rating-row">
+            <span class="product-stars">${getStarsHTML(product.rating)}</span>
+            <span class="product-rating-count">${product.rating} • ${product.reviews.toLocaleString()} ratings</span>
+          </div>
+          <div class="product-price-row">
+            <span class="product-price">₹${product.price.toLocaleString()}</span>
+            <span class="product-mrp">₹${product.mrp.toLocaleString()}</span>
+            <span class="product-discount">${discount}% off</span>
+          </div>
+          <div class="emi-selector">
+            <h3>💰 Price Details</h3>
+            <div style="font-size:1.1rem;color:var(--primary);font-weight:700;margin-bottom:8px">₹${product.price.toLocaleString()} <span style="font-size:0.8rem;color:var(--gray-500);font-weight:400;text-decoration:line-through">₹${product.mrp.toLocaleString()}</span> <span style="font-size:0.8rem;color:#22C55E;font-weight:600">${discount}% off</span></div>
+          </div>
+          <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:16px">
+            <p style="margin-bottom:8px;font-weight:600;color:var(--gray-700)">✨ Highlights:</p>
+            <p style="margin-bottom:4px">🚀 ${product.description || 'Premium quality guaranteed'}</p>
+            <p style="margin-bottom:4px">✅ Free Delivery on all orders</p>
+            <p style="margin-bottom:4px">✅ Best Price Guarantee</p>
+            <p style="margin-bottom:4px">✅ 7 Day Easy Returns & Refund</p>
+          </div>
+          <div class="product-actions">
+            <button class="btn btn-primary btn-lg" onclick="addToCart(${product.id})">🛒 Add to Cart</button>
+            <button class="btn btn-secondary btn-lg" onclick="addToCart(${product.id}); window.location.href='cart.html'">⚡ Buy Now</button>
+          </div>
+        </div>
+      `;
+
+            // Related products
+            const related = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 8);
+            document.getElementById('relatedProducts').innerHTML = related.map(p => createProductCardHTML(p)).join('');
+
+            // Reviews Section Injection
+            const main = document.querySelector('main');
+            const reviewsSection = document.createElement('section');
+            reviewsSection.className = 'container reviews-section';
+            reviewsSection.innerHTML = `
+                <div class="section-header">
+                    <h2>💬 Product Reviews</h2>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:1.5rem; font-weight:800; color:var(--primary);" id="averageRatingLabel">${product.rating}</span>
+                        <div style="color:var(--accent-yellow); font-size:1rem;" id="averageStars">${getStarsHTML(product.rating)}</div>
+                        <span style="color:var(--gray-500); font-size:0.85rem;" id="totalReviewsLabel">(${product.reviews.toLocaleString()} ratings)</span>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 2fr; gap:40px; margin-top:24px;">
+                    <div>
+                        <div style="background:var(--gray-50); padding:24px; border-radius:16px;">
+                            <h4 style="margin-bottom:12px;">Share your feedback</h4>
+                            <p style="color:var(--gray-600); font-size:0.85rem; margin-bottom:20px; line-height:1.5;">Have you used this product? Your review helps others shop smart!</p>
+                            <button class="btn btn-outline" style="width:100%" onclick="document.getElementById('reviewFormSection').style.display='block'">Write a Review</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div id="reviewFormSection" style="display:none; margin-bottom:32px; background:var(--gray-50); padding:24px; border-radius:16px; border:1px solid var(--gray-200);">
+                            <form onsubmit="handleReviewSubmit(event, ${product.id})">
+                                <h4 style="margin-bottom:16px;">New Review</h4>
+                                <div class="rating-input">
+                                    <span style="font-weight:600;">Your Rating:</span>
+                                    <select id="reviewRating" required>
+                                        <option value="5">★★★★★ (5/5)</option>
+                                        <option value="4">★★★★☆ (4/5)</option>
+                                        <option value="3">★★★☆☆ (3/5)</option>
+                                        <option value="2">★★☆☆☆ (2/5)</option>
+                                        <option value="1">★☆☆☆☆ (1/5)</option>
+                                    </select>
+                                </div>
+                                <textarea class="review-comment-input" id="reviewComment" placeholder="What did you like or dislike? How was the quality?" required></textarea>
+                                <div style="display:flex; gap:12px;">
+                                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                                    <button type="button" class="btn btn-outline" onclick="document.getElementById('reviewFormSection').style.display='none'">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div id="reviewsList">
+                            <!-- Existing and new reviews will render here -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            main.appendChild(reviewsSection);
+
+            // Init State
+            if (typeof renderReviewsUI === 'function') {
+                renderReviewsUI(product.id);
+            }
+            if (typeof initScrollArrows === 'function') initScrollArrows();
+
+            // JSON-LD for SEO
+            const jsonLd = {
+                "@context": "https://schema.org/",
+                "@type": "Product",
+                "name": product.name,
+                "image": product.image,
+                "description": product.description || `Premium ${product.name} from Kidvana.`,
+                "brand": {
+                    "@type": "Brand",
+                    "name": product.brand
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "url": window.location.href,
+                    "priceCurrency": "INR",
+                    "price": product.price,
+                    "availability": "https://schema.org/InStock"
+                },
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": product.rating,
+                    "reviewCount": product.reviews
+                }
+            };
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.text = JSON.stringify(jsonLd);
+            document.head.appendChild(script);
+        }
+
+        document.addEventListener('DOMContentLoaded', renderProductDetail);
+        document.addEventListener('productsLoaded', renderProductDetail);
+    </script>
+</body>
+
+</html>
