@@ -109,8 +109,8 @@
 .header-search input:focus {
     border-color: var(--primary);
     background: var(--white);
-    box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.15);
-    /* Soft sand focus ring */
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+    /* Vibrant modern focus ring */
 }
 
 .header-search .search-icon {
