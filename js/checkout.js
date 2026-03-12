@@ -23,7 +23,7 @@ function initShippingForm() {
     if (!form) return;
 
     // Prefill if logged in
-    const user = JSON.parse(localStorage.getItem('genZeLootUser'));
+    const user = JSON.parse(localStorage.getItem('kidvanaUser'));
     if (user) {
         document.getElementById('shipName').value = user.name || '';
         document.getElementById('shipPhone').value = user.phone || '';
@@ -163,7 +163,7 @@ function renderOrderReview() {
 const API_BASE_URL = 'http://localhost:5000/api';
 
 async function placeOrder() {
-    const user = JSON.parse(localStorage.getItem('genZeLootUser'));
+    const user = JSON.parse(localStorage.getItem('kidvanaUser'));
     if (!user) {
         showToast('Please login to place order', 'error');
         openLoginModal();
@@ -215,7 +215,7 @@ async function placeOrder() {
                 });
                 const result = await verifyRes.json();
                 if (result.status === 'success') {
-                    localStorage.removeItem('snapmint_cart');
+                    localStorage.removeItem('kidvana_cart');
                     window.location.href = 'order-success.html?id=' + result.order._id;
                 }
             }

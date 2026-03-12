@@ -17,7 +17,7 @@ app.use(express.static(__dirname)); // Explicitly serve from the script's direct
 let isConnected = false;
 mongoose.set('bufferCommands', false); // Disable buffering so it fails fast
 
-const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/genzeloot';
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/kidvana';
 // Masking URI for safer logging
 const maskedUri = mongoUri.replace(/\/\/.*@/, '//****:****@');
 

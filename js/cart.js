@@ -2,7 +2,7 @@
 // CART SYSTEM — localStorage based
 // ═══════════════════════════════════════════════
 
-const CART_KEY = 'snapmint_cart';
+const CART_KEY = 'kidvana_cart';
 
 // Get cart from localStorage
 function getCart() {

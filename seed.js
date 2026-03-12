@@ -165,7 +165,7 @@ const products = [
 
 async function seedProducts() {
     try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/genzeloot');
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/kidvana');
         console.log('Connected to MongoDB');
 
         await Product.deleteMany();
