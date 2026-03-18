@@ -39,18 +39,19 @@
   --glass-border: rgba(255, 255, 255, 0.3);
   --glass-blur: blur(20px);
   
-  /* Enhanced Shadows - Multi-layered & Diffuse */
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 12px 24px -6px rgba(0, 0, 0, 0.04), 0 4px 8px -2px rgba(0, 0, 0, 0.02);
-  --shadow-lg: 0 24px 48px -12px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 32px 64px -16px rgba(0, 0, 0, 0.1), 0 16px 32px -8px rgba(0, 0, 0, 0.05);
+  /* Lush Floating Shadows - Eliminating flat boxiness */
+  --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 16px 32px -4px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 32px 64px -12px rgba(0, 0, 0, 0.08), 0 16px 32px -8px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 40px 80px -16px rgba(0, 0, 0, 0.12), 0 20px 40px -8px rgba(0, 0, 0, 0.06);
 
-  /* Radius & Spacing */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  /* Extreme Soft Radius (App-like & Organic) */
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 32px;
+  --radius-xl: 48px;
   --radius-pill: 9999px;
+  --radius-full: 9999px;
   
   /* Typography Scale */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -170,15 +171,51 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── Base Styles with Ambient Orbs ── */
 body {
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 16px; /* Retained from original body */
   color: var(--gray-800);
-  background: var(--bg-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-body);
+  line-height: 1.6;
   overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  -webkit-font-smoothing: antialiased; /* Retained from original body */
+  -moz-osx-font-smoothing: grayscale; /* Retained from original body */
+}
+
+/* Ambient Backdrops */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  opacity: 0.15;
+  animation: floatOrb 25s infinite alternate ease-in-out;
+}
+
+body::before {
+  top: -10%;
+  left: -10%;
+  background: var(--primary);
+}
+
+body::after {
+  bottom: -10%;
+  right: -10%;
+  background: var(--accent-yellow);
+  animation-duration: 30s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(100px, 50px) scale(1.2); }
+  100% { transform: translate(-50px, 150px) scale(0.9); }
 }
 
 .glass {
@@ -406,44 +443,47 @@ h5 {
 
 /* ── Product Card ── */
 .product-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: all var(--transition-cubic-1);
-  cursor: pointer;
   position: relative;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-100);
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  padding: 12px;
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: var(--shadow-float);
+  z-index: 10;
 }
 
-.product-card .card-image {
+.product-image-wrapper {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1;
+  padding-top: 100%; /* 1:1 Aspect Ratio */
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
+  margin-bottom: 16px;
 }
 
-.product-card .card-image img {
+.product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  mix-blend-mode: multiply;
-  transition: transform var(--transition-slow);
+  padding: var(--space-4);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.product-card:hover .card-image img {
-  transform: scale(1.08);
+.product-card:hover .product-image {
+  transform: scale(1.1) rotate(2deg);
 }
 
 .product-card .card-badge {
