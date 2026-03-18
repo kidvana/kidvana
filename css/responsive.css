@@ -49,6 +49,17 @@
     .category-grid-homepage {
         grid-template-columns: repeat(4, 1fr);
     }
+
+    /* Trending Categories - Tablet */
+    .tcat-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    /* Testimonials - Tablet */
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
 }
 
 /* Mobile Large */
@@ -266,6 +277,109 @@
         grid-template-columns: repeat(4, 1fr);
         gap: var(--space-2);
     }
+
+    /* Header Grid - Mobile */
+    .header-main {
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        padding: 8px 12px;
+    }
+
+    /* Trending Categories - Mobile */
+    .tcat-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .tcat-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+    }
+
+    .tcat-card p {
+        font-size: 0.72rem;
+    }
+
+    /* Testimonials - Mobile */
+    .testimonials-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    /* Mission Section - Mobile */
+    .mission-section {
+        padding: 50px 0 !important;
+    }
+
+    /* Fix inline mission grid on mobile */
+    [style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+        text-align: center;
+    }
+
+    /* Section padding mobile */
+    .section {
+        padding: 35px 0;
+    }
+
+    /* Slider - Mobile */
+    .pics {
+        height: 200px !important;
+        border-radius: 12px !important;
+    }
+
+    /* Offer banner mobile */
+    .offer-banner {
+        border-radius: 12px;
+        padding: 16px 20px;
+    }
+
+    .offer-text {
+        font-size: 0.85rem;
+    }
+
+    /* Holi banner mobile */
+    .holi-banner {
+        padding: 0 12px !important;
+    }
+
+    /* Section header mobile */
+    .section-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+    }
+
+    /* Footer mobile */
+    .footer {
+        padding: 60px 0 40px;
+    }
+
+    .footer-grid {
+        gap: 32px;
+    }
+
+    /* Scroll arrows hide on mobile */
+    .scroll-arrow {
+        display: none;
+    }
+
+    /* Features strip mobile */
+    .features-grid {
+        padding: 16px;
+        border-radius: var(--radius-md);
+    }
+
+    .feature-item {
+        gap: 12px;
+    }
 }
 
 /* Mobile Small */
@@ -342,6 +456,52 @@
     .product-thumb {
         flex: 0 0 60px;
         height: 60px;
+    }
+
+    /* Trending Categories - Small Mobile */
+    .tcat-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .tcat-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .tcat-card p {
+        font-size: 0.68rem;
+    }
+
+    /* Mission heading mobile small */
+    [style*="font-size:2.8rem"] {
+        font-size: 1.6rem !important;
+    }
+
+    /* Mission stats mobile */
+    [style*="display:flex; gap:40px"] {
+        gap: 20px !important;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    [style*="font-size:2.2rem"] {
+        font-size: 1.6rem !important;
+    }
+
+    /* Slider small mobile */
+    .pics {
+        height: 160px !important;
+        border-radius: 10px !important;
+    }
+
+    .container {
+        padding: 0 12px;
+    }
+
+    .section {
+        padding: 28px 0;
     }
 }
 
