@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/homepage.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <!-- Toyfort Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 </head>
 
 <body>
@@ -107,83 +109,94 @@
     </nav>
   </div>
 
-  <!-- ═══ HERO BANNER ═══ -->
-  <section class="hero-section">
-    <div class="hero-carousel">
-      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1543332143-4e8c27e32a20?auto=format&fit=crop&q=80&w=1600')">
-        <div class="hero-slide-content">
-          <span class="hero-tag">New Season Arrival</span>
-          <h1>Festive Elegance <br>for Little Stars</h1>
-          <p>Discover our exclusive festive collection. Premium ethnic wear crafted with love for your little ones.</p>
-          <div class="hero-cta-group">
-            <button class="btn btn-primary btn-lg" onclick="window.location.href='category.html?cat=baby-kids'">Shop Collection</button>
-            <button class="btn btn-outline btn-lg" style="color:white; border-color:white;">View Lookbook</button>
-          </div>
-        </div>
-      </div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1555529733-0e670560f4e1?auto=format&fit=crop&q=80&w=1600')">
-        <div class="hero-slide-content">
-          <span class="hero-tag">Tech Revolution</span>
-          <h1>Next-Gen Gadgets <br>for Modern Kids</h1>
-          <p>Smart watches, educational tablets, and more. The future of learning and play is here.</p>
-          <div class="hero-cta-group">
-            <button class="btn btn-primary btn-lg" onclick="window.location.href='category.html?cat=electronics'">Explore Tech</button>
-          </div>
-        </div>
-      </div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&q=80&w=1600')">
-        <div class="hero-slide-content">
-          <span class="hero-tag">Imagination Unleashed</span>
-          <h1>Play. Learn. <br>Grow Together.</h1>
-          <p>Premium educational toys designed to spark creativity and cognitive development.</p>
-          <div class="hero-cta-group">
-            <button class="btn btn-primary btn-lg" onclick="window.location.href='category.html?cat=toys'">Browse Toys</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="hero-dots">
-      <button class="hero-dot active"></button>
-      <button class="hero-dot"></button>
-      <button class="hero-dot"></button>
+  <!-- ═══ TOYFORT BANNER CONCEPT ═══ -->
+  <section class="toyfort-header-block mb-4 mt-4 text-center">
+    <div class="container text-center happy-shopping happy-shopping-mob mb-4">
+      <h1><b style="font-size: 25px;">Hot New Arrivals – Be the First to Own Them!</b></h1>
     </div>
   </section>
 
-  <!-- ═══ FEATURES STRIP ═══ -->
-  <section class="features-section reveal">
-    <div class="container">
-      <div class="features-glass">
-        <div class="feature-item">
-          <div class="feature-icon">💰</div>
-          <div class="feature-content">
-            <h4>Best Prices</h4>
-            <p>Unbeatable deals daily</p>
+  <section class="main-basic toyfort-main-section">
+    <div class="container main-slider-section">
+      <div class="slider-wrapper-inner">
+        <div class="swiper-container swiper mySwiper">
+          <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+              <div class="pics-div">
+                <a href="category.html?cat=baby-kids" class="image-container">
+                  <img src="https://images.unsplash.com/photo-1543332143-4e8c27e32a20?auto=format&fit=crop&q=80&w=1600" alt="image" class="pics">
+                </a>
+              </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+              <div class="pics-div">
+                <a href="category.html?cat=toys" class="image-container">
+                  <img src="https://images.unsplash.com/photo-1555529733-0e670560f4e1?auto=format&fit=crop&q=80&w=1600" alt="image" class="pics">
+                </a>
+              </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+              <div class="pics-div">
+                <a href="category.html?cat=electronics" class="image-container">
+                  <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&q=80&w=1600" alt="image" class="pics">
+                </a>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">🛡️</div>
-          <div class="feature-content">
-            <h4>Secure Payments</h4>
-            <p>256-bit SSL encrypted</p>
-          </div>
+
+        <!-- Navigation Arrows -->
+        <div class="slider-arrow leftSlider">
+          <span style="transform: rotate(180deg); display:block;">➔</span>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">🚚</div>
-          <div class="feature-content">
-            <h4>Free Delivery</h4>
-            <p>On orders above ₹499</p>
-          </div>
+        <div class="slider-arrow rightSlider">
+          <span style="display:block;">➔</span>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">↩️</div>
-          <div class="feature-content">
-            <h4>Easy Returns</h4>
-            <p>7-day return policy</p>
-          </div>
-        </div>
+        
+        <div class="swiper-pagination"></div>
       </div>
     </div>
   </section>
+
+  <!-- ═══ SPARKLE OFFER BANNER ═══ -->
+  <div class="container text-center mt-4 mb-4 offer-main-div offerbanner basic">
+      <div class="offer-banner">
+          <div class="banner-shimmer"></div>
+          <!-- 8 Star Sparkles -->
+          <div class="banner-sparkle" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
+          <div class="banner-sparkle" style="top: 15%; left: 35%; animation-delay: 1.5s;"></div>
+          <div class="banner-sparkle" style="top: 20%; right: 10%; animation-delay: 0.5s;"></div>
+          <div class="banner-sparkle" style="top: 40%; right: 30%; animation-delay: 2.5s;"></div>
+          <div class="banner-sparkle" style="bottom: 15%; left: 15%; animation-delay: 2s;"></div>
+          <div class="banner-sparkle" style="bottom: 25%; left: 50%; animation-delay: 1s;"></div>
+          <div class="banner-sparkle" style="bottom: 10%; right: 15%; animation-delay: 3s;"></div>
+          <div class="banner-sparkle" style="bottom: 30%; right: 5%; animation-delay: 3.5s;"></div>
+
+          <div class="offer-text">
+              Special Prices, Premium Products, and Free Home Delivery PAN India –<span class="offer-code" style="color:#ffa500;"> It’s All Just A Click Away!</span>
+          </div>
+      </div>
+  </div>
+
+  <!-- ═══ HOLI PROMO BANNER ═══ -->
+  <div class="holi-banner container mb-4" style="padding: 0 25px;">
+      <a href="category.html?cat=art-crafts">
+          <img src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=1600&q=80" alt="promo-banner" style="width: 100%; height:200px; object-fit:cover; border-radius:20px;">
+      </a>
+  </div>
+
+  <!-- ═══ FEATURES STRIP (Perks) ═══ -->
+  <div class="container mb-5">
+    <div class="row text-center" style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="flex:1;"><span style="font-size:30px;">🚚</span><p style="font-weight:600; margin-top:10px;">Free Shipping</p></div>
+      <div style="flex:1;"><span style="font-size:30px;">💳</span><p style="font-weight:600; margin-top:10px;">Multiple Payment Modes</p></div>
+      <div style="flex:1;"><span style="font-size:30px;">🎉</span><p style="font-weight:600; margin-top:10px;">Exciting Offers</p></div>
+      <div style="flex:1;"><span style="font-size:30px;">🛡️</span><p style="font-weight:600; margin-top:10px;">100% Genuine</p></div>
+    </div>
+  </div>
 
   <!-- ═══ BEST SELLERS ═══ -->
   <section class="section scroll-section reveal">
@@ -391,6 +404,41 @@
   <script src="js/quickview.js"></script>
   <script src="js/reviews.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- Toyfort Swiper Logic -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const swiper = new Swiper('.swiper', {
+          loop: true,
+          autoplay: {
+              delay: 4000,
+              disableOnInteraction: false,
+          },
+          pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+              dynamicBullets: true,
+          },
+          navigation: {
+              nextEl: '.rightSlider',
+              prevEl: '.leftSlider',
+          },
+          spaceBetween: 20,
+          slidesPerView: 1,
+          breakpoints: {
+              768: {
+                  slidesPerView: 2,
+                  spaceBetween: 25,
+              },
+              1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+              }
+          }
+      });
+    });
+  </script>
 
   <script>
     // Auth tab switching style fix

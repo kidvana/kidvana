@@ -1,174 +1,140 @@
 /* ── HOMEPAGE SECTIONS ── */
 
-/* Hero Banner */
-.hero-section {
+/* ── TOYFORT BANNER CSS ── */
+.main-basic { padding: 0 25px; }
+
+.main-slider-section {
+    padding: 20px 0;
     position: relative;
-    overflow: hidden;
 }
 
-.hero-carousel {
+.slider-wrapper-inner {
     position: relative;
+    padding: 0;
+}
+
+.swiper-container {
     width: 100%;
-    height: 600px;
+    border-radius: 20px;
     overflow: hidden;
-    border-radius: 0;
-    background: var(--gray-900);
 }
 
-.hero-slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 1.2s var(--transition-cubic-1);
-    display: flex;
-    align-items: center;
-    background-size: cover;
-    background-position: center;
-}
-
-.hero-slide::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%);
-    z-index: 1;
-}
-
-.hero-slide-content {
+.pics-div {
+    width: 100%;
     position: relative;
-    z-index: 2;
-    max-width: 700px;
-    padding: var(--space-16) var(--space-8);
-    color: var(--white);
-    margin-left: 5%;
 }
 
-.hero-slide-content h1 {
-    font-size: 4rem;
-    font-weight: 900;
-    line-height: 1.05;
-    margin-bottom: 24px;
-    letter-spacing: -0.03em;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s var(--transition-cubic-1) 0.2s;
+.pics {
+    height: 430px !important;
+    width: 100% !important;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
 }
 
-.hero-slide-content p {
-    font-size: 1.25rem;
-    font-weight: 400;
-    opacity: 0;
-    max-width: 500px;
-    transform: translateY(20px);
-    transition: all 0.8s var(--transition-cubic-1) 0.4s;
+.image-container {
+    position: relative;
+    display: block;
+    width: 100%;
 }
 
-.hero-cta-group {
-    opacity: 0;
-    transform: translateY(15px);
-    transition: all 0.8s var(--transition-cubic-1) 0.6s;
-}
-
-.hero-slide.active .hero-slide-content h1,
-.hero-slide.active .hero-slide-content p,
-.hero-slide.active .hero-cta-group {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hero-cta-group {
-    display: flex;
-    gap: var(--space-3);
-    flex-wrap: wrap;
-}
-
-.hero-cta {
-    padding: 12px 28px;
-    border-radius: var(--radius-full);
-    font-weight: 700;
-    font-size: 0.9rem;
-    transition: all var(--transition-base);
-    border: none;
-    cursor: pointer;
-}
-
-.hero-cta-primary {
-    background: var(--white);
-    color: var(--primary);
-}
-
-.hero-cta-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.hero-cta-secondary {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--white);
-    backdrop-filter: blur(4px);
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-}
-
-.hero-cta-secondary:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.hero-dots {
+.slider-arrow {
+    width: 45px;
+    height: 45px;
+    background-color: #ffffff;
+    border-radius: 50%;
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
-    gap: 8px;
-    z-index: 5;
-}
-
-.hero-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.4);
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: all var(--transition-base);
-    border: none;
+    z-index: 20;
+    border: 2px solid #eee;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    color: var(--gray-900);
 }
 
-.hero-dot.active {
-    background: var(--white);
-    width: 28px;
+.slider-arrow:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
-/* Deals Banner */
-.deals-banner {
-    background: var(--bg-deal);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4) var(--space-6);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-6);
-    border: 1px solid rgba(255, 107, 53, 0.15);
+.leftSlider { left: -22.5px; }
+.rightSlider { right: -22.5px; }
+
+.swiper-pagination {
+    position: relative;
+    margin-top: 20px;
+    bottom: 0 !important;
 }
 
-.deals-banner-left {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
+.swiper-pagination-bullet {
+    background: #ccc;
+    opacity: 1;
 }
 
-.deals-banner-icon {
-    font-size: 2.5rem;
-    animation: pulse 2s infinite;
+.swiper-pagination-bullet-active {
+    background: var(--primary);
 }
 
-.deals-banner-text h3 {
-    font-size: 1.1rem;
-    color: var(--primary);
+/* Sparkle Banner CSS */
+.offer-banner {
+    background: linear-gradient(135deg, #e43434 0%, #ff6b6b 100%);
+    border-radius: 20px;
+    padding: 20px 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(228, 52, 52, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.deals-banner-text p {
-    font-size: 0.82rem;
-    color: var(--gray-500);
+.banner-shimmer {
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+    transform: skewX(-20deg);
+    animation: sweep 4s infinite linear;
+}
+
+@keyframes sweep {
+    0% { left: -100%; }
+    20%, 100% { left: 200%; }
+}
+
+.banner-sparkle {
+    position: absolute; width: 15px; height: 15px;
+    background: radial-gradient(circle, #fff 20%, transparent 60%);
+    animation: twinkle 3s infinite ease-in-out;
+    opacity: 0;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+.offer-text {
+    position: relative; z-index: 2;
+    color: #fff; font-size: 1.25rem; font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 1200px) {
+    .leftSlider { left: 10px; }
+    .rightSlider { right: 10px; }
+}
+
+@media (max-width: 1024px) {
+    .pics { height: 350px !important; }
+}
+@media (max-width: 767px) {
+    .slider-arrow { display: none !important; }
+    .pics { height: 322px !important; }
+    .offer-text { font-size: 1rem; }
+    .main-basic { padding: 0 15px; }
 }
 
 /* Brand Section */
