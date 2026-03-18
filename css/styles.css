@@ -286,6 +286,88 @@ textarea {
     box-shadow: var(--shadow-sm);
 }
 
+/* ── Trending Category Cards ── */
+.tcat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+    text-align: center;
+}
+
+.tcat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.tcat-card:hover {
+    transform: translateY(-6px);
+}
+
+.tcat-card:hover .tcat-icon {
+    animation: tcatBounce 0.6s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.tcat-icon {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
+
+.tcat-card p {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--gray-700);
+    transition: color 0.3s ease;
+}
+
+.tcat-card:hover p {
+    color: var(--primary);
+}
+
+/* Color variants */
+.tcat-pink { background: linear-gradient(135deg, #FFE0EC, #FFF0F5); }
+.tcat-purple { background: linear-gradient(135deg, #E8D5F5, #F3E8FF); }
+.tcat-blue { background: linear-gradient(135deg, #D5E8F5, #E8F4FF); }
+.tcat-orange { background: linear-gradient(135deg, #FFE8D5, #FFF0E5); }
+.tcat-green { background: linear-gradient(135deg, #D5F5E8, #E5FFF0); }
+.tcat-yellow { background: linear-gradient(135deg, #F5E8D5, #FFF5E8); }
+.tcat-red { background: linear-gradient(135deg, #FFD5D5, #FFE8E8); }
+.tcat-teal { background: linear-gradient(135deg, #D5F5F5, #E5FFFF); }
+.tcat-indigo { background: linear-gradient(135deg, #E8E8F5, #F0F0FF); }
+.tcat-lime { background: linear-gradient(135deg, #D5FFD5, #E8FFE8); }
+.tcat-rose { background: linear-gradient(135deg, #FFE0F0, #FFF0F8); }
+.tcat-amber { background: linear-gradient(135deg, #FFF5D5, #FFFCE8); }
+
+@keyframes tcatBounce {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.2); }
+    50% { transform: scale(0.95); }
+    70% { transform: scale(1.08); }
+}
+
+@media (max-width: 768px) {
+    .tcat-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    .tcat-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+    }
+}
+
 .feature-item span {
     color: var(--primary);
     filter: drop-shadow(0 4px 6px rgba(228, 52, 52, 0.15));
