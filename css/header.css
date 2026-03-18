@@ -112,7 +112,7 @@
 .header-search input:focus {
     border-color: var(--primary);
     background: var(--white);
-    box-shadow: 0 0 0 4px hsla(18, 100%, 60%, 0.1);
+    box-shadow: 0 0 0 4px hsla(238, 85%, 60%, 0.1);
 }
 
 .header-search .search-icon {

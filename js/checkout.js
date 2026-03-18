@@ -135,7 +135,7 @@ function renderOrderReview() {
                 <h4 style="margin-bottom:8px;">💳 Payment</h4>
                 <p style="font-size:0.85rem; color:var(--gray-600);">
                     Method: <strong style="text-transform:uppercase;">${checkoutData.payment}</strong><br>
-                    Status: <span style="color:var(--accent-orange)">Pending Verification</span>
+                    Status: <span style="color:var(--accent-yellow)">Pending Verification</span>
                 </p>
             </div>
         </div>
