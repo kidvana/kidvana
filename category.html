@@ -1,125 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category — Kidvana</title>
-    <meta name="description"
-        content="Browse products by category at Kidvana. Best deals on electronics, fashion, and more.">
+    <title>Shop All Categories — Premium Collections | Kidvana</title>
+    <meta name="description" content="Browse our curated categories of premium kids fashion, toys, and gadgets. Find the best deals on high-quality essentials at Kidvana.">
+    
+    <!-- OpenGraph SEO -->
+    <meta property="og:title" content="Explore Premium Categories — Kidvana">
+    <meta property="og:description" content="India's trendiest collection of kidswear and tech categories. Shop the best deals now.">
+    <meta property="og:type" content="website">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="icon" href="assets/logo/kidvana-logo.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/product.css">
     <link rel="stylesheet" href="css/homepage.css">
     <link rel="stylesheet" href="css/responsive.css">
     <style>
-        .category-header {
-            padding: 40px 0;
-            background: var(--gray-50);
+        .category-hero {
+            padding: 80px 0 60px;
+            background: var(--bg-section-alt);
             margin-bottom: 40px;
-            border-bottom: 1px solid var(--gray-200);
+            text-align: center;
         }
-
         .category-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 8px;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 12px;
             text-transform: capitalize;
+            color: var(--gray-900);
         }
-
         .category-count {
             color: var(--gray-500);
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
+        .category-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        .filter-sidebar {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+        }
+        .filter-card {
+            background: var(--white);
+            padding: 32px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow-sm);
+        }
+        .filter-group {
+            margin-bottom: 32px;
+        }
+        .filter-group:last-child { margin-bottom: 0; }
+        .filter-group h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+            color: var(--gray-800);
+        }
+        .filter-list {
+            display: grid;
+            gap: 12px;
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gray-600);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: color var(--transition-base);
+        }
+        .filter-item:hover { color: var(--primary); }
+        .filter-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+        @media (max-width: 991px) {
+            .category-layout { grid-template-columns: 1fr; }
+            .filter-sidebar { display: none; } /* Mobile filters can be a modal later */
         }
     </style>
 </head>
-
 <body>
-    <!-- ═══ TOP BAR ═══ -->
-    <div class="top-bar">
-        <div class="top-bar-inner container">
-            <span class="top-bar-text"><span class="top-bar-icon">💰</span> Best Prices Guaranteed</span>
-            <span class="top-bar-text"><span class="top-bar-icon">🚚</span> Free Delivery on ₹499+</span>
-            <span class="top-bar-text"><span class="top-bar-icon">🔒</span> 100% Secure Payments</span>
-        </div>
-    </div>
+    <div class="scroll-progress"></div>
 
     <!-- ═══ HEADER ═══ -->
-    <header class="header" id="mainHeader">
-        <div class="header-main">
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
+    <header class="header">
+        <div class="container header-main">
+            <div class="hamburger"><span></span><span></span><span></span></div>
+            
             <a href="index.html" class="header-logo">
-                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="logo-img" style="height: 40px; width: auto; margin-right: 12px;">
-                <div>
-                    <div class="logo-text">Kidvana</div>
-                    <span class="logo-sub">Shop Smart, Live Bold</span>
+                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                <div class="logo-text-group">
+                    <span class="logo-text">Kidvana</span>
+                    <span class="logo-sub">Shop Smart • Live Bold</span>
                 </div>
             </a>
+
             <div class="header-search">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" placeholder="Search for products..." autocomplete="off">
-                <button class="search-btn">→</button>
-                <div class="search-suggestions"></div>
+                <input type="text" class="search-input" placeholder="Search premium products...">
+                <button class="search-btn">🔍</button>
             </div>
+
             <div class="header-actions">
-                <a href="wishlist.html" class="header-action-btn"><span class="action-icon">❤️</span></a>
-                <a href="cart.html" class="header-action-btn">
-                    <span class="action-icon">🛒</span>
-                    <span class="cart-count" style="display:none">0</span>
+                <a href="dashboard.html" class="header-action-btn" title="My Account">
+                    <span class="action-icon">👤</span>
+                    <span class="action-label">Account</span>
                 </a>
-                <button class="header-login-btn" onclick="openLoginModal()"><span>Login</span></button>
+                <a href="wishlist.html" class="header-action-btn" title="Wishlist">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">🤍</span>
+                        <span class="wishlist-count count-badge">0</span>
+                    </div>
+                    <span class="action-label">Wishlist</span>
+                </a>
+                <a href="cart.html" class="header-action-btn" title="Shopping Cart">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-count count-badge">0</span>
+                    </div>
+                    <span class="action-label">Cart</span>
+                </a>
             </div>
         </div>
-        <nav class="category-nav">
-            <ul class="category-nav-list">
-                <!-- Rendered by JS -->
-            </ul>
-        </nav>
     </header>
 
-    <!-- Mobile Search -->
-    <div class="mobile-search">
-        <div style="position:relative">
-            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:0.9rem">🔍</span>
-            <input type="text" class="search-input" placeholder="Search products..."
-                style="width:100%;padding:10px 16px 10px 40px;border:2px solid var(--gray-200);border-radius:999px;font-size:0.85rem;background:var(--gray-50)">
-        </div>
-    </div>
-
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="mobile-sidebar-header">
-            <h3>Menu</h3>
-            <button class="mobile-sidebar-close">✕</button>
-        </div>
-        <nav class="mobile-sidebar-nav">
-            <!-- Rendered by JS -->
-        </nav>
-    </div>
+    <nav class="category-nav">
+        <div class="container"><ul class="category-nav-list"></ul></div>
+    </nav>
 
     <main>
-        <section class="category-header">
-            <div class="container text-center">
+        <section class="category-hero reveal">
+            <div class="container">
                 <h1 class="category-title" id="categoryTitle">All Products</h1>
-                <p class="category-count" id="categoryCount">0 items found</p>
+                <p class="category-count" id="categoryCount">Discover premium selections</p>
             </div>
         </section>
 
         <section class="section">
             <div class="container">
-                <div class="product-grid" id="categoryGrid">
-                    <!-- Products rendered by JS -->
-                    <div style="text-align:center;padding:60px;grid-column:1/-1">
-                        <p style="color:var(--gray-400)">Loading products...</p>
+                <div class="category-layout">
+                    <!-- SIDEBAR -->
+                    <aside class="filter-sidebar reveal">
+                        <div class="filter-card">
+                            <div class="filter-group">
+                                <h4>Price Range</h4>
+                                <div class="filter-list">
+                                    <label class="filter-item"><input type="checkbox"> Under ₹500</label>
+                                    <label class="filter-item"><input type="checkbox"> ₹500 - ₹1,000</label>
+                                    <label class="filter-item"><input type="checkbox"> ₹1,000 - ₹2,500</label>
+                                    <label class="filter-item"><input type="checkbox"> Over ₹2,500</label>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <h4>Availability</h4>
+                                <div class="filter-list">
+                                    <label class="filter-item"><input type="checkbox" checked> In Stock</label>
+                                    <label class="filter-item"><input type="checkbox"> Express Delivery</label>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- GRID -->
+                    <div class="category-content">
+                        <div class="product-grid reveal" id="categoryGrid">
+                            <!-- Products rendered by JS -->
+                            <div style="text-align:center;padding:100px;grid-column:1/-1">
+                                <span class="skeleton" style="width:40px;height:40px;border-radius:50%;display:inline-block"></span>
+                                <p style="color:var(--gray-400);margin-top:16px">Curating best items for you...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,21 +193,61 @@
 
     <!-- ═══ FOOTER ═══ -->
     <footer class="footer">
-        <div class="container text-center" style="padding-top:40px; border-top:1px solid var(--gray-800);">
-            <p style="color:var(--gray-500); font-size:0.85rem;">© 2026 Kidvana. All rights reserved.</p>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                        <span>Kidvana</span>
+                    </a>
+                    <p>India's leading destination for premium kidswear, toys, and tech.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="category.html">Catalog</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">Shipping</a></li>
+                        <li><a href="#">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Stay Updated</h4>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Email" required>
+                        <button class="btn btn-primary">Join</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Kidvana. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
+    <button class="back-to-top">↑</button>
+
     <script src="js/products.js"></script>
-    <script src="js/wishlist.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
-
+    <script src="js/quickview.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initial render is handled by fetchProducts in products.js
-            // which calls renderCategoryPage
+            // initScrollProgress check
+            if (typeof initScrollRefinements === 'function') initScrollRefinements();
+        });
+    </script>
+</body>
+</html>
+ renderCategoryPage
         });
     </script>
 </body>

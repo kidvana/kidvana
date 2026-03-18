@@ -1,193 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile — Kidvana</title>
+    <title>My Dashboard — Account Overview | Kidvana</title>
+    <meta name="description" content="Manage your profile, track orders, and view your wishlist in your premium Kidvana dashboard.">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="assets/logo/kidvana-logo.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/product.css">
     <link rel="stylesheet" href="css/homepage.css">
     <link rel="stylesheet" href="css/responsive.css">
     <style>
-        .profile-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 24px;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            margin: 60px 0 100px;
         }
-
-        .profile-header {
+        .dashboard-sidebar {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-100);
+            padding: 32px;
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+        }
+        .sidebar-menu { display: grid; gap: 8px; }
+        .sidebar-link {
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            font-weight: 600;
+            transition: all var(--transition-base);
+            cursor: pointer;
         }
-
-        .avatar-circle {
-            width: 80px;
-            height: 80px;
-            background: var(--primary, #007bff);
-            color: #fff;
+        .sidebar-link:hover, .sidebar-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .sidebar-link.logout { color: #ef4444; margin-top: 24px; border-top: 1px solid var(--gray-100); padding-top: 24px; border-radius: 0; }
+        
+        .dashboard-content { display: grid; gap: 32px; }
+        .dashboard-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow-sm);
+        }
+        .avatar-large {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
+            background: var(--bg-section-alt);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 24px;
+            border: 4px solid var(--white);
+            box-shadow: var(--shadow-md);
+        }
+        .order-item {
+            padding: 24px;
+            border: 1px solid var(--gray-100);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-status {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
             font-weight: 700;
+            text-transform: uppercase;
         }
+        .status-delivered { background: #dcfce7; color: #166534; }
+        .status-processing { background: #fef9c3; color: #854d0e; }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .save-btn {
-            background: var(--primary, #007bff);
-            color: #fff;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .save-btn:hover {
-            opacity: 0.9;
-        }
-
-        .logout-btn {
-            background: #f8f9fa;
-            color: #dc3545;
-            border: 1px solid #dc3545;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
+        @media (max-width: 991px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+            .dashboard-sidebar { display: none; }
         }
     </style>
 </head>
-
 <body>
-    <!-- ═══ TOP BAR ═══ -->
-    <div class="top-bar">
-        <div class="top-bar-inner container">
-            <span class="top-bar-text"><span class="top-bar-icon">💰</span> Best Prices Guaranteed</span>
-            <span class="top-bar-text"><span class="top-bar-icon">🚚</span> Free Delivery on ₹499+</span>
-            <span class="top-bar-text"><span class="top-bar-icon">🔒</span> 100% Secure Payments</span>
-            <span class="top-bar-text"><span class="top-bar-icon">↩️</span> Easy Returns</span>
-        </div>
-    </div>
+    <div class="scroll-progress"></div>
 
-    <header class="header" id="mainHeader">
-        <div class="header-main">
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
+    <!-- ═══ HEADER ═══ -->
+    <header class="header">
+        <div class="container header-main">
+            <div class="hamburger"><span></span><span></span><span></span></div>
+            
             <a href="index.html" class="header-logo">
-                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="logo-img" style="height: 40px; width: auto; margin-right: 12px;">
-                <div>
-                    <div class="logo-text">Kidvana</div>
-                    <span class="logo-sub">Shop Smart, Live Bold</span>
+                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                <div class="logo-text-group">
+                    <span class="logo-text">Kidvana</span>
+                    <span class="logo-sub">Shop Smart • Live Bold</span>
                 </div>
             </a>
+
             <div class="header-search">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" placeholder="Search for products, brands and more..."
-                    autocomplete="off">
-                <button class="search-btn" aria-label="Search">→</button>
-                <div class="search-suggestions"></div>
+                <input type="text" class="search-input" placeholder="Search premium products...">
+                <button class="search-btn">🔍</button>
             </div>
+
             <div class="header-actions">
-                <button class="header-action-btn" onclick="openLoginModal()">
+                <a href="dashboard.html" class="header-action-btn active" title="My Account">
                     <span class="action-icon">👤</span>
                     <span class="action-label">Account</span>
-                </button>
-                <a href="wishlist.html" class="header-action-btn">
-                    <span class="action-icon">❤️</span>
+                </a>
+                <a href="wishlist.html" class="header-action-btn" title="Wishlist">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">🤍</span>
+                        <span class="wishlist-count count-badge">0</span>
+                    </div>
                     <span class="action-label">Wishlist</span>
                 </a>
-                <a href="cart.html" class="header-action-btn">
-                    <span class="action-icon">🛒</span>
-                    <span class="cart-count" style="display:none">0</span>
+                <a href="cart.html" class="header-action-btn" title="Shopping Cart">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-count count-badge">0</span>
+                    </div>
                     <span class="action-label">Cart</span>
                 </a>
             </div>
         </div>
-        <nav class="category-nav">
-            <ul class="category-nav-list">
-                <!-- Rendered by JS -->
-            </ul>
-        </nav>
     </header>
 
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="mobile-sidebar-header">
-            <h3>Menu</h3>
-            <button class="mobile-sidebar-close">✕</button>
-        </div>
-        <nav class="mobile-sidebar-nav">
-            <!-- Rendered by JS -->
-        </nav>
-    </div>
+    <nav class="category-nav">
+        <div class="container"><ul class="category-nav-list"></ul></div>
+    </nav>
 
-    <main class="container">
-        <div class="profile-container">
-            <div class="profile-header">
-                <div class="avatar-circle" id="userAvatar">U</div>
-                <div>
-                    <h2 id="userNameDisplay">Welcome, User!</h2>
-                    <p id="userPhoneDisplay" style="color: #666;">+91 0000000000</p>
+    <main>
+        <div class="container">
+            <div class="dashboard-layout">
+                <!-- SIDEBAR -->
+                <aside class="dashboard-sidebar reveal">
+                    <div class="sidebar-menu">
+                        <div class="sidebar-link active"><span>👤</span> Personal Info</div>
+                        <div class="sidebar-link"><span>📦</span> My Orders</div>
+                        <a href="wishlist.html" class="sidebar-link" style="text-decoration:none"><span>🤍</span> Wishlist</a>
+                        <div class="sidebar-link"><span>📍</span> Addresses</div>
+                        <div class="sidebar-link logout" onclick="logoutUser()"><span>🚪</span> Logout</div>
+                    </div>
+                </aside>
+
+                <!-- CONTENT -->
+                <div class="dashboard-content reveal">
+                    <div class="dashboard-card">
+                        <div class="avatar-large" id="userAvatar">U</div>
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-black" id="userNameDisplay">Welcome back!</h2>
+                            <p class="text-gray-500" id="userPhoneDisplay">+91 0000000000</p>
+                        </div>
+
+                        <form id="profileForm" class="grid gap-6">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="setFullName" placeholder="Your full name" required class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="setEmail" placeholder="your@email.com" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone (Verified)</label>
+                                <input type="text" id="setPhone" readonly class="form-input" style="background:var(--bg-section-alt); color:var(--gray-500)">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg mt-4">Save Profile Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- RECENT ORDERS -->
+                    <div class="dashboard-card">
+                        <h3 class="mb-6">Recent Orders</h3>
+                        <div id="orderList">
+                            <div class="order-item">
+                                <div>
+                                    <strong class="block">Order #KV-1092</strong>
+                                    <span class="text-xs text-gray-400">Placed on March 15, 2026</span>
+                                </div>
+                                <span class="order-status status-delivered">Delivered</span>
+                                <div class="font-bold">₹2,499</div>
+                            </div>
+                            <div class="order-item">
+                                <div>
+                                    <strong class="block">Order #KV-1085</strong>
+                                    <span class="text-xs text-gray-400">Placed on March 10, 2026</span>
+                                </div>
+                                <span class="order-status status-processing">Processing</span>
+                                <div class="font-bold">₹899</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <form id="profileForm">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="setFullName" placeholder="Enter your name" required>
-                </div>
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="setEmail" placeholder="Enter your email">
-                </div>
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="text" id="setPhone" readonly style="background: #f1f1f1;">
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-            </form>
-
-            <button class="logout-btn" onclick="logoutUser()">Logout</button>
         </div>
     </main>
 
+    <!-- ═══ FOOTER ═══ -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-bottom"
-                style="text-align:center; padding-top:40px; border-top:1px solid var(--gray-800);">
-                <p style="color:var(--gray-500); font-size:0.85rem;">© 2026 Kidvana. All rights reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                        <span>Kidvana</span>
+                    </a>
+                    <p>India's leading destination for premium kidswear, toys, and tech.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Account</h4>
+                    <ul>
+                        <li><a href="dashboard.html">Profile</a></li>
+                        <li><a href="#">Orders</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Kidvana. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -197,6 +251,9 @@
     <script src="js/auth.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/app.js"></script>
+</body>
+</html>
+t src="js/app.js"></script>
 </body>
 
 </html>

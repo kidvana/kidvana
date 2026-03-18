@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart — Kidvana</title>
-    <meta name="description" content="Review your cart items and checkout at Kidvana. Best prices guaranteed.">
-
-    <!-- OpenGraph SEO -->
-    <meta property="og:title" content="Your Shopping Cart — Kidvana">
-    <meta property="og:description" content="Complete your purchase and enjoy premium deals at Kidvana.">
-    <meta property="og:image"
-        content="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=1000">
-    <meta property="og:type" content="website">
+    <title>Your Shopping Cart — Kidvana</title>
+    <meta name="description" content="Review your favorites and complete your purchase securely. Experience India's most trusted premium shopping checkout at Kidvana.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="icon" href="assets/logo/kidvana-logo.svg">
     <link rel="stylesheet" href="css/styles.css">
@@ -21,95 +18,96 @@
     <link rel="stylesheet" href="css/homepage.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
-
 <body>
-    <!-- HEADER -->
-    <div class="top-bar">
-        <div class="top-bar-inner container"><span class="top-bar-text"><span class="top-bar-icon">💰</span> Best Prices
-                Guaranteed</span><span class="top-bar-text"><span class="top-bar-icon">🚚</span> Free Delivery on
-                ₹499+</span></div>
-    </div>
-    <header class="header" id="mainHeader">
-        <div class="header-main">
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
+    <div class="scroll-progress"></div>
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header">
+        <div class="container header-main">
+            <div class="hamburger"><span></span><span></span><span></span></div>
+            
             <a href="index.html" class="header-logo">
-                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="logo-img" style="height: 40px; width: auto; margin-right: 12px;">
-                <div>
-                    <div class="logo-text">Kidvana</div>
-                    <span class="logo-sub">Shop Smart, Live Bold</span>
+                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                <div class="logo-text-group">
+                    <span class="logo-text">Kidvana</span>
+                    <span class="logo-sub">Shop Smart • Live Bold</span>
                 </div>
             </a>
+
             <div class="header-search">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" placeholder="Search for products..." autocomplete="off">
-                <button class="search-btn">→</button>
-                <div class="search-suggestions"></div>
+                <input type="text" class="search-input" placeholder="Search premium products...">
+                <button class="search-btn">🔍</button>
             </div>
+
             <div class="header-actions">
-                <a href="wishlist.html" class="header-action-btn"><span class="action-icon">❤️</span></a>
-                <a href="cart.html" class="header-action-btn">
-                    <span class="action-icon">🛒</span>
-                    <span class="cart-count" style="display:none">0</span>
+                <a href="dashboard.html" class="header-action-btn" title="My Account">
+                    <span class="action-icon">👤</span>
+                    <span class="action-label">Account</span>
                 </a>
-                <button class="header-login-btn" onclick="openLoginModal()"><span>Login</span></button>
+                <a href="wishlist.html" class="header-action-btn" title="Wishlist">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">🤍</span>
+                        <span class="wishlist-count count-badge">0</span>
+                    </div>
+                    <span class="action-label">Wishlist</span>
+                </a>
+                <a href="cart.html" class="header-action-btn active" title="Shopping Cart">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-count count-badge">0</span>
+                    </div>
+                    <span class="action-label">Cart</span>
+                </a>
             </div>
         </div>
-        <nav class="category-nav">
-            <ul class="category-nav-list">
-                <!-- Rendered by JS -->
-            </ul>
-        </nav>
     </header>
 
-    <!-- Mobile Search -->
-    <div class="mobile-search">
-        <div style="position:relative">
-            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:0.9rem">🔍</span>
-            <input type="text" class="search-input" placeholder="Search products..."
-                style="width:100%;padding:10px 16px 10px 40px;border:2px solid var(--gray-200);border-radius:999px;font-size:0.85rem;background:var(--gray-50)">
-        </div>
-    </div>
+    <nav class="category-nav">
+        <div class="container"><ul class="category-nav-list"></ul></div>
+    </nav>
 
-    <!-- Mobile Sidebar -->
-    <div class="mobile-sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="mobile-sidebar" id="mobileSidebar">
-        <div class="mobile-sidebar-header">
-            <h3>Menu</h3>
-            <button class="mobile-sidebar-close">✕</button>
-        </div>
-        <nav class="mobile-sidebar-nav">
-            <!-- Rendered by JS -->
-        </nav>
-    </div>
+    <main>
+        <section class="section">
+            <div class="container" id="cartContainer">
+                <!-- Loaded dynamically -->
+                <div style="text-align:center;padding:100px;">
+                    <span class="skeleton" style="width:40px;height:40px;border-radius:50%;display:inline-block"></span>
+                    <p style="color:var(--gray-400);margin-top:16px">Loading your cart items...</p>
+                </div>
+            </div>
+        </section>
+    </main>
 
-    <!-- CART CONTENT -->
-    <section class="cart-section" style="min-height: 60vh;">
-        <div class="container" id="cartContainer">
-            <!-- Rendered by JS -->
-        </div>
-    </section>
-
+    <!-- ═══ FOOTER ═══ -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-brand" style="flex:1.5">
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
-                        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" style="width: 40px; height: 40px;">
-                        <span style="color:var(--white); font-size:1.5rem; font-weight:800;">Kidvana</span>
-                    </div>
-                    <p style="color:var(--gray-400); font-size:0.85rem; line-height:1.7; margin-bottom:24px;">India's most trusted online shopping destination for the next generation. Shop smart, live bold.</p>
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                        <span>Kidvana</span>
+                    </a>
+                    <p>India's leading destination for premium kidswear, toys, and tech.</p>
                 </div>
-                <div class="footer-col" style="flex:1">
-                    <h4 style="color:var(--white); margin-bottom:20px;">Support</h4>
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px; color:var(--gray-400); font-size:0.85rem;">
-                        <span>📞 1800-KIDVANA</span>
-                    </div>
+                <div class="footer-links">
+                    <h4>Trust & Safety</h4>
+                    <ul>
+                        <li><a href="#">Secure Checkout</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Help</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Support</a></li>
+                        <li><a href="#">Order Tracking</a></li>
+                        <li><a href="#">Easy Returns</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="footer-bottom" style="margin-top:20px; padding-top:20px; border-top:1px solid var(--gray-800); text-align:center;">
-                <p style="color:var(--gray-500); font-size:0.8rem;">© 2026 Kidvana. All rights reserved.</p>
+            <div class="footer-bottom">
+                <p>© 2026 Kidvana. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -140,12 +138,12 @@
 
             if (cart.length === 0) {
                 container.innerHTML = `
-          <div class="cart-empty">
-            <div class="empty-icon">🛒</div>
-            <h3>Your cart is empty</h3>
-            <p>Looks like you haven't added anything to your cart yet.</p>
-            <a href="index.html" class="btn btn-primary btn-lg">Start Shopping</a>
-          </div>`;
+                  <div class="empty-state reveal">
+                    <div style="font-size:4rem;margin-bottom:24px">🛒</div>
+                    <h2>Your cart is empty</h2>
+                    <p style="color:var(--gray-500);margin-bottom:32px">Looks like you haven't added anything to your cart yet.</p>
+                    <a href="index.html" class="btn btn-primary btn-lg">Start Shopping</a>
+                  </div>`;
                 return;
             }
 
@@ -161,61 +159,74 @@
             const finalTotal = subtotal - couponDiscount;
             const totalSavings = originalSavings + couponDiscount;
 
-            let itemsHTML = cart.map(item => {
-                return `
-          <div class="cart-item">
-            <div class="cart-item-image"><img src="${item.image}" alt="${item.name}"></div>
-            <div class="cart-item-info">
-              <div class="item-brand">${item.brand}</div>
-              <h4>${item.name}</h4>
-              <div class="item-emi">₹${item.price.toLocaleString()}</div>
-              <div class="cart-item-qty">
-                <button onclick="updateQty(${item.id}, -1); renderCartPage()">−</button>
-                <span>${item.qty}</span>
-                <button onclick="updateQty(${item.id}, 1); renderCartPage()">+</button>
-              </div>
-            </div>
-            <div class="cart-item-price">
-              <div class="price">₹${(item.price * item.qty).toLocaleString()}</div>
-              <div class="mrp">₹${(item.mrp * item.qty).toLocaleString()}</div>
-            </div>
-            <button class="cart-item-remove" onclick="removeFromCart(${item.id}); renderCartPage()">✕</button>
-          </div>`;
-            }).join('');
-
             container.innerHTML = `
-        <h2 style="font-size:1.4rem;margin-bottom:24px">Shopping Cart (${getCartCount()} items)</h2>
-        <div class="cart-grid">
-          <div class="cart-items">${itemsHTML}</div>
-          <div class="cart-summary">
-            <h3>Order Summary</h3>
-            <div class="summary-row"><span>Subtotal</span><span>₹${mrpTotal.toLocaleString()}</span></div>
-            <div class="summary-row"><span>Discount</span><span class="discount">- ₹${originalSavings.toLocaleString()}</span></div>
-            ${appliedCoupon ? `<div class="summary-row" style="color:var(--accent-green); font-weight:600;"><span>Promo (${appliedCoupon.code})</span><span>- ₹${couponDiscount.toLocaleString()}</span></div>` : ''}
-            <div class="summary-row"><span>Delivery</span><span style="color:var(--accent-green)">FREE</span></div>
-            <div class="summary-row total"><span>Total</span><span>₹${finalTotal.toLocaleString()}</span></div>
-            
-            <div class="coupon-box" style="margin:20px 0; padding:16px; background:var(--gray-50); border-radius:12px;">
-                <label style="display:block; font-size:0.8rem; margin-bottom:8px; font-weight:600; color:var(--gray-600);">Have a Promo Code?</label>
-                <div style="display:flex; gap:8px;">
-                    <input type="text" id="couponInput" placeholder="Enter code" style="flex:1; padding:8px 12px; border-radius:8px; border:1px solid var(--gray-200); font-size:0.85rem;" ${appliedCoupon ? 'disabled value="' + appliedCoupon.code + '"' : ''}>
-                    <button class="btn btn-outline" style="padding:8px 16px; font-size:0.85rem;" onclick="applyCoupon()" ${appliedCoupon ? 'disabled' : ''}>${appliedCoupon ? 'Applied' : 'Apply'}</button>
+                <div class="section-header reveal">
+                    <h2>Shopping Cart (${getCartCount()})</h2>
                 </div>
-                ${!appliedCoupon ? '<p style="font-size:0.7rem; color:var(--gray-400); margin-top:6px;">Try "SAVE20" for 20% off!</p>' : ''}
-            </div>
+                <div class="cart-grid reveal">
+                    <div class="cart-items">
+                        ${cart.map(item => `
+                            <div class="cart-item">
+                                <div class="cart-item-image"><img src="${item.image}" alt="${item.name}"></div>
+                                <div class="cart-item-info">
+                                    <div class="item-brand">${item.brand}</div>
+                                    <h4>${item.name}</h4>
+                                    <div class="cart-item-qty">
+                                        <button onclick="updateQty('${item.id}', -1); renderCartPage()">−</button>
+                                        <span>${item.qty}</span>
+                                        <button onclick="updateQty('${item.id}', 1); renderCartPage()">+</button>
+                                    </div>
+                                </div>
+                                <div class="cart-item-price">
+                                    <div class="price">₹${(item.price * item.qty).toLocaleString()}</div>
+                                    <div class="mrp">₹${(item.mrp * item.qty).toLocaleString()}</div>
+                                </div>
+                                <button class="cart-item-remove" onclick="removeFromCart('${item.id}'); renderCartPage()">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
 
-            <div class="cart-emi-info">
-              <div class="emi-label">You save</div>
-              <div class="emi-amount">₹${totalSavings.toLocaleString()}</div>
-              <div class="emi-subtext">on this order 🎉</div>
-            </div>
-            <button class="btn btn-primary cart-checkout-btn" onclick="window.location.href='checkout.html'">Proceed to Checkout →</button>
-            <p style="text-align:center;font-size:0.72rem;color:var(--gray-400);margin-top:8px">🔒 Secure checkout powered by RazorPay</p>
-          </div>
-        </div>`;
+                    <div class="cart-summary">
+                        <h3 class="mb-4">Order Summary</h3>
+                        <div class="summary-row"><span>Original Price</span><span>₹${mrpTotal.toLocaleString()}</span></div>
+                        <div class="summary-row"><span>Product Discount</span><span class="text-green">- ₹${originalSavings.toLocaleString()}</span></div>
+                        ${appliedCoupon ? `<div class="summary-row text-green font-bold"><span>Promo (${appliedCoupon.code})</span><span>- ₹${couponDiscount.toLocaleString()}</span></div>` : ''}
+                        <div class="summary-row"><span>Shipping</span><span class="text-green">FREE</span></div>
+                        <div class="summary-row total mt-4 pt-4 border-t border-gray-100">
+                            <span>Total Amount</span>
+                            <span>₹${finalTotal.toLocaleString()}</span>
+                        </div>
+                        
+                        <div class="promo-box mt-6">
+                            <div class="flex gap-2">
+                                <input type="text" id="couponInput" placeholder="Promo Code" class="form-input" 
+                                       ${appliedCoupon ? 'disabled value="'+appliedCoupon.code+'"' : ''}>
+                                <button class="btn btn-outline" onclick="applyCoupon()" 
+                                        ${appliedCoupon ? 'disabled' : ''}>${appliedCoupon?'Applied':'Apply'}</button>
+                            </div>
+                            ${!appliedCoupon ? '<p class="text-xs text-gray-400 mt-2">Try <strong>SAVE20</strong> for 20% off</p>' : ''}
+                        </div>
+
+                        <div class="savings-badge mt-6">
+                            <span class="text-sm font-semibold">Total Savings</span>
+                            <span class="text-xl font-black text-primary">₹${totalSavings.toLocaleString()}</span>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-full mt-6" onclick="window.location.href='checkout.html'">Checkout Securely →</button>
+                        <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400">
+                            🔒 256-bit SSL Protected Checkout
+                        </div>
+                    </div>
+                </div>
+            `;
+            if (typeof initIntersectionObserver === 'function') initIntersectionObserver();
         }
 
         document.addEventListener('DOMContentLoaded', renderCartPage);
+    </script>
+</body>
+</html>
+OMContentLoaded', renderCartPage);
     </script>
 </body>
 
