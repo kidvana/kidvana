@@ -212,9 +212,8 @@
 
 .header-action-btn {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 6px;
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     color: var(--gray-600);
@@ -272,8 +271,8 @@
 
 .header-action-btn .cart-count {
     position: absolute;
-    top: 2px;
-    right: 6px;
+    top: -8px;
+    right: -10px;
     min-width: 18px;
     height: 18px;
     border-radius: var(--radius-full);
@@ -285,6 +284,7 @@
     align-items: center;
     justify-content: center;
     animation: scaleIn 0.3s ease;
+    border: 2px solid var(--white);
 }
 
 .header-login-btn {
