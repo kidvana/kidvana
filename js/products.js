@@ -365,7 +365,7 @@ function createProductCardHTML(product) {
           👁️
         </button>
       </div>
-      <div class="card-image" style="background-color: ${product.color}">
+      <div class="card-image" style="background-color: var(--gray-50)">
         <img src="${product.image}" alt="${product.name}" loading="lazy">
       </div>
       <div class="card-body">

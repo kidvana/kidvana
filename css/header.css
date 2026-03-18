@@ -1,8 +1,8 @@
 /* ── HEADER & NAVIGATION ── */
 
 .top-bar {
-    background: var(--bg-dark);
-    color: var(--gray-200);
+    background: var(--primary);
+    color: var(--white);
     padding: 8px 0;
     font-size: 0.75rem;
     font-weight: 500;
@@ -13,7 +13,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-8);
+    width: 100%;
 }
 
 .top-bar-text {
@@ -201,6 +201,21 @@
 
 .search-suggestion-item:hover {
     background: var(--gray-50);
+}
+
+.search-btn {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 0 var(--space-4);
+    height: 100%;
+    cursor: pointer;
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+    transition: all var(--transition-fast);
+}
+
+.search-btn:hover {
+    background: var(--primary-dark);
 }
 
 .header-actions {

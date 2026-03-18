@@ -2,22 +2,22 @@
    KIDVANA E-COMMERCE — GLOBAL DESIGN SYSTEM
    ============================================ */
 
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap');
+/* ── Google Fonts (Toyfort Identity) ── */
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap');
 
 /* ── CSS Custom Properties ── */
 :root {
-  /* ── High-End Minimalist Monochrome Palette (Apple/Zara style) ── */
-  --primary: #0A0A0A; /* Pure stark black */
-  --primary-dark: #000000; 
-  --primary-light: #F9FAFB; /* Off-white canvas */
-  --primary-gradient: #0A0A0A; /* Flat elegant black */
+  /* ── Toyfort.in Exact Palette Clone ── */
+  --primary: #E43434; /* Bright Red Toyfort Primary */
+  --primary-dark: #C62121; 
+  --primary-light: #FFF0F0; 
+  --primary-gradient: #E43434;
   
-  /* Accent Colors - Muted & Refined */
-  --accent-yellow: #0A0A0A; 
-  --accent-pink: #0A0A0A; 
-  --accent-green: #0A0A0A; 
-  --accent-red: #0A0A0A;
+  /* Accent Colors */
+  --accent-yellow: #FFC107; 
+  --accent-pink: #EC4899; 
+  --accent-green: #28A745; 
+  --accent-red: #E43434;
   
   /* Neutral Palette - Refined */
   --white: #FFFFFF;
@@ -39,23 +39,23 @@
   --glass-border: rgba(0, 0, 0, 0.05);
   --glass-blur: blur(8px);
   
-  /* Stark Flat Design Shadows - High End Fashion Style */
-  --shadow-sm: none;
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.02);
-  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.03);
+  /* Standard E-Commerce Shadows (Toyfort Style) */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  --shadow-float: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 
-  /* Extreme Sharp Edges (High-Fashion Geometric) */
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
-  --radius-pill: 0px;
-  --radius-full: 0px;
+  /* Clean Boxy Edges (Standard Bootstrap Style) */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-pill: 500px;
+  --radius-full: 500px;
   
   /* Typography Scale */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Poppins', var(--font-sans);
+  --font-sans: 'Open Sans', Helvetica, sans-serif;
+  --font-display: 'Comic Neue', cursive;
   
   /* Layout & Spacing */
   --header-height: 80px;
