@@ -85,12 +85,7 @@ function getCartMRP() {
 
 // Update cart badge in header
 function updateCartUI() {
-    const countEls = document.querySelectorAll('.cart-count');
-    const count = getCartCount();
-    countEls.forEach(el => {
-        el.textContent = count;
-        el.style.display = count > 0 ? 'flex' : 'none';
-    });
+    updateHeaderCounts();
 }
 
 // ── Toast Notification ──
@@ -118,12 +113,74 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// ── Wishlist (simple toggle) ──
-function toggleWishlist(productId, btn) {
-    btn.classList.toggle('active');
-    const isActive = btn.classList.contains('active');
-    btn.innerHTML = isActive ? '♥' : '♡';
-    showToast(isActive ? 'Added to wishlist!' : 'Removed from wishlist', isActive ? 'success' : 'info');
+// ── Wishlist System (Persistent) ──
+const WISHLIST_KEY = 'kidvana_wishlist';
+
+function getWishlist() {
+    try {
+        return JSON.parse(localStorage.getItem(WISHLIST_KEY)) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveWishlist(wishlist) {
+    localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
+    updateHeaderCounts();
+}
+
+function toggleWishlist(productId) {
+    let wishlist = getWishlist();
+    const index = wishlist.indexOf(productId);
+    
+    if (index === -1) {
+        wishlist.push(productId);
+        showToast('Added to wishlist! ❤️', 'success');
+    } else {
+        wishlist.splice(index, 1);
+        showToast('Removed from wishlist', 'info');
+    }
+    
+    saveWishlist(wishlist);
+    
+    // Update all matching cards on current page
+    document.querySelectorAll(`.product-card[data-id="${productId}"]`).forEach(card => {
+        const btn = card.querySelector('.card-wishlist');
+        if (btn) {
+            const isActive = wishlist.includes(productId);
+            btn.classList.toggle('active', isActive);
+            btn.innerHTML = isActive ? '❤️' : '🤍';
+        }
+    });
+}
+
+function isInWishlist(productId) {
+    return getWishlist().includes(productId);
+}
+
+// ── Header Counts (Cart & Wishlist) ──
+function updateHeaderCounts() {
+    // Update Cart
+    const cartCount = getCartCount();
+    document.querySelectorAll('.cart-count').forEach(el => {
+        const oldVal = parseInt(el.textContent) || 0;
+        el.textContent = cartCount;
+        el.style.display = cartCount > 0 ? 'flex' : 'none';
+        
+        // Pop animation if increased
+        if (cartCount > oldVal) {
+            el.classList.remove('pop-anim');
+            void el.offsetWidth; // trigger reflow
+            el.classList.add('pop-anim');
+        }
+    });
+
+    // Update Wishlist
+    const wishCount = getWishlist().length;
+    document.querySelectorAll('.wishlist-count').forEach(el => {
+        el.textContent = wishCount;
+        el.style.display = wishCount > 0 ? 'flex' : 'none';
+    });
 }
 
 // Initialize cart UI on page load

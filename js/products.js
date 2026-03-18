@@ -323,12 +323,18 @@ function getProductById(id) {
   return PRODUCTS.find(p => p.id === id || p._id === id || p.id == id);
 }
 
-// ── Star Rating HTML ──
+// ── Star Rating HTML (Premium Visuals) ──
 function getStarsHTML(rating) {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5 ? 1 : 0;
-  const empty = 5 - full - half;
-  return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
+    const full = Math.floor(rating);
+    const hasHalf = rating % 1 >= 0.5;
+    const empty = 5 - full - (hasHalf ? 1 : 0);
+    
+    let html = '<div class="star-rating-v2">';
+    for(let i=0; i<full; i++) html += '<span class="star-full">★</span>';
+    if(hasHalf) html += '<span class="star-half">★</span>';
+    for(let i=0; i<empty; i++) html += '<span class="star-empty">★</span>';
+    html += '</div>';
+    return html;
 }
 
 // ── Product Card HTML Generator ──

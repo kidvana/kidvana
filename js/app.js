@@ -4,7 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     renderCommonHeader();
-    initStickyHeader();
+    initScrollRefinements();
     initMobileMenu();
     initSearch();
     initIntersectionObserver();
@@ -23,8 +23,8 @@ function renderFeaturedCategories() {
     if (!container) return;
 
     const featured = CATEGORIES.slice(0, 8);
-    container.innerHTML = featured.map(cat => `
-        <div class="category-card" onclick="viewCategory('${cat.id}')">
+    container.innerHTML = featured.map((cat, index) => `
+        <div class="category-card reveal" style="animation-delay: ${index * 0.1}s" onclick="viewCategory('${cat.id}')">
             <div class="category-icon-box">${cat.icon}</div>
             <span class="category-name">${cat.name}</span>
         </div>
@@ -32,11 +32,33 @@ function renderFeaturedCategories() {
 }
 
 // ── Sticky Header Shadow ──
-function initStickyHeader() {
+// ── Scroll Progress & Sticky Header ──
+function initScrollRefinements() {
     const header = document.querySelector('.header');
-    if (!header) return;
+    const scrollProgress = document.createElement('div');
+    scrollProgress.className = 'scroll-progress';
+    document.body.appendChild(scrollProgress);
+
+    const backToTop = document.createElement('button');
+    backToTop.className = 'back-to-top';
+    backToTop.innerHTML = '↑';
+    backToTop.setAttribute('aria-label', 'Back to top');
+    document.body.appendChild(backToTop);
+
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
     window.addEventListener('scroll', () => {
-        header.classList.toggle('scrolled', window.scrollY > 10);
+        // Sticky Header Class
+        if (header) header.classList.toggle('scrolled', window.scrollY > 20);
+
+        // Scroll Progress
+        const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        scrollProgress.style.width = scrolled + '%';
+
+        // Back to Top Button Visibility
+        backToTop.classList.toggle('show', window.scrollY > 500);
     }, { passive: true });
 }
 
@@ -115,14 +137,14 @@ function initIntersectionObserver() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-fadeInUp');
+                entry.target.classList.add('animate-reveal');
                 observer.unobserve(entry.target);
             }
         });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-    document.querySelectorAll('.section').forEach(section => {
-        observer.observe(section);
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
     });
 }
 

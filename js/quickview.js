@@ -19,25 +19,37 @@ function openQuickView(productId) {
     modal.innerHTML = `
         <div class="modal quick-view-modal">
             <button class="modal-close" onclick="closeQuickView()">✕</button>
-            <div class="quick-view-content" style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                <div class="quick-view-image" style="background:${product.color}; border-radius: 12px; display:flex; align-items:center; justify-content:center; padding: 20px;">
-                    <img src="${product.image}" alt="${product.name}" style="max-height: 260px; object-fit: contain;">
+            <div class="quick-view-grid">
+                <div class="quick-view-media" style="background:${product.color}">
+                    <img src="${product.image}" alt="${product.name}">
                 </div>
-                <div class="quick-view-info">
-                    <div style="font-size:0.75rem; font-weight:600; color:var(--gray-400); text-transform:uppercase; margin-bottom:4px;">${product.brand}</div>
-                    <h2 style="font-size:1.4rem; margin-bottom:12px;">${product.name}</h2>
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
-                        <span style="color:var(--accent-yellow); font-size:0.85rem;">${getStarsHTML(product.rating)}</span>
-                        <span style="color:var(--gray-400); font-size:0.75rem;">(${product.reviews.toLocaleString()} reviews)</span>
+                <div class="quick-view-details">
+                    <div class="quick-view-brand">${product.brand}</div>
+                    <h2 class="quick-view-title">${product.name}</h2>
+                    
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-primary font-bold">${product.rating}</span>
+                        <span class="stars" style="color:#FFD700">${getStarsHTML(product.rating)}</span>
+                        <span class="text-gray-400 text-sm">(${product.reviews.toLocaleString()} verified reviews)</span>
                     </div>
-                    <div style="margin-bottom:20px;">
-                        <div style="font-size:1.5rem; font-weight:800; color:var(--primary);">₹${product.price.toLocaleString()}</div>
-                        <div style="font-size:0.9rem; color:var(--gray-400);">MRP <span style="text-decoration:line-through;">₹${product.mrp.toLocaleString()}</span> <span style="color:var(--accent-green); font-weight:700;">${discount}% off</span></div>
+
+                    <div class="quick-view-price-box">
+                        <div style="font-size:2rem; font-weight:900; color:var(--gray-900);">₹${product.price.toLocaleString()}</div>
+                        <div style="font-size:1rem; color:var(--gray-500);">
+                            MRP <span style="text-decoration:line-through;">₹${product.mrp.toLocaleString()}</span> 
+                            <span style="color:#10B981; font-weight:700; margin-left:8px;">${discount}% OFF</span>
+                        </div>
                     </div>
-                    <p style="font-size:0.85rem; color:var(--gray-600); line-height:1.6; margin-bottom:24px;">${product.description || 'Premium quality product with best-in-class features.'}</p>
-                    <div style="display:flex; gap:12px;">
-                        <button class="btn btn-primary" style="flex:1;" onclick="addToCart('${product.id}'); closeQuickView();">🛒 Add to Cart</button>
-                        <a href="product.html?id=${product.id}" class="btn btn-outline" style="flex:1;">View Details</a>
+
+                    <p style="color:var(--gray-600); line-height:1.7; margin-bottom:40px;">${product.description || 'Experience the perfect blend of quality and design with this premium selection.'}</p>
+                    
+                    <div style="display:flex; gap:16px; margin-top:auto;">
+                        <button class="btn btn-primary" style="flex:1; height:56px;" onclick="addToCart('${product.id}'); closeQuickView();">
+                            Add to Cart
+                        </button>
+                        <a href="product.html?id=${product.id}" class="btn btn-outline" style="flex:1; height:56px; display:flex; align-items:center; justify-content:center;">
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
