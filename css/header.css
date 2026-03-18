@@ -55,7 +55,7 @@
     flex-shrink: 0;
 }
 
-.header-logo .logo-img {
+.header-logo img {
     height: 54px;
     width: auto;
     object-fit: contain;

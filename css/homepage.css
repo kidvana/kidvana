@@ -365,7 +365,7 @@
 /* Mission Section */
 .mission-section {
     padding: 160px 0;
-    background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('assets/banners/toys_banner.png');
+    background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('../assets/hero-images/toys_hero.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
