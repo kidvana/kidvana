@@ -41,9 +41,9 @@
 
 .header-main {
     display: grid;
-    grid-template-columns: 240px 1fr 280px;
+    grid-template-columns: 200px 1fr auto;
     align-items: center;
-    gap: 30px;
+    gap: 24px;
     padding: 12px 25px;
     max-width: var(--container-max);
     margin: 0 auto;
@@ -127,9 +127,8 @@
     pointer-events: none;
 }
 
-.header-search .search-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-50%) scale(1.05);
+.header-search .search-btn {
+    display: none;
 }
 
 /* Mobile Search Bar */
@@ -206,14 +205,7 @@
 }
 
 .search-btn {
-    background: var(--primary);
-    color: var(--white);
-    border: none;
-    padding: 0 var(--space-4);
-    height: 100%;
-    cursor: pointer;
-    border-radius: 0 var(--radius-full) var(--radius-full) 0;
-    transition: all var(--transition-fast);
+    display: none;
 }
 
 .search-btn:hover {

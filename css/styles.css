@@ -783,7 +783,7 @@ h5 {
 }
 
 .product-scroll-row .product-card {
-  flex: 0 0 200px;
+  flex: 0 0 230px;
   scroll-snap-align: start;
 }
 
