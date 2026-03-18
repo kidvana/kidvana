@@ -11,9 +11,8 @@
     width: 100%;
     height: 600px;
     overflow: hidden;
-    border-radius: 0 0 80px 80px;
+    border-radius: 0;
     background: var(--gray-900);
-    box-shadow: var(--shadow-lg);
 }
 
 .hero-slide {
@@ -238,12 +237,11 @@
 .category-card {
     background: var(--white);
     padding: 24px 16px;
-    border-radius: var(--radius-pill); /* Capsule Shape */
+    border-radius: 0;
     text-align: center;
     cursor: pointer;
-    border: none;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--gray-200);
+    transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -367,7 +365,7 @@
 /* Mission Section */
 .mission-section {
     padding: 160px 0;
-    background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('../assets/hero-images/toys_hero.png');
+    background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.unsplash.com/photo-1601366533287-5ee4c763ae4e?auto=format&fit=crop&q=80&w=1600');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

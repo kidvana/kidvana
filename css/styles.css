@@ -7,17 +7,17 @@
 
 /* ── CSS Custom Properties ── */
 :root {
-  /* ── Modern Premium E-commerce Palette (Sleek Coral & Warm Sun) ── */
-  --primary: hsl(352, 85%, 60%); /* Sleek, playful yet professional Coral */
-  --primary-dark: hsl(352, 90%, 50%); 
-  --primary-light: hsl(352, 100%, 96%); /* Very soft background tint */
-  --primary-gradient: linear-gradient(135deg, hsl(352, 85%, 60%) 0%, hsl(15, 90%, 65%) 100%);
+  /* ── High-End Minimalist Monochrome Palette (Apple/Zara style) ── */
+  --primary: #0A0A0A; /* Pure stark black */
+  --primary-dark: #000000; 
+  --primary-light: #F9FAFB; /* Off-white canvas */
+  --primary-gradient: #0A0A0A; /* Flat elegant black */
   
-  /* Accent Colors - Playful yet sophisticated (For kids e-commerce) */
-  --accent-yellow: hsl(45, 100%, 51%); /* #F59E0B - Star Ratings & Urgent Badges */
-  --accent-pink: hsl(330, 81%, 60%); /* #EC4899 - Secondary fun accent */
-  --accent-green: hsl(152, 69%, 45%); /* #059669 - Positive actions/Success */
-  --accent-red: hsl(348, 83%, 55%); /* #E11D48 - Wishlist & Destructive actions */
+  /* Accent Colors - Muted & Refined */
+  --accent-yellow: #0A0A0A; 
+  --accent-pink: #0A0A0A; 
+  --accent-green: #0A0A0A; 
+  --accent-red: #0A0A0A;
   
   /* Neutral Palette - Refined */
   --white: #FFFFFF;
@@ -32,26 +32,26 @@
   --gray-800: hsl(210, 12%, 18%);
   --gray-900: hsl(210, 15%, 12%);
   
-  /* Surfaces & Glassmorphism */
+  /* Surfaces & Glassmorphism - Minimal Transparency */
   --bg-body: var(--white);
   --bg-card: var(--white);
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --glass-blur: blur(20px);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-blur: blur(8px);
   
-  /* Lush Floating Shadows - Eliminating flat boxiness */
-  --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 16px 32px -4px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 32px 64px -12px rgba(0, 0, 0, 0.08), 0 16px 32px -8px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 40px 80px -16px rgba(0, 0, 0, 0.12), 0 20px 40px -8px rgba(0, 0, 0, 0.06);
+  /* Stark Flat Design Shadows - High End Fashion Style */
+  --shadow-sm: none;
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.02);
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.03);
 
-  /* Extreme Soft Radius (App-like & Organic) */
-  --radius-sm: 16px;
-  --radius-md: 24px;
-  --radius-lg: 32px;
-  --radius-xl: 48px;
-  --radius-pill: 9999px;
-  --radius-full: 9999px;
+  /* Extreme Sharp Edges (High-Fashion Geometric) */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-pill: 0px;
+  --radius-full: 0px;
   
   /* Typography Scale */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -441,34 +441,33 @@ h5 {
   color: var(--white);
 }
 
-/* ── Product Card ── */
 .product-card {
   position: relative;
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
+  border-radius: 0;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: none;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-  padding: 12px;
+  border: 1px solid var(--gray-200);
+  box-shadow: none;
+  padding: 0;
 }
 
 .product-card:hover {
-  transform: translateY(-12px) scale(1.02);
-  box-shadow: var(--shadow-float);
-  z-index: 10;
+  transform: translateY(-4px);
+  border-color: var(--primary);
 }
 
 .product-image-wrapper {
   position: relative;
   padding-top: 100%; /* 1:1 Aspect Ratio */
   background: var(--gray-50);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--gray-100);
 }
 
 .product-image {
