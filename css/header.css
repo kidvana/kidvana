@@ -40,10 +40,11 @@
 }
 
 .header-main {
-    display: flex;
+    display: grid;
+    grid-template-columns: 240px 1fr 280px;
     align-items: center;
-    gap: var(--space-6);
-    padding: var(--space-3) var(--space-4);
+    gap: 30px;
+    padding: 12px 25px;
     max-width: var(--container-max);
     margin: 0 auto;
 }
@@ -56,7 +57,7 @@
 }
 
 .header-logo img {
-    height: 54px;
+    height: 42px;
     width: auto;
     object-fit: contain;
 }
@@ -93,8 +94,9 @@
 }
 
 .header-search {
-    flex: 1;
-    max-width: 540px;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
     position: relative;
 }
 
@@ -227,18 +229,19 @@
 
 .header-action-btn {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: var(--space-2) var(--space-3);
+    gap: 1px;
+    padding: 2px 8px;
     border-radius: var(--radius-md);
-    color: var(--gray-600);
-    font-size: 0.68rem;
-    font-weight: 500;
+    color: var(--gray-700);
+    font-size: 0.62rem;
+    font-weight: 700;
     transition: all var(--transition-fast);
     cursor: pointer;
-    position: relative;
     background: none;
     border: none;
+    min-width: 60px;
 }
 
 .header-action-btn:hover {
@@ -281,7 +284,7 @@
 }
 
 .header-action-btn .action-icon {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 }
 
 .header-action-btn .cart-count {

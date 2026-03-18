@@ -45,9 +45,9 @@
 
       <a href="index.html" class="header-logo">
         <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="logo-img">
-        <div>
+        <div class="logo-text-group">
           <div class="logo-text">Kidvana</div>
-          <span class="logo-sub">Shop Smart, Live Bold</span>
+          <span class="logo-sub">Shop Smart • Live Bold</span>
         </div>
       </a>
 
@@ -110,9 +110,9 @@
   </div>
 
   <!-- ═══ TOYFORT BANNER CONCEPT ═══ -->
-  <section class="toyfort-header-block mb-4 mt-4 text-center">
-    <div class="container text-center happy-shopping happy-shopping-mob mb-4">
-      <h1><b style="font-size: 25px;">Hot New Arrivals – Be the First to Own Them!</b></h1>
+  <section class="toyfort-hero-intro mt-4 mb-2 text-center">
+    <div class="container">
+      <h2 style="font-size: 1.8rem; color: var(--gray-800); font-family: var(--font-display); margin-bottom:0;">Hot New Arrivals – Be the First to Own Them!</h2>
     </div>
   </section>
 
@@ -125,7 +125,7 @@
             <div class="swiper-slide">
               <div class="pics-div">
                 <a href="category.html?cat=baby-kids" class="image-container">
-                  <img src="https://images.unsplash.com/photo-1543332143-4e8c27e32a20?auto=format&fit=crop&q=80&w=1600" alt="image" class="pics">
+                  <img src="https://images.unsplash.com/photo-1544126592-807daa215a75?auto=format&fit=crop&q=80&w=1600" alt="Special Festive Kidswear" class="pics">
                 </a>
               </div>
             </div>
@@ -133,7 +133,7 @@
             <div class="swiper-slide">
               <div class="pics-div">
                 <a href="category.html?cat=toys" class="image-container">
-                  <img src="https://images.unsplash.com/photo-1555529733-0e670560f4e1?auto=format&fit=crop&q=80&w=1600" alt="image" class="pics">
+                  <img src="https://images.unsplash.com/photo-1515488764276-beab7607c1e6?auto=format&fit=crop&q=80&w=1600" alt="Educational Wooden Toys" class="pics">
                 </a>
               </div>
             </div>
@@ -141,7 +141,7 @@
             <div class="swiper-slide">
               <div class="pics-div">
                 <a href="category.html?cat=electronics" class="image-container">
-                  <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&q=80&w=1600" alt="image" class="pics">
+                  <img src="https://images.unsplash.com/photo-1581235720704-06d3acfc1c6f?auto=format&fit=crop&q=80&w=1600" alt="Modern Tech Gadgets" class="pics">
                 </a>
               </div>
             </div>
@@ -184,17 +184,29 @@
   <!-- ═══ HOLI PROMO BANNER ═══ -->
   <div class="holi-banner container mb-4" style="padding: 0 25px;">
       <a href="category.html?cat=art-crafts">
-          <img src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=1600&q=80" alt="promo-banner" style="width: 100%; height:200px; object-fit:cover; border-radius:20px;">
+          <img src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=1600&q=80" alt="promo-banner" style="width: 100%; height:auto; aspect-ratio:16/4; object-fit:cover; border-radius:20px;">
       </a>
   </div>
 
   <!-- ═══ FEATURES STRIP (Perks) ═══ -->
   <div class="container mb-5">
-    <div class="row text-center" style="display:flex; justify-content:space-between; align-items:center;">
-      <div style="flex:1;"><span style="font-size:30px;">🚚</span><p style="font-weight:600; margin-top:10px;">Free Shipping</p></div>
-      <div style="flex:1;"><span style="font-size:30px;">💳</span><p style="font-weight:600; margin-top:10px;">Multiple Payment Modes</p></div>
-      <div style="flex:1;"><span style="font-size:30px;">🎉</span><p style="font-weight:600; margin-top:10px;">Exciting Offers</p></div>
-      <div style="flex:1;"><span style="font-size:30px;">🛡️</span><p style="font-weight:600; margin-top:10px;">100% Genuine</p></div>
+    <div class="features-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align:center;">
+      <div class="feature-item">
+        <span style="font-size:32px; display:block; margin-bottom:8px;">🚚</span>
+        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">Free Shipping</p>
+      </div>
+      <div class="feature-item">
+        <span style="font-size:32px; display:block; margin-bottom:8px;">💳</span>
+        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">Secured Payments</p>
+      </div>
+      <div class="feature-item">
+        <span style="font-size:32px; display:block; margin-bottom:8px;">🎉</span>
+        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">Exciting Offers</p>
+      </div>
+      <div class="feature-item">
+        <span style="font-size:32px; display:block; margin-bottom:8px;">🛡️</span>
+        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">100% Genuine</p>
+      </div>
     </div>
   </div>
 
@@ -272,9 +284,9 @@
   </section>
 
   <!-- ═══ MISSION SECTION ═══ -->
-  <section class="mission-section reveal">
+  <section class="mission-section reveal" style="padding: 80px 0;">
     <div class="container">
-      <div class="mission-grid">
+      <div class="mission-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center;">
         <div class="mission-content">
           <span class="mission-tag">Our Mission</span>
           <h2>Redefining Childhood <br>through Quality & Joy</h2>
@@ -426,13 +438,14 @@
           },
           spaceBetween: 20,
           slidesPerView: 1,
+          centeredSlides: true,
           breakpoints: {
               768: {
-                  slidesPerView: 2,
+                  slidesPerView: 1,
                   spaceBetween: 25,
               },
               1024: {
-                  slidesPerView: 3,
+                  slidesPerView: 1.2,
                   spaceBetween: 30,
               }
           }

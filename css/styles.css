@@ -18,6 +18,14 @@
   --accent-pink: #EC4899; 
   --accent-green: #28A745; 
   --accent-red: #E43434;
+  --accent-blue: #3B82F6;
+  
+  /* Derived Values */
+  --primary-rgb: 228, 52, 52;
+  --primary-light-alpha: rgba(228, 52, 52, 0.08);
+  --bg-section-alt: #fafafa;
+  --bg-deal: #fff5f5;
+  --bg-dark: #1a1a2e;
   
   /* Neutral Palette - Refined */
   --white: #FFFFFF;
@@ -188,26 +196,26 @@ body {
   min-height: 100vh;
   position: relative;
   -webkit-font-smoothing: antialiased; /* Retained from original body */
-  -moz-osx-font-smoothing: grayscale; /* Retained from original body */
+  -moz-osx-font-smoothing: grayscale; 
 }
-
-/* Ambient Backdrops */
+/* Ambient Backdrops - Disabled for cleaner layout */
+/*
 body::before, body::after {
   content: '';
   position: fixed;
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  filter: blur(120px);
   z-index: -1;
-  opacity: 0.15;
-  animation: floatOrb 25s infinite alternate ease-in-out;
+  filter: blur(120px);
+  opacity: 0.25;
+  pointer-events: none;
 }
 
 body::before {
-  top: -10%;
-  left: -10%;
-  background: var(--primary);
+  top: -200px;
+  right: -100px;
+  background: radial-gradient(circle, hsla(238, 85%, 60%, 0.4), transparent 70%);
 }
 
 body::after {
@@ -217,6 +225,7 @@ body::after {
   animation-duration: 30s;
   animation-direction: alternate-reverse;
 }
+*/
 
 @keyframes floatOrb {
   0% { transform: translate(0, 0) scale(1); }
@@ -263,10 +272,90 @@ textarea {
 /* ── Container ── */
 .container {
   width: 100%;
-  max-width: var(--container-width);
+  max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 25px;
 }
+
+/* Feature Grid Strip */
+.features-grid {
+    background: var(--white);
+    padding: 30px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-100);
+    box-shadow: var(--shadow-sm);
+}
+
+.feature-item span {
+    color: var(--primary);
+    filter: drop-shadow(0 4px 6px rgba(228, 52, 52, 0.15));
+}
+
+/* Mission Section Refinement */
+.mission-section {
+    background: #FFF9F9;
+    border-top: 1px solid #FFE4E4;
+    border-bottom: 1px solid #FFE4E4;
+}
+
+.mission-tag {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+}
+
+.mission-content h2 {
+    font-size: 2.8rem;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--gray-900);
+}
+
+.mission-content p {
+    font-size: 1.05rem;
+    color: var(--gray-600);
+    margin-bottom: 32px;
+    max-width: 540px;
+}
+
+.mission-stats {
+    display: flex;
+    gap: 40px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: var(--font-display);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.mission-image img {
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border: none !important;
+}
+
+/* ── Container ── (primary definition at line ~270) */
 
 /* ── Typography ── */
 h1,
@@ -302,25 +391,22 @@ h5 {
 }
 
 .section-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
 }
 
 .section-header h2 {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--gray-900);
-  letter-spacing: -0.03em;
-  line-height: 1;
+    font-size: 2rem;
+    color: var(--gray-900);
 }
 
 .section-subtitle {
-  font-size: 1.1rem;
-  color: var(--gray-500);
-  margin-top: 12px;
-  max-width: 600px;
+    font-size: 0.95rem;
+    color: var(--gray-500);
+    margin-top: 4px;
+    max-width: 600px;
 }
 
 .view-all-link {
@@ -450,7 +536,7 @@ h5 {
 .product-card {
   position: relative;
   background: var(--bg-card);
-  border-radius: 0;
+  border-radius: var(--radius-md);
   overflow: hidden;
   transition: all 0.3s ease;
   display: flex;
@@ -464,13 +550,14 @@ h5 {
 .product-card:hover {
   transform: translateY(-4px);
   border-color: var(--primary);
+  box-shadow: var(--shadow-md);
 }
 
 .product-image-wrapper {
   position: relative;
   padding-top: 100%; /* 1:1 Aspect Ratio */
   background: var(--gray-50);
-  border-radius: 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
   overflow: hidden;
   margin-bottom: 0;
   border-bottom: 1px solid var(--gray-100);
@@ -749,7 +836,7 @@ h5 {
 
 /* ── Sections ── */
 .section {
-  padding: 40px 0;
+  padding: 50px 0;
 }
 
 .section-alt {

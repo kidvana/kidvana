@@ -32,7 +32,7 @@
             <div class="hamburger"><span></span><span></span><span></span></div>
             
             <a href="index.html" class="header-logo">
-                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="logo-img">
                 <div class="logo-text-group">
                     <span class="logo-text">Kidvana</span>
                     <span class="logo-sub">Shop Smart • Live Bold</span>
@@ -40,8 +40,10 @@
             </a>
 
             <div class="header-search">
-                <input type="text" class="search-input" placeholder="Search premium products...">
-                <button class="search-btn">🔍</button>
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search for products, brands and more..." autocomplete="off">
+                <button class="search-btn" aria-label="Search">→</button>
+                <div class="search-suggestions"></div>
             </div>
 
             <div class="header-actions">
