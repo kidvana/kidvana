@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Shopping Cart — Kidvana</title>
+    <title>Your Shopping Cart | Kidvana</title>
     <meta name="description" content="Review your favorites and complete your purchase securely. Experience India's most trusted premium shopping checkout at Kidvana.">
     
     <!-- Fonts -->
@@ -30,30 +30,30 @@
                 <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
                 <div class="logo-text-group">
                     <span class="logo-text">Kidvana</span>
-                    <span class="logo-sub">Shop Smart • Live Bold</span>
+                    <span class="logo-sub">Shop Smart &bull; Live Bold</span>
                 </div>
             </a>
 
             <div class="header-search">
                 <input type="text" class="search-input" placeholder="Search premium products...">
-                <button class="search-btn">🔍</button>
+                <button class="search-btn">&#128269;</button>
             </div>
 
             <div class="header-actions">
                 <a href="dashboard.html" class="header-action-btn" title="My Account">
-                    <span class="action-icon">👤</span>
+                    <span class="action-icon">&#128100;</span>
                     <span class="action-label">Account</span>
                 </a>
                 <a href="wishlist.html" class="header-action-btn" title="Wishlist">
                     <div class="action-icon-wrapper">
-                        <span class="action-icon">🤍</span>
+                        <span class="action-icon">&#9825;</span>
                         <span class="wishlist-count count-badge">0</span>
                     </div>
                     <span class="action-label">Wishlist</span>
                 </a>
                 <a href="cart.html" class="header-action-btn active" title="Shopping Cart">
                     <div class="action-icon-wrapper">
-                        <span class="action-icon">🛒</span>
+                        <span class="action-icon">&#128722;</span>
                         <span class="cart-count count-badge">0</span>
                     </div>
                     <span class="action-label">Cart</span>
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 Kidvana. All rights reserved.</p>
+                <p>&copy; 2026 Kidvana. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -123,12 +123,12 @@
             const code = document.getElementById('couponInput').value.trim().toUpperCase();
             if (code === 'SAVE20') {
                 appliedCoupon = { code: 'SAVE20', discount: 0.2 };
-                showToast('20% discount applied! 🥳', 'success');
+                showToast('20% discount applied!', 'success');
                 renderCartPage();
             } else if (code === '') {
                 showToast('Please enter a coupon code', 'info');
             } else {
-                showToast('Invalid coupon code ❌', 'error');
+                showToast('Invalid coupon code', 'error');
             }
         }
 
@@ -139,7 +139,7 @@
             if (cart.length === 0) {
                 container.innerHTML = `
                   <div class="empty-state reveal">
-                    <div style="font-size:4rem;margin-bottom:24px">🛒</div>
+                    <div style="font-size:4rem;margin-bottom:24px">&#128722;</div>
                     <h2>Your cart is empty</h2>
                     <p style="color:var(--gray-500);margin-bottom:32px">Looks like you haven't added anything to your cart yet.</p>
                     <a href="index.html" class="btn btn-primary btn-lg">Start Shopping</a>
@@ -172,33 +172,33 @@
                                     <div class="item-brand">${item.brand}</div>
                                     <h4>${item.name}</h4>
                                     <div class="cart-item-qty">
-                                        <button onclick="updateQty('${item.id}', -1); renderCartPage()">−</button>
+                                        <button onclick="updateQty('${item.id}', -1); renderCartPage()">&minus;</button>
                                         <span>${item.qty}</span>
                                         <button onclick="updateQty('${item.id}', 1); renderCartPage()">+</button>
                                     </div>
                                 </div>
                                 <div class="cart-item-price">
-                                    <div class="price">₹${(item.price * item.qty).toLocaleString()}</div>
-                                    <div class="mrp">₹${(item.mrp * item.qty).toLocaleString()}</div>
+                                    <div class="price">Rs.${(item.price * item.qty).toLocaleString()}</div>
+                                    <div class="mrp">Rs.${(item.mrp * item.qty).toLocaleString()}</div>
                                 </div>
-                                <button class="cart-item-remove" onclick="removeFromCart('${item.id}'); renderCartPage()">✕</button>
+                                <button class="cart-item-remove" onclick="removeFromCart('${item.id}'); renderCartPage()">&times;</button>
                             </div>
                         `).join('')}
                     </div>
 
                     <div class="cart-summary">
                         <h3 class="mb-4">Order Summary</h3>
-                        <div class="summary-row"><span>Original Price</span><span>₹${mrpTotal.toLocaleString()}</span></div>
-                        <div class="summary-row"><span>Product Discount</span><span class="text-green">- ₹${originalSavings.toLocaleString()}</span></div>
-                        ${appliedCoupon ? `<div class="summary-row text-green font-bold"><span>Promo (${appliedCoupon.code})</span><span>- ₹${couponDiscount.toLocaleString()}</span></div>` : ''}
+                        <div class="summary-row"><span>Original Price</span><span>Rs.${mrpTotal.toLocaleString()}</span></div>
+                        <div class="summary-row"><span>Product Discount</span><span class="text-green">- Rs.${originalSavings.toLocaleString()}</span></div>
+                        ${appliedCoupon ? `<div class="summary-row text-green font-bold"><span>Promo (${appliedCoupon.code})</span><span>- Rs.${couponDiscount.toLocaleString()}</span></div>` : ''}
                         <div class="summary-row"><span>Shipping</span><span class="text-green">FREE</span></div>
                         <div class="summary-row total mt-4 pt-4 border-t border-gray-100">
                             <span>Total Amount</span>
-                            <span>₹${finalTotal.toLocaleString()}</span>
+                            <span>Rs.${finalTotal.toLocaleString()}</span>
                         </div>
                         
                         <div class="promo-box mt-6">
-                            <div class="flex gap-2">
+                            <div class="promo-box-actions">
                                 <input type="text" id="couponInput" placeholder="Promo Code" class="form-input" 
                                        ${appliedCoupon ? 'disabled value="'+appliedCoupon.code+'"' : ''}>
                                 <button class="btn btn-outline" onclick="applyCoupon()" 
@@ -209,12 +209,12 @@
 
                         <div class="savings-badge mt-6">
                             <span class="text-sm font-semibold">Total Savings</span>
-                            <span class="text-xl font-black text-primary">₹${totalSavings.toLocaleString()}</span>
+                            <span class="text-xl font-black text-primary">Rs.${totalSavings.toLocaleString()}</span>
                         </div>
 
-                        <button class="btn btn-primary btn-lg w-full mt-6" onclick="window.location.href='checkout.html'">Checkout Securely →</button>
-                        <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400">
-                            🔒 256-bit SSL Protected Checkout
+                        <button class="btn btn-primary btn-lg w-full mt-6" onclick="window.location.href='checkout.html'">Checkout Securely &rarr;</button>
+                        <div class="cart-security-note">
+                            &#128274; 256-bit SSL Protected Checkout
                         </div>
                     </div>
                 </div>
