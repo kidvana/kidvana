@@ -1,20 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop All Categories — Premium Collections | Kidvana</title>
-    <meta name="description" content="Browse our curated categories of premium kids fashion, toys, and gadgets. Find the best deals on high-quality essentials at Kidvana.">
-    
-    <!-- OpenGraph SEO -->
-    <meta property="og:title" content="Explore Premium Categories — Kidvana">
-    <meta property="og:description" content="India's trendiest collection of kidswear and tech categories. Shop the best deals now.">
+    <title>Shop All Categories | Kidvana</title>
+    <meta name="description" content="Browse curated categories of premium kids fashion, toys, and gadgets at Kidvana.">
+    <meta property="og:title" content="Explore Premium Categories | Kidvana">
+    <meta property="og:description" content="Discover curated categories and filter products by price, delivery speed, and rating.">
     <meta property="og:type" content="website">
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
     <link rel="icon" href="assets/logo/kidvana-logo.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/header.css">
@@ -91,48 +87,58 @@
             height: 18px;
             accent-color: var(--primary);
         }
+        .category-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
         @media (max-width: 991px) {
             .category-layout { grid-template-columns: 1fr; }
-            .filter-sidebar { display: none; } /* Mobile filters can be a modal later */
+            .filter-sidebar { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="scroll-progress"></div>
 
-    <!-- ═══ HEADER ═══ -->
     <header class="header">
         <div class="container header-main">
             <div class="hamburger"><span></span><span></span><span></span></div>
-            
             <a href="index.html" class="header-logo">
                 <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
                 <div class="logo-text-group">
                     <span class="logo-text">Kidvana</span>
-                    <span class="logo-sub">Shop Smart • Live Bold</span>
+                    <span class="logo-sub">Shop Smart &bull; Live Bold</span>
                 </div>
             </a>
-
             <div class="header-search">
                 <input type="text" class="search-input" placeholder="Search premium products...">
-                <button class="search-btn">🔍</button>
+                <button class="search-btn">&#128269;</button>
             </div>
-
             <div class="header-actions">
                 <a href="dashboard.html" class="header-action-btn" title="My Account">
-                    <span class="action-icon">👤</span>
+                    <span class="action-icon">&#128100;</span>
                     <span class="action-label">Account</span>
                 </a>
                 <a href="wishlist.html" class="header-action-btn" title="Wishlist">
                     <div class="action-icon-wrapper">
-                        <span class="action-icon">🤍</span>
+                        <span class="action-icon">&#9825;</span>
                         <span class="wishlist-count count-badge">0</span>
                     </div>
                     <span class="action-label">Wishlist</span>
                 </a>
                 <a href="cart.html" class="header-action-btn" title="Shopping Cart">
                     <div class="action-icon-wrapper">
-                        <span class="action-icon">🛒</span>
+                        <span class="action-icon">&#128722;</span>
                         <span class="cart-count count-badge">0</span>
                     </div>
                     <span class="action-label">Cart</span>
@@ -156,35 +162,47 @@
         <section class="section">
             <div class="container">
                 <div class="category-layout">
-                    <!-- SIDEBAR -->
                     <aside class="filter-sidebar reveal">
                         <div class="filter-card">
                             <div class="filter-group">
                                 <h4>Price Range</h4>
                                 <div class="filter-list">
-                                    <label class="filter-item"><input type="checkbox"> Under ₹500</label>
-                                    <label class="filter-item"><input type="checkbox"> ₹500 - ₹1,000</label>
-                                    <label class="filter-item"><input type="checkbox"> ₹1,000 - ₹2,500</label>
-                                    <label class="filter-item"><input type="checkbox"> Over ₹2,500</label>
+                                    <label class="filter-item"><input type="checkbox" data-filter="price" value="under-500"> Under Rs.500</label>
+                                    <label class="filter-item"><input type="checkbox" data-filter="price" value="500-1000"> Rs.500 - Rs.1,000</label>
+                                    <label class="filter-item"><input type="checkbox" data-filter="price" value="1000-2500"> Rs.1,000 - Rs.2,500</label>
+                                    <label class="filter-item"><input type="checkbox" data-filter="price" value="over-2500"> Over Rs.2,500</label>
                                 </div>
                             </div>
                             <div class="filter-group">
                                 <h4>Availability</h4>
                                 <div class="filter-list">
-                                    <label class="filter-item"><input type="checkbox" checked> In Stock</label>
-                                    <label class="filter-item"><input type="checkbox"> Express Delivery</label>
+                                    <label class="filter-item"><input type="checkbox" data-filter="availability" value="in-stock" checked> In Stock</label>
+                                    <label class="filter-item"><input type="checkbox" data-filter="availability" value="express-delivery"> Express Delivery</label>
                                 </div>
                             </div>
+                            <button id="clearCategoryFilters" class="btn btn-outline" style="width:100%;">Clear Filters</button>
                         </div>
                     </aside>
 
-                    <!-- GRID -->
                     <div class="category-content">
+                        <div class="category-toolbar">
+                            <div style="color:var(--gray-500); font-size:0.92rem;">Use filters to narrow down your search.</div>
+                            <div class="toolbar-actions">
+                                <label for="sortProducts" style="font-weight:700; color:var(--gray-700);">Sort by</label>
+                                <select id="sortProducts" class="form-input" style="width:auto; min-width:180px;">
+                                    <option value="featured">Featured</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="rating">Top Rated</option>
+                                    <option value="discount">Best Discount</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="product-grid reveal" id="categoryGrid">
-                            <!-- Products rendered by JS -->
                             <div style="text-align:center;padding:100px;grid-column:1/-1">
                                 <span class="skeleton" style="width:40px;height:40px;border-radius:50%;display:inline-block"></span>
-                                <p style="color:var(--gray-400);margin-top:16px">Curating best items for you...</p>
+                                <p style="color:var(--gray-400);margin-top:16px">Curating the best items for you...</p>
                             </div>
                         </div>
                     </div>
@@ -193,7 +211,6 @@
         </section>
     </main>
 
-    <!-- ═══ FOOTER ═══ -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
@@ -216,8 +233,8 @@
                     <h4>Support</h4>
                     <ul>
                         <li><a href="contact.html">Contact Us</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Returns</a></li>
+                        <li><a href="shipping-policy.html">Shipping</a></li>
+                        <li><a href="returns-refunds.html">Returns</a></li>
                     </ul>
                 </div>
                 <div class="footer-newsletter">
@@ -229,22 +246,18 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 Kidvana. All rights reserved.</p>
+                <p>&copy; 2026 Kidvana. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <button class="back-to-top">↑</button>
+    <button class="back-to-top">&#8593;</button>
 
     <script src="js/products.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script src="js/quickview.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof initScrollRefinements === 'function') initScrollRefinements();
-        });
-    </script>
 </body>
 </html>
+

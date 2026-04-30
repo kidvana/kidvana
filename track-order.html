@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order | Kidvana</title>
+    <meta name="description" content="Track your Kidvana order using your order ID and phone number.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/logo/kidvana-logo.svg">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/homepage.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/support-pages.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-main">
+            <div class="hamburger"><span></span><span></span><span></span></div>
+            <a href="index.html" class="header-logo">
+                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                <div class="logo-text-group">
+                    <span class="logo-text">Kidvana</span>
+                    <span class="logo-sub">Shop Smart &bull; Live Bold</span>
+                </div>
+            </a>
+            <div class="header-search">
+                <input type="text" class="search-input" placeholder="Search premium products...">
+                <button class="search-btn">&#128269;</button>
+            </div>
+            <div class="header-actions">
+                <a href="dashboard.html" class="header-action-btn" title="My Account">
+                    <span class="action-icon">&#128100;</span>
+                    <span class="action-label">Account</span>
+                </a>
+                <a href="wishlist.html" class="header-action-btn" title="Wishlist">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">&#9825;</span>
+                        <span class="wishlist-count count-badge">0</span>
+                    </div>
+                    <span class="action-label">Wishlist</span>
+                </a>
+                <a href="cart.html" class="header-action-btn" title="Shopping Cart">
+                    <div class="action-icon-wrapper">
+                        <span class="action-icon">&#128722;</span>
+                        <span class="cart-count count-badge">0</span>
+                    </div>
+                    <span class="action-label">Cart</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="category-nav">
+        <div class="container"><ul class="category-nav-list"></ul></div>
+    </nav>
+
+    <section class="support-hero">
+        <div class="container">
+            <h1>Track Your Order</h1>
+            <p>Enter your order ID and the phone number used during checkout. You will see the order status, items, and delivery details.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="support-layout">
+            <aside class="support-sidebar">
+                <h3>Support</h3>
+                <a href="track-order.html" class="active">Track Order</a>
+                <a href="shipping-policy.html">Shipping Policy</a>
+                <a href="returns-refunds.html">Returns and Refunds</a>
+                <a href="faq.html">FAQs</a>
+                <a href="contact.html">Contact Support</a>
+            </aside>
+
+            <section>
+                <div class="support-card">
+                    <h2>Find your order</h2>
+                    <form id="trackOrderForm" class="tracker-form">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="trackOrderId" class="form-label">Order ID</label>
+                            <input id="trackOrderId" class="form-input" placeholder="KV-12345678 or database ID" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="trackPhone" class="form-label">Phone Number</label>
+                            <input id="trackPhone" class="form-input" placeholder="10-digit phone number" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">Track Order</button>
+                    </form>
+                    <div id="trackOrderResult" class="tracker-result"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
+                        <span>Kidvana</span>
+                    </a>
+                    <p>India's leading destination for premium kidswear, toys, and tech.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Policies</h4>
+                    <ul>
+                        <li><a href="shipping-policy.html">Shipping Policy</a></li>
+                        <li><a href="returns-refunds.html">Returns and Refunds</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Help</h4>
+                    <ul>
+                        <li><a href="faq.html">FAQs</a></li>
+                        <li><a href="security.html">Security</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Kidvana. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        async function fetchTrackedOrder(orderId, phone) {
+            const response = await fetch(`/api/orders/track/${encodeURIComponent(orderId)}?phone=${encodeURIComponent(phone)}`);
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(payload.message || 'Order not found');
+            }
+            return payload;
+        }
+
+        function renderTrackedOrder(order) {
+            const container = document.getElementById('trackOrderResult');
+            const orderStatus = String(order.status || 'processing').toLowerCase();
+            const items = order.items || [];
+            const orderId = order.id || order._id || '';
+
+            container.innerHTML = `
+                <div class="support-card" style="margin-top:24px;">
+                    <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;">
+                        <div>
+                            <h2 style="margin-bottom:6px;">Order #${orderId}</h2>
+                            <p>Placed on ${new Date(order.date || order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                        </div>
+                        <span class="tracker-pill ${orderStatus}">${order.status}</span>
+                    </div>
+                    <div class="tracker-meta">
+                        <div>
+                            <strong>Total</strong>
+                            <p>Rs.${Number(order.totals?.total || order.amount || 0).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <strong>Payment</strong>
+                            <p>${order.payment?.method || order.paymentMethod || 'N/A'} / ${order.payment?.status || order.paymentStatus || 'Pending'}</p>
+                        </div>
+                        <div>
+                            <strong>Delivery Address</strong>
+                            <p>${order.shipping?.city || order.address?.city || '-'}, ${order.shipping?.zip || order.address?.zip || ''}</p>
+                        </div>
+                    </div>
+                    ${items.map(item => `
+                        <div class="tracker-item">
+                            <img src="${item.image}" alt="${item.name}">
+                            <div style="flex:1;">
+                                <div style="font-weight:700;">${item.name}</div>
+                                <div style="color:var(--gray-500); font-size:0.9rem;">Qty: ${item.quantity} x Rs.${Number(item.price).toLocaleString()}</div>
+                            </div>
+                            <div style="font-weight:700;">Rs.${(Number(item.price) * Number(item.quantity)).toLocaleString()}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        document.getElementById('trackOrderForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const orderId = document.getElementById('trackOrderId').value.trim();
+            const phone = document.getElementById('trackPhone').value.trim();
+
+            const localOrder = findStoredOrder(orderId, phone);
+            if (localOrder) {
+                renderTrackedOrder(localOrder);
+                return;
+            }
+
+            try {
+                const order = await fetchTrackedOrder(orderId, phone);
+                renderTrackedOrder(order);
+            } catch (err) {
+                document.getElementById('trackOrderResult').innerHTML = `
+                    <div class="support-card" style="margin-top:24px;">
+                        <h2>Order not found</h2>
+                        <p>${err.message}</p>
+                    </div>
+                `;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('id');
+            const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
+            if (orderId) document.getElementById('trackOrderId').value = orderId;
+            if (user?.phone) document.getElementById('trackPhone').value = user.phone;
+        });
+    </script>
+</body>
+</html>
+

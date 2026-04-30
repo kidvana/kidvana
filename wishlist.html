@@ -1,17 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Wishlist — Kidvana</title>
+  <title>Your Wishlist | Kidvana</title>
   <meta name="description" content="Manage your favorite products and save them for later at Kidvana.">
-  
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/homepage.css">
@@ -20,54 +16,30 @@
 <body>
   <div class="scroll-progress"></div>
 
-  <!-- ═══ HEADER (Same as Index) ═══ -->
   <header class="header">
     <div class="container header-main">
       <div class="hamburger"><span></span><span></span><span></span></div>
-      
       <a href="index.html" class="header-logo">
         <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
         <div class="logo-text-group">
           <span class="logo-text">Kidvana</span>
-          <span class="logo-sub">Shop Smart • Live Bold</span>
+          <span class="logo-sub">Shop Smart &bull; Live Bold</span>
         </div>
       </a>
-
       <div class="header-search">
         <input type="text" class="search-input" placeholder="Search for premium products...">
-        <button class="search-btn">🔍</button>
+        <button class="search-btn">&#128269;</button>
       </div>
-
       <div class="header-actions">
-        <a href="dashboard.html" class="header-action-btn" title="My Account">
-          <span class="action-icon">👤</span>
-          <span class="action-label">Account</span>
-        </a>
-        <a href="wishlist.html" class="header-action-btn active" title="Wishlist">
-          <div class="action-icon-wrapper">
-            <span class="action-icon">❤️</span>
-            <span class="wishlist-count count-badge">0</span>
-          </div>
-          <span class="action-label">Wishlist</span>
-        </a>
-        <a href="cart.html" class="header-action-btn" title="Shopping Cart">
-          <div class="action-icon-wrapper">
-            <span class="action-icon">🛒</span>
-            <span class="cart-count count-badge">0</span>
-          </div>
-          <span class="action-label">Cart</span>
-        </a>
+        <a href="dashboard.html" class="header-action-btn" title="My Account"><span class="action-icon">&#128100;</span><span class="action-label">Account</span></a>
+        <a href="wishlist.html" class="header-action-btn active" title="Wishlist"><div class="action-icon-wrapper"><span class="action-icon">&#9825;</span><span class="wishlist-count count-badge">0</span></div><span class="action-label">Wishlist</span></a>
+        <a href="cart.html" class="header-action-btn" title="Shopping Cart"><div class="action-icon-wrapper"><span class="action-icon">&#128722;</span><span class="cart-count count-badge">0</span></div><span class="action-label">Cart</span></a>
       </div>
     </div>
   </header>
 
-  <!-- ═══ NAVIGATION ═══ -->
   <nav class="category-nav">
-    <div class="container">
-      <ul class="category-nav-list">
-        <!-- Rendered by JS -->
-      </ul>
-    </div>
+    <div class="container"><ul class="category-nav-list"></ul></div>
   </nav>
 
   <main>
@@ -75,18 +47,17 @@
       <div class="container">
         <div class="section-header reveal">
           <div>
-            <h2>Your Wishlist ❤️</h2>
-            <p class="section-subtitle">Items you've saved for later. Ready to bring them home?</p>
+            <h2>Your Wishlist</h2>
+            <p class="section-subtitle">Items you have saved for later.</p>
           </div>
           <a href="index.html" class="view-all-link">Continue Shopping</a>
         </div>
 
         <div id="wishlistGrid" class="product-grid reveal">
-          <!-- Rendered by JS -->
           <div class="empty-state">
-            <div style="font-size:3rem;margin-bottom:16px">🤍</div>
+            <div style="font-size:3rem;margin-bottom:16px">Wishlist</div>
             <h3>Your wishlist is empty</h3>
-            <p style="color:var(--gray-500);margin:8px 0 20px">Explore our catalog and save your favorites!</p>
+            <p style="color:var(--gray-500);margin:8px 0 20px">Explore our catalog and save your favorites.</p>
             <a href="index.html" class="btn btn-primary">Start Shopping</a>
           </div>
         </div>
@@ -94,7 +65,6 @@
     </section>
   </main>
 
-  <!-- ═══ FOOTER (Same as Index) ═══ -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -105,7 +75,7 @@
           </a>
           <p>India's leading destination for premium kidswear, toys, and tech.</p>
           <div class="footer-social">
-            <a href="#">FB</a><a href="#">IG</a><a href="#">TW</a>
+            <a href="contact.html">Support</a><a href="track-order.html">Track</a><a href="privacy-policy.html">Privacy</a>
           </div>
         </div>
         <div class="footer-links">
@@ -117,12 +87,12 @@
           </ul>
         </div>
         <div class="footer-links">
-            <h4>Customer Care</h4>
-            <ul>
-              <li><a href="#">Shipping Policy</a></li>
-              <li><a href="#">Returns</a></li>
-              <li><a href="#">Track Order</a></li>
-            </ul>
+          <h4>Customer Care</h4>
+          <ul>
+            <li><a href="shipping-policy.html">Shipping Policy</a></li>
+            <li><a href="returns-refunds.html">Returns</a></li>
+            <li><a href="track-order.html">Track Order</a></li>
+          </ul>
         </div>
         <div class="footer-newsletter">
           <h4>Stay Updated</h4>
@@ -133,12 +103,12 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 Kidvana. Crafted for the next generation.</p>
+        <p>&copy; 2026 Kidvana. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
-  <button class="back-to-top">↑</button>
+  <button class="back-to-top">&#8593;</button>
 
   <script src="js/products.js"></script>
   <script src="js/cart.js"></script>
@@ -147,33 +117,32 @@
   <script src="js/quickview.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-        renderWishlistPage();
-        document.addEventListener('productsLoaded', renderWishlistPage);
+      renderWishlistPage();
+      document.addEventListener('productsLoaded', renderWishlistPage);
     });
 
     function renderWishlistPage() {
-        const grid = document.getElementById('wishlistGrid');
-        if (!grid) return;
+      const grid = document.getElementById('wishlistGrid');
+      if (!grid) return;
 
-        const wishlist = getWishlist();
-        if (wishlist.length === 0) {
-            grid.innerHTML = `
-                <div class="empty-state">
-                    <div style="font-size:3rem;margin-bottom:16px">🤍</div>
-                    <h3>Your wishlist is empty</h3>
-                    <p style="color:var(--gray-500);margin:8px 0 20px">Explore our catalog and save your favorites!</p>
-                    <a href="index.html" class="btn btn-primary">Start Shopping</a>
-                </div>
-            `;
-            return;
-        }
+      const wishlist = getWishlist();
+      if (!wishlist.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size:3rem;margin-bottom:16px">Wishlist</div>
+            <h3>Your wishlist is empty</h3>
+            <p style="color:var(--gray-500);margin:8px 0 20px">Explore our catalog and save your favorites.</p>
+            <a href="index.html" class="btn btn-primary">Start Shopping</a>
+          </div>
+        `;
+        return;
+      }
 
-        const products = wishlist.map(id => getProductById(id)).filter(p => p);
-        grid.innerHTML = products.map(p => createProductCardHTML(p)).join('');
-        
-        // Re-init intersection observer for new items
-        if (typeof initIntersectionObserver === 'function') initIntersectionObserver();
+      const products = wishlist.map(id => getProductById(id)).filter(Boolean);
+      grid.innerHTML = products.map(createProductCardHTML).join('');
+      if (typeof initIntersectionObserver === 'function') initIntersectionObserver();
     }
   </script>
 </body>
 </html>
+
