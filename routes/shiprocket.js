@@ -65,13 +65,17 @@ function buildSignature(payload) {
 function getShiprocketHeaders(payload) {
     return {
         'Content-Type': 'application/json',
-        'X-Api-Key': `Bearer ${SHIPROCKET_API_KEY}`,
+        'X-Api-Key': SHIPROCKET_API_KEY,
         'X-Api-HMAC-SHA256': buildSignature(payload)
     };
 }
 
 function getOrigin(req) {
-    return `${req.protocol}://${req.get('host')}`;
+    const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+    const forwardedHost = String(req.headers['x-forwarded-host'] || '').split(',')[0].trim();
+    const protocol = forwardedProto || req.protocol || 'https';
+    const host = forwardedHost || req.get('host');
+    return `${protocol}://${host}`;
 }
 
 function toAbsoluteAssetUrl(req, assetPath) {
