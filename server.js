@@ -210,6 +210,7 @@ const MOCK_PRODUCTS = [
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/orders');
+const shiprocketRoutes = require('./routes/shiprocket');
 
 // Inject mock status into request
 app.use((req, res, next) => {
@@ -221,6 +222,7 @@ app.use((req, res, next) => {
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/shiprocket', shiprocketRoutes);
 
 // app.get('/', (req, res) => {
 //     res.send('Kidvana API is running...');

@@ -98,19 +98,7 @@
     <script src="js/orders.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const orderId = params.get('id');
-            const order = getOrderById(orderId);
-            const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
-
-            if (!order) {
-                document.getElementById('orderIdDisplay').textContent = 'ORDER NOT FOUND';
-                document.getElementById('orderedItems').innerHTML = '<p style="color:var(--gray-500);">We could not find this order in the current session.</p>';
-                document.getElementById('orderSummaryDetails').innerHTML = '<p style="color:var(--gray-500);">Please use Track Order with your order ID and phone number.</p>';
-                return;
-            }
-
+        function renderOrderDetails(order, user) {
             document.getElementById('orderIdDisplay').textContent = `ORDER #${order.id}`;
             document.getElementById('trackOrderLink').href = `track-order.html?id=${encodeURIComponent(order.id)}`;
 
@@ -138,6 +126,104 @@
                 <p style="margin-top:16px;"><strong>Delivery city</strong><br>${order.shipping?.city || '-'}</p>
                 <p style="margin-top:16px;"><strong>Phone used</strong><br>${order.shipping?.phone || user?.phone || '-'}</p>
             `;
+        }
+
+        async function resolveShiprocketReturn(params) {
+            const checkoutRef = params.get('ref');
+            if (!checkoutRef) return null;
+
+            const pendingCheckout = getPendingShiprocketCheckout(checkoutRef);
+            if (!pendingCheckout?.orderInfo) {
+                return null;
+            }
+
+            try {
+                let resolvedOrder = null;
+
+                if (pendingCheckout.orderId) {
+                    const lookupResponse = await fetch(
+                        `/api/shiprocket/orders/${encodeURIComponent(pendingCheckout.orderId)}?phone=${encodeURIComponent(pendingCheckout.orderInfo.address?.phone || '')}`,
+                        { headers: getAuthHeaders() }
+                    );
+
+                    if (lookupResponse.ok) {
+                        resolvedOrder = await parseApiResponse(lookupResponse);
+                    }
+                }
+
+                if (!resolvedOrder) {
+                    const response = await fetch('/api/shiprocket/orders/complete', {
+                        method: 'POST',
+                        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+                        body: JSON.stringify({
+                            orderId: pendingCheckout.orderId || `SRC-${checkoutRef}`,
+                            checkoutRef,
+                            orderInfo: pendingCheckout.orderInfo
+                        })
+                    });
+
+                    const payload = await parseApiResponse(response);
+                    resolvedOrder = payload.order;
+                }
+
+                localStorage.removeItem('kidvana_cart');
+                removePendingShiprocketCheckout(checkoutRef);
+
+                const savedOrder = saveOrder(resolvedOrder);
+                const nextUrl = new URL(window.location.href);
+                nextUrl.searchParams.delete('checkout');
+                nextUrl.searchParams.delete('ref');
+                nextUrl.searchParams.set('id', savedOrder.id);
+                window.history.replaceState({}, '', nextUrl);
+                return savedOrder;
+            } catch (err) {
+                const fallbackOrder = saveOrder({
+                    id: pendingCheckout.orderId || `SRC-${checkoutRef.toUpperCase()}`,
+                    items: pendingCheckout.orderInfo.items || [],
+                    address: pendingCheckout.orderInfo.address || {},
+                    amount: pendingCheckout.orderInfo.amount || 0,
+                    totals: pendingCheckout.orderInfo.totals || {},
+                    paymentMethod: 'shiprocket',
+                    paymentStatus: 'Pending confirmation',
+                    status: 'Processing',
+                    checkoutSource: 'shiprocket',
+                    shiprocketOrderId: pendingCheckout.orderId || '',
+                    userPhone: pendingCheckout.orderInfo.address?.phone || ''
+                });
+
+                localStorage.removeItem('kidvana_cart');
+                removePendingShiprocketCheckout(checkoutRef);
+                const nextUrl = new URL(window.location.href);
+                nextUrl.searchParams.delete('checkout');
+                nextUrl.searchParams.delete('ref');
+                nextUrl.searchParams.set('id', fallbackOrder.id);
+                window.history.replaceState({}, '', nextUrl);
+                return fallbackOrder;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
+            let order = null;
+
+            if (params.get('checkout') === 'shiprocket') {
+                order = await resolveShiprocketReturn(params);
+            }
+
+            if (!order) {
+                const orderId = params.get('id');
+                order = getOrderById(orderId);
+            }
+
+            if (!order) {
+                document.getElementById('orderIdDisplay').textContent = 'ORDER NOT FOUND';
+                document.getElementById('orderedItems').innerHTML = '<p style="color:var(--gray-500);">We could not find this order in the current session.</p>';
+                document.getElementById('orderSummaryDetails').innerHTML = '<p style="color:var(--gray-500);">Please use Track Order with your order ID and phone number.</p>';
+                return;
+            }
+
+            renderOrderDetails(order, user);
         });
     </script>
 </body>
