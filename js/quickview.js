@@ -47,6 +47,9 @@ function openQuickView(productId) {
                         <button class="btn btn-primary" style="flex:1; height:56px;" onclick="addToCart('${product.id}'); closeQuickView();">
                             Add to Cart
                         </button>
+                        <button class="btn btn-secondary" style="flex:1; height:56px;" onclick="buyNow(event, '${product.id}')">
+                            Buy Now
+                        </button>
                         <a href="product.html?id=${product.id}" class="btn btn-outline" style="flex:1; height:56px; display:flex; align-items:center; justify-content:center;">
                             View Details
                         </a>

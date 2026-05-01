@@ -25,5 +25,18 @@
       "src": "assets/**",
       "use": "@vercel/static"
     }
+  ],
+  "routes": [
+    {
+      "src": "/api",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/[...path].js"
+    },
+    {
+      "handle": "filesystem"
+    }
   ]
 }

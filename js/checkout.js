@@ -1,6 +1,6 @@
-// ═══════════════════════════════════════════════
-// CHECKOUT — Multi-step Flow Logic
-// ═══════════════════════════════════════════════
+const API_BASE_URL = '/api';
+const SHIPROCKET_METHOD = 'shiprocket';
+let checkoutInProgress = false;
 
 let checkoutData = {
     shipping: {},
@@ -14,218 +14,410 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
         return;
     }
+
     renderCheckoutSummary();
     initShippingForm();
+    selectPayment(checkoutData.payment);
+    showSection('Shipping');
+
+    const sellerDomainField = document.getElementById('sellerDomain');
+    if (sellerDomainField) {
+        sellerDomainField.value = window.location.host;
+    }
 });
+
+function getCheckoutItems() {
+    return getCart().map(item => ({
+        id: String(item.id),
+        productId: String(item.id),
+        name: item.name,
+        brand: item.brand || '',
+        price: Number(item.price) || 0,
+        mrp: Number(item.mrp) || 0,
+        image: item.image || '',
+        qty: Number(item.qty) || 1,
+        quantity: Number(item.qty) || 1
+    }));
+}
+
+function calculateCheckoutTotals(items = getCheckoutItems()) {
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = subtotal > 499 ? 0 : 40;
+    const tax = Math.round(subtotal * 0.18);
+    const total = subtotal + shipping + tax;
+
+    return { subtotal, shipping, tax, total };
+}
+
+function buildShiprocketCheckoutRef() {
+    return `src_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function buildShiprocketRedirectUrl(checkoutRef) {
+    const redirectUrl = new URL('order-success.html', window.location.href);
+    redirectUrl.searchParams.set('checkout', 'shiprocket');
+    redirectUrl.searchParams.set('ref', checkoutRef);
+    return redirectUrl.toString();
+}
+
+function collectShippingForm() {
+    return {
+        name: document.getElementById('shipName')?.value.trim() || '',
+        email: document.getElementById('shipEmail')?.value.trim() || '',
+        phone: document.getElementById('shipPhone')?.value.trim() || '',
+        address: document.getElementById('shipAddress')?.value.trim() || '',
+        city: document.getElementById('shipCity')?.value.trim() || '',
+        state: document.getElementById('shipState')?.value.trim() || '',
+        zip: document.getElementById('shipZip')?.value.trim() || ''
+    };
+}
 
 function initShippingForm() {
     const form = document.getElementById('shippingForm');
     if (!form) return;
 
-    // Prefill if logged in
-    const user = JSON.parse(localStorage.getItem('kidvanaUser'));
+    const user = getAuthUser();
     if (user) {
         document.getElementById('shipName').value = user.name || '';
         document.getElementById('shipPhone').value = user.phone || '';
+        document.getElementById('shipEmail').value = user.email || '';
     }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        checkoutData.shipping = {
-            name: document.getElementById('shipName').value,
-            email: document.getElementById('shipEmail').value,
-            phone: document.getElementById('shipPhone').value,
-            address: document.getElementById('shipAddress').value,
-            city: document.getElementById('shipCity').value,
-            zip: document.getElementById('shipZip').value
-        };
+
+        if (!form.reportValidity()) {
+            return;
+        }
+
+        checkoutData.shipping = collectShippingForm();
         showSection('Payment');
     });
 }
 
 function showSection(step) {
-    // Hide all
-    document.querySelectorAll('.checkout-section').forEach(s => s.style.display = 'none');
-    document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active', 'completed'));
-
-    // Show target
-    document.getElementById(`section${step}`).style.display = 'block';
-
-    // Update stepper
-    const steps = ['Shipping', 'Payment', 'Review'];
-    const currentIdx = steps.indexOf(step);
-
-    steps.forEach((s, i) => {
-        const el = document.getElementById(`step${i + 1}`);
-        if (i < currentIdx) el.classList.add('completed');
-        if (i === currentIdx) el.classList.add('active');
+    document.querySelectorAll('.checkout-section').forEach(section => {
+        section.style.display = 'none';
     });
 
-    if (step === 'Review') renderOrderReview();
-    window.scrollTo(0, 0);
+    document.querySelectorAll('.step').forEach(stepEl => {
+        stepEl.classList.remove('active', 'completed');
+    });
+
+    const section = document.getElementById(`section${step}`);
+    if (section) {
+        section.style.display = 'block';
+    }
+
+    const steps = ['Shipping', 'Payment', 'Review'];
+    const currentIndex = steps.indexOf(step);
+
+    steps.forEach((stepName, index) => {
+        const stepElement = document.getElementById(`step${index + 1}`);
+        if (!stepElement) return;
+
+        if (index < currentIndex) stepElement.classList.add('completed');
+        if (index === currentIndex) stepElement.classList.add('active');
+    });
+
+    if (step === 'Review') {
+        renderOrderReview();
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function selectPayment(method) {
     checkoutData.payment = method;
-    document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
-    document.getElementById(`pay${method.toUpperCase()}`).checked = true;
-    document.getElementById(`pay${method.toUpperCase()}`).closest('.payment-option').classList.add('active');
-
-    const cardDetails = document.getElementById('cardDetails');
-    if (cardDetails) cardDetails.style.display = method === 'card' ? 'block' : 'none';
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.toggle('active', option.dataset.method === method);
+    });
 }
 
 function handlePaymentSubmit() {
-    if (!checkoutData.payment) {
-        showToast('Please select a payment method', 'error');
+    if (!checkoutData.shipping.name) {
+        showToast('Please complete your shipping details first.', 'error');
+        showSection('Shipping');
         return;
     }
+
+    renderOrderReview();
     showSection('Review');
 }
 
 function renderCheckoutSummary() {
-    const cart = getCart();
-    const subtotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
-    const shipping = subtotal > 499 ? 0 : 40;
-    const tax = Math.round(subtotal * 0.18);
-    const total = subtotal + shipping + tax;
-
-    checkoutData.totals = { subtotal, shipping, tax, total };
+    const items = getCheckoutItems();
+    checkoutData.totals = calculateCheckoutTotals(items);
 
     const container = document.getElementById('checkoutSummary');
     if (!container) return;
 
     container.innerHTML = `
         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-            <span>Subtotal (${cart.length} items)</span>
-            <span>₹${subtotal.toLocaleString()}</span>
+            <span>Subtotal (${items.length} items)</span>
+            <span>Rs.${checkoutData.totals.subtotal.toLocaleString()}</span>
         </div>
         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
             <span>Shipping</span>
-            <span style="color:${shipping === 0 ? 'var(--accent-green)' : 'inherit'}">${shipping === 0 ? 'FREE' : '₹' + shipping}</span>
+            <span style="color:${checkoutData.totals.shipping === 0 ? 'var(--accent-green)' : 'inherit'}">
+                ${checkoutData.totals.shipping === 0 ? 'FREE' : 'Rs.' + checkoutData.totals.shipping}
+            </span>
         </div>
         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
             <span>GST (18%)</span>
-            <span>₹${tax.toLocaleString()}</span>
+            <span>Rs.${checkoutData.totals.tax.toLocaleString()}</span>
         </div>
         <hr style="border:0; border-top:1px solid var(--gray-100); margin:16px 0;">
         <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; color:var(--primary);">
             <span>Order Total</span>
-            <span>₹${total.toLocaleString()}</span>
+            <span>Rs.${checkoutData.totals.total.toLocaleString()}</span>
         </div>
     `;
 }
 
 function renderOrderReview() {
     const summary = document.getElementById('reviewSummary');
-    if (!summary) return;
-
-    summary.innerHTML = `
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-            <div style="padding:16px; background:var(--gray-50); border-radius:12px;">
-                <h4 style="margin-bottom:8px;">📍 Shipping To</h4>
-                <p style="font-size:0.85rem; color:var(--gray-600); line-height:1.5;">
-                    <strong>${checkoutData.shipping.name}</strong><br>
-                    ${checkoutData.shipping.address}<br>
-                    ${checkoutData.shipping.city}, ${checkoutData.shipping.zip}<br>
-                    📞 ${checkoutData.shipping.phone}
-                </p>
-            </div>
-            <div style="padding:16px; background:var(--gray-50); border-radius:12px;">
-                <h4 style="margin-bottom:8px;">💳 Payment</h4>
-                <p style="font-size:0.85rem; color:var(--gray-600);">
-                    Method: <strong style="text-transform:uppercase;">${checkoutData.payment}</strong><br>
-                    Status: <span style="color:var(--accent-yellow)">Pending Verification</span>
-                </p>
-            </div>
-        </div>
-    `;
-
     const itemsContainer = document.getElementById('reviewItems');
+    const items = getCheckoutItems();
+
+    if (summary) {
+        summary.innerHTML = `
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div style="padding:16px; background:var(--gray-50); border-radius:12px;">
+                    <h4 style="margin-bottom:8px;">Shipping To</h4>
+                    <p style="font-size:0.85rem; color:var(--gray-600); line-height:1.5;">
+                        <strong>${checkoutData.shipping.name}</strong><br>
+                        ${checkoutData.shipping.address}<br>
+                        ${checkoutData.shipping.city}, ${checkoutData.shipping.state} ${checkoutData.shipping.zip}<br>
+                        Phone: ${checkoutData.shipping.phone}
+                    </p>
+                </div>
+                <div style="padding:16px; background:var(--gray-50); border-radius:12px;">
+                    <h4 style="margin-bottom:8px;">Payment</h4>
+                    <p style="font-size:0.85rem; color:var(--gray-600);">
+                        Method: <strong style="text-transform:uppercase;">${checkoutData.payment}</strong><br>
+                        Status: <span style="color:var(--accent-yellow)">${checkoutData.payment === 'cod' ? 'Pay on delivery' : checkoutData.payment === SHIPROCKET_METHOD ? 'Secure Shiprocket popup will open next' : 'Pending confirmation'}</span>
+                    </p>
+                </div>
+            </div>
+        `;
+    }
+
     if (itemsContainer) {
-        const cart = getCart();
-        itemsContainer.innerHTML = `<h4 style="margin: 24px 0 12px;">Items (${cart.length})</h4>` +
-            cart.map(item => `
+        itemsContainer.innerHTML = `<h4 style="margin:24px 0 12px;">Items (${items.length})</h4>` + items.map(item => `
             <div style="display:flex; gap:12px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-50);">
-                <div style="width:50px; height:50px; background:${item.product.color}; border-radius:8px; display:flex; align-items:center; justify-content:center;">
-                    <img src="${item.product.image}" style="max-height:30px;">
+                <div style="width:56px; height:56px; border-radius:8px; overflow:hidden; background:var(--gray-50); flex-shrink:0;">
+                    <img src="${item.image}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <div style="flex:1;">
-                    <div style="font-size:0.85rem; font-weight:600;">${item.product.name}</div>
-                    <div style="font-size:0.75rem; color:var(--gray-400);">Qty: ${item.quantity} × ₹${item.product.price.toLocaleString()}</div>
+                    <div style="font-size:0.85rem; font-weight:600;">${item.name}</div>
+                    <div style="font-size:0.75rem; color:var(--gray-400);">Qty: ${item.quantity} x Rs.${item.price.toLocaleString()}</div>
                 </div>
-                <div style="font-weight:700;">₹${(item.product.price * item.quantity).toLocaleString()}</div>
+                <div style="font-weight:700;">Rs.${(item.price * item.quantity).toLocaleString()}</div>
             </div>
         `).join('');
     }
 }
 
-const API_BASE_URL = 'http://localhost:5000/api';
+function setCheckoutBusy(isBusy) {
+    checkoutInProgress = isBusy;
+    const button = document.getElementById('placeOrderBtn');
+    if (!button) return;
 
-async function placeOrder() {
-    const user = JSON.parse(localStorage.getItem('kidvanaUser'));
-    if (!user) {
-        showToast('Please login to place order', 'error');
+    button.disabled = isBusy;
+    button.textContent = isBusy
+        ? (checkoutData.payment === SHIPROCKET_METHOD ? 'Opening Checkout...' : 'Placing Order...')
+        : 'Place Order';
+}
+
+function persistCompletedOrder(savedOrder, orderInfo) {
+    return saveOrder({
+        ...savedOrder,
+        items: orderInfo.items,
+        address: orderInfo.address,
+        amount: orderInfo.amount,
+        paymentMethod: orderInfo.paymentMethod,
+        paymentStatus: orderInfo.paymentMethod === 'cod' ? 'Pending' : 'Paid',
+        totals: checkoutData.totals,
+        userPhone: orderInfo.address.phone
+    });
+}
+
+async function verifyOrderPayment(payload) {
+    const response = await fetch(`${API_BASE_URL}/orders/verify-payment`, {
+        method: 'POST',
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+    });
+
+    return parseApiResponse(response);
+}
+
+async function createShiprocketAccessToken(payload) {
+    const response = await fetch(`${API_BASE_URL}/shiprocket/access-token/checkout`, {
+        method: 'POST',
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+    });
+
+    return parseApiResponse(response);
+}
+
+function launchShiprocketCheckout(event, token, redirectUrl) {
+    const checkoutLauncher = window.HeadlessCheckout;
+    if (!checkoutLauncher || typeof checkoutLauncher.addToCart !== 'function') {
+        throw new Error('Shiprocket checkout script failed to load.');
+    }
+
+    checkoutLauncher.addToCart(event, token, { fallbackUrl: redirectUrl });
+}
+
+async function placeOrder(event) {
+    if (checkoutInProgress) return;
+
+    const user = getAuthUser();
+    if (!user?.token) {
+        showToast('Please login to place your order.', 'error');
         openLoginModal();
         return;
     }
 
-    const cart = getCart();
-    const total = getCartTotal();
-    const address = {
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        state: document.getElementById('state').value,
-        zip: document.getElementById('pincode').value
-    };
-
-    if (!address.address || !address.city) {
-        showToast('Please fill shipping details', 'error');
+    const items = getCheckoutItems();
+    if (!items.length) {
+        showToast('Your cart is empty.', 'error');
         return;
     }
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/orders/create-order`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                amount: total,
-                userId: user._id || user.phone, // fallback for mock
-                items: cart,
-                address: address
-            })
-        });
-        const rzpOrder = await response.json();
+    if (!checkoutData.shipping.name) {
+        const form = document.getElementById('shippingForm');
+        if (!form?.reportValidity()) {
+            showSection('Shipping');
+            return;
+        }
+        checkoutData.shipping = collectShippingForm();
+    }
 
-        // Initialize Razorpay (Structure only for now)
-        const options = {
-            key: "your_razorpay_key",
+    checkoutData.totals = calculateCheckoutTotals(items);
+
+    const orderInfo = {
+        userId: user._id || user.phone,
+        items,
+        amount: checkoutData.totals.total,
+        address: checkoutData.shipping,
+        paymentMethod: checkoutData.payment,
+        totals: checkoutData.totals
+    };
+
+    try {
+        setCheckoutBusy(true);
+
+        if (checkoutData.payment === 'cod') {
+            const result = await verifyOrderPayment({ orderInfo });
+            const localOrder = persistCompletedOrder(result.order, orderInfo);
+            localStorage.removeItem('kidvana_cart');
+            window.location.href = `order-success.html?id=${encodeURIComponent(localOrder.id)}`;
+            return;
+        }
+
+        if (checkoutData.payment === SHIPROCKET_METHOD) {
+            const checkoutRef = buildShiprocketCheckoutRef();
+            const redirectUrl = buildShiprocketRedirectUrl(checkoutRef);
+            const shiprocketResponse = await createShiprocketAccessToken({
+                cart_data: {
+                    items: items.map(item => ({
+                        variant_id: String(item.productId || item.id || ''),
+                        quantity: Number(item.quantity || item.qty || 1)
+                    }))
+                },
+                redirect_url: redirectUrl
+            });
+
+            if (!shiprocketResponse?.token) {
+                throw new Error('Shiprocket token was not returned.');
+            }
+
+            savePendingShiprocketCheckout({
+                ref: checkoutRef,
+                orderId: shiprocketResponse.orderId || '',
+                orderInfo,
+                redirectUrl,
+                source: SHIPROCKET_METHOD
+            });
+
+            launchShiprocketCheckout(event || window.event, shiprocketResponse.token, redirectUrl);
+            setCheckoutBusy(false);
+            return;
+        }
+
+        const orderResponse = await fetch(`${API_BASE_URL}/orders/create-order`, {
+            method: 'POST',
+            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify(orderInfo)
+        });
+        const rzpOrder = await parseApiResponse(orderResponse);
+
+        if (rzpOrder.isMock || !rzpOrder.publicKey) {
+            const result = await verifyOrderPayment({
+                razorpay_order_id: rzpOrder.id,
+                razorpay_payment_id: `pay_mock_${Date.now()}`,
+                razorpay_signature: 'mock_signature',
+                orderInfo
+            });
+            const localOrder = persistCompletedOrder(result.order, orderInfo);
+            localStorage.removeItem('kidvana_cart');
+            showToast('Razorpay keys are not configured yet. Test order completed.', 'info');
+            window.location.href = `order-success.html?id=${encodeURIComponent(localOrder.id)}`;
+            return;
+        }
+
+        if (typeof window.Razorpay !== 'function') {
+            throw new Error('Payment gateway failed to load. Please try Cash on Delivery.');
+        }
+
+        const razorpay = new window.Razorpay({
+            key: rzpOrder.publicKey,
             amount: rzpOrder.amount,
-            currency: "INR",
-            name: "Kidvana",
-            description: "Order Payment",
+            currency: rzpOrder.currency,
+            name: 'Kidvana',
+            description: 'Order Payment',
             order_id: rzpOrder.id,
-            handler: async function (response) {
-                const verifyRes = await fetch(`${API_BASE_URL}/orders/verify-payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(response)
-                });
-                const result = await verifyRes.json();
-                if (result.status === 'success') {
+            prefill: {
+                name: checkoutData.shipping.name,
+                email: checkoutData.shipping.email,
+                contact: checkoutData.shipping.phone
+            },
+            theme: { color: '#E43434' },
+            modal: {
+                ondismiss: () => {
+                    setCheckoutBusy(false);
+                    showToast('Payment cancelled.', 'info');
+                }
+            },
+            handler: async (paymentResponse) => {
+                try {
+                    const result = await verifyOrderPayment({
+                        ...paymentResponse,
+                        orderInfo
+                    });
+                    const localOrder = persistCompletedOrder(result.order, orderInfo);
                     localStorage.removeItem('kidvana_cart');
-                    window.location.href = 'order-success.html?id=' + result.order._id;
+                    window.location.href = `order-success.html?id=${encodeURIComponent(localOrder.id)}`;
+                } catch (err) {
+                    setCheckoutBusy(false);
+                    showToast(err.message || 'Payment verification failed.', 'error');
                 }
             }
-        };
+        });
 
-        // Structure ready, but real script needs to be loaded in HTML
-        showToast('Order structure created! (Payment integration needs script)', 'info');
-        console.log('Razorpay Options:', options);
+        razorpay.open();
     } catch (err) {
         console.error(err);
-        showToast('Failed to create order', 'error');
+        showToast(err.message || 'Failed to place order.', 'error');
+        setCheckoutBusy(false);
+        return;
+    }
+
+    if (checkoutData.payment !== 'razorpay' && checkoutData.payment !== SHIPROCKET_METHOD) {
+        setCheckoutBusy(false);
     }
 }

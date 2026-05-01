@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════
 
 const CART_KEY = 'kidvana_cart';
+const SHIPROCKET_CHECKOUTS_KEY = 'kidvanaShiprocketCheckouts';
 
 // Get cart from localStorage
 function getCart() {
@@ -19,16 +20,15 @@ function saveCart(cart) {
     updateCartUI();
 }
 
-// Add item to cart
-function addToCart(productId) {
+function addItemToCart(productId, qty = 1) {
     const product = getProductById(productId);
-    if (!product) return;
+    if (!product) return null;
 
     const cart = getCart();
     const existing = cart.find(item => item.id === productId);
 
     if (existing) {
-        existing.qty += 1;
+        existing.qty += qty;
     } else {
         cart.push({
             id: product.id,
@@ -37,12 +37,194 @@ function addToCart(productId) {
             price: product.price,
             mrp: product.mrp,
             image: product.image,
-            qty: 1
+            qty
         });
     }
 
     saveCart(cart);
+    return product;
+}
+
+// Add item to cart
+function addToCart(productId) {
+    const product = addItemToCart(productId, 1);
+    if (!product) return;
     showToast(`${product.name} added to cart!`, 'success');
+}
+
+function buildShiprocketCheckoutRef() {
+    return `src_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function buildShiprocketRedirectUrl(checkoutRef) {
+    const redirectUrl = new URL('order-success.html', window.location.href);
+    redirectUrl.searchParams.set('checkout', 'shiprocket');
+    redirectUrl.searchParams.set('ref', checkoutRef);
+    return redirectUrl.toString();
+}
+
+function buildInstantOrderInfo(product, quantity = 1) {
+    const amount = Number(product.price || 0) * quantity;
+    const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
+
+    return {
+        userId: String(user?._id || user?.phone || ''),
+        items: [{
+            id: String(product.id || product._id || ''),
+            productId: String(product.id || product._id || ''),
+            name: product.name,
+            brand: product.brand || '',
+            price: Number(product.price || 0),
+            mrp: Number(product.mrp || 0),
+            image: product.image || '',
+            qty: quantity,
+            quantity
+        }],
+        amount,
+        address: {},
+        totals: {
+            subtotal: amount,
+            shipping: 0,
+            tax: 0,
+            total: amount
+        },
+        paymentMethod: 'shiprocket'
+    };
+}
+
+function savePendingShiprocketCheckoutFallback(checkout) {
+    if (!checkout?.ref) return;
+
+    try {
+        const entries = JSON.parse(localStorage.getItem(SHIPROCKET_CHECKOUTS_KEY)) || {};
+        entries[checkout.ref] = {
+            ...checkout,
+            createdAt: checkout.createdAt || new Date().toISOString()
+        };
+        localStorage.setItem(SHIPROCKET_CHECKOUTS_KEY, JSON.stringify(entries));
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function persistPendingShiprocketCheckout(checkout) {
+    if (typeof savePendingShiprocketCheckout === 'function') {
+        savePendingShiprocketCheckout(checkout);
+        return;
+    }
+
+    savePendingShiprocketCheckoutFallback(checkout);
+}
+
+function ensureShiprocketSellerDomain() {
+    let field = document.getElementById('sellerDomain');
+    if (!field) {
+        field = document.createElement('input');
+        field.type = 'hidden';
+        field.id = 'sellerDomain';
+        document.body.appendChild(field);
+    }
+
+    field.value = window.location.host;
+}
+
+function ensureShiprocketCheckoutAssets() {
+    if (!document.querySelector('link[data-shiprocket-checkout-style="true"]')) {
+        const stylesheet = document.createElement('link');
+        stylesheet.rel = 'stylesheet';
+        stylesheet.href = 'https://checkout-ui.shiprocket.com/assets/styles/shopify.css';
+        stylesheet.dataset.shiprocketCheckoutStyle = 'true';
+        document.head.appendChild(stylesheet);
+    }
+
+    if (window.HeadlessCheckout && typeof window.HeadlessCheckout.addToCart === 'function') {
+        return Promise.resolve();
+    }
+
+    const existingScript = document.querySelector('script[data-shiprocket-checkout="true"]');
+    if (existingScript) {
+        return new Promise((resolve, reject) => {
+            existingScript.addEventListener('load', () => resolve(), { once: true });
+            existingScript.addEventListener('error', () => reject(new Error('Shiprocket checkout script failed to load.')), { once: true });
+        });
+    }
+
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout-ui.shiprocket.com/assets/js/channels/shopify.js';
+        script.async = true;
+        script.dataset.shiprocketCheckout = 'true';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Shiprocket checkout script failed to load.'));
+        document.body.appendChild(script);
+    });
+}
+
+async function createShiprocketAccessToken(payload) {
+    const response = await fetch('/api/shiprocket/access-token/checkout', {
+        method: 'POST',
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+    });
+
+    return parseApiResponse(response);
+}
+
+async function buyNow(event, productId) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+
+    const product = getProductById(productId);
+    if (!product) return;
+
+    const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
+    if (!user?.token) {
+        showToast('Please login to continue.', 'error');
+        if (typeof openLoginModal === 'function') openLoginModal();
+        return;
+    }
+
+    const orderInfo = buildInstantOrderInfo(product, 1);
+    const checkoutRef = buildShiprocketCheckoutRef();
+    const redirectUrl = buildShiprocketRedirectUrl(checkoutRef);
+
+    try {
+        ensureShiprocketSellerDomain();
+        await ensureShiprocketCheckoutAssets();
+
+        const shiprocketResponse = await createShiprocketAccessToken({
+            cart_data: {
+                items: orderInfo.items.map(item => ({
+                    variant_id: String(item.productId || item.id || ''),
+                    quantity: Number(item.quantity || item.qty || 1)
+                }))
+            },
+            redirect_url: redirectUrl
+        });
+
+        if (!shiprocketResponse?.token) {
+            throw new Error('Shiprocket token was not returned.');
+        }
+
+        persistPendingShiprocketCheckout({
+            ref: checkoutRef,
+            orderId: shiprocketResponse.orderId || '',
+            orderInfo,
+            redirectUrl,
+            source: 'buy-now'
+        });
+
+        if (!window.HeadlessCheckout || typeof window.HeadlessCheckout.addToCart !== 'function') {
+            throw new Error('Shiprocket checkout is unavailable right now.');
+        }
+
+        window.HeadlessCheckout.addToCart(event || window.event, shiprocketResponse.token, {
+            fallbackUrl: redirectUrl
+        });
+    } catch (err) {
+        console.error(err);
+        showToast(err.message || 'Failed to launch Shiprocket checkout.', 'error');
+    }
 }
 
 // Remove item from cart
