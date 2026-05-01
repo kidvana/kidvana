@@ -13,25 +13,42 @@ app.use(express.static(__dirname));
 
 let isConnected = false;
 mongoose.set('bufferCommands', false);
+let mongoConnectionPromise = null;
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/kidvana';
 const maskedUri = mongoUri.replace(/\/\/.*@/, '//****:****@');
 
-mongoose.connect(mongoUri, {
-    serverSelectionTimeoutMS: 2000,
-    connectTimeoutMS: 5000
-})
-    .then(() => {
-        console.log('MongoDB connected successfully to:', maskedUri);
+function ensureMongoConnection() {
+    if (mongoose.connection.readyState === 1) {
         isConnected = true;
-    })
-    .catch(err => {
-        console.error('MongoDB connection failed!');
-        console.error('URI:', maskedUri);
-        console.error('Error:', err.message);
-        console.warn('Using comprehensive mock data fallback for frontend display.');
-        isConnected = false;
-    });
+        return Promise.resolve();
+    }
+
+    if (!mongoConnectionPromise) {
+        mongoConnectionPromise = mongoose.connect(mongoUri, {
+            serverSelectionTimeoutMS: 2000,
+            connectTimeoutMS: 5000
+        })
+            .then(() => {
+                console.log('MongoDB connected successfully to:', maskedUri);
+                isConnected = true;
+            })
+            .catch(err => {
+                console.error('MongoDB connection failed!');
+                console.error('URI:', maskedUri);
+                console.error('Error:', err.message);
+                console.warn('Using comprehensive mock data fallback for frontend display.');
+                isConnected = false;
+            })
+            .finally(() => {
+                mongoConnectionPromise = null;
+            });
+    }
+
+    return mongoConnectionPromise;
+}
+
+ensureMongoConnection();
 
 const MOCK_PRODUCTS = [
     {
