@@ -390,7 +390,11 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
         cart_data: {
             items: cartItems.map(item => ({
                 variant_id: String(item.variant_id || item.productId || item.id || ''),
-                quantity: Number(item.quantity || item.qty || 1)
+                quantity: Number(item.quantity || item.qty || 1),
+                price: Number(item.price || item.mrp || 0),
+                title: String(item.name || item.title || 'Product'),
+                sku: String(item.sku || item.variant_id || item.productId || item.id || ''),
+                image_url: String(item.image || item.image_url || '')
             }))
         },
         redirect_url: redirectUrl,
