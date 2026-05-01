@@ -130,11 +130,7 @@ function ensureShiprocketSellerDomain() {
 
 function ensureShiprocketCheckoutAssets() {
     if (!document.querySelector('link[data-shiprocket-checkout-style="true"]')) {
-        const stylesheet = document.createElement('link');
-        stylesheet.rel = 'stylesheet';
-        stylesheet.href = 'https://checkout-ui.shiprocket.com/assets/styles/shopify.css';
-        stylesheet.dataset.shiprocketCheckoutStyle = 'true';
-        document.head.appendChild(stylesheet);
+        // No CSS file exists for custom.js currently
     }
 
     if (window.HeadlessCheckout && typeof window.HeadlessCheckout.addToCart === 'function') {
@@ -151,7 +147,7 @@ function ensureShiprocketCheckoutAssets() {
 
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = 'https://checkout-ui.shiprocket.com/assets/js/channels/shopify.js';
+        script.src = 'https://checkout-ui.shiprocket.com/assets/js/channels/custom.js';
         script.async = true;
         script.dataset.shiprocketCheckout = 'true';
         script.onload = () => resolve();

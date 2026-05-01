@@ -348,6 +348,46 @@
     color: var(--accent-green);
 }
 
+.promo-box {
+    margin-top: var(--space-5);
+}
+
+.promo-box-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.promo-box-actions .form-input {
+    flex: 1;
+}
+
+.promo-box-actions .btn {
+    white-space: nowrap;
+}
+
+.savings-badge {
+    margin-top: var(--space-5);
+    padding: 16px 18px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, #fff7f7 0%, #fff 100%);
+    border: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.cart-security-note {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    text-align: center;
+}
+
 .cart-emi-info {
     background: var(--bg-section-alt);
     border-radius: var(--radius-md);
