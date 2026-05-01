@@ -70,7 +70,7 @@ function buildSignature(payload) {
 function getShiprocketHeaders(payload) {
     return {
         'Content-Type': 'application/json',
-        'X-Api-Key': \`Bearer \${SHIPROCKET_API_KEY}\`,
+        'X-Api-Key': SHIPROCKET_API_KEY,
         'X-Api-HMAC-SHA256': buildSignature(payload)
     };
 }
@@ -380,7 +380,7 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
 
     const cartItems = req.body?.cart_data?.items;
     const redirectUrl = String(req.body?.redirect_url || '').trim();
-    const timestamp = req.body?.timestamp || new Date().toISOString();
+    const timestamp = req.body?.timestamp || Math.floor(Date.now() / 1000);
 
     if (!Array.isArray(cartItems) || cartItems.length === 0 || !redirectUrl) {
         return res.status(400).json({ message: 'cart_data.items and redirect_url are required.' });
@@ -421,7 +421,8 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
             raw: data
         });
     } catch (err) {
-        const message = err.response?.data?.message || err.message || 'Failed to generate Shiprocket checkout token.';
+        console.error('Shiprocket token generation error:', err.response?.data || err.message);
+        const message = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Failed to generate Shiprocket checkout token.';
         return res.status(err.response?.status || 500).json({
             message,
             raw: err.response?.data || null
