@@ -52,7 +52,12 @@ const CATEGORY_META = {
 };
 
 function isShiprocketConfigured() {
-    return Boolean(SHIPROCKET_API_KEY && SHIPROCKET_SECRET_KEY);
+    return Boolean(
+        SHIPROCKET_API_KEY && 
+        SHIPROCKET_SECRET_KEY && 
+        !SHIPROCKET_API_KEY.includes('PASTE_YOUR_') && 
+        !SHIPROCKET_SECRET_KEY.includes('PASTE_YOUR_')
+    );
 }
 
 function buildSignature(payload) {
