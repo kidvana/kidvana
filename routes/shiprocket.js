@@ -70,7 +70,7 @@ function buildSignature(payload) {
 function getShiprocketHeaders(payload) {
     return {
         'Content-Type': 'application/json',
-        'X-Api-Key': SHIPROCKET_API_KEY,
+        'X-Api-Key': \`Bearer \${SHIPROCKET_API_KEY}\`,
         'X-Api-HMAC-SHA256': buildSignature(payload)
     };
 }
