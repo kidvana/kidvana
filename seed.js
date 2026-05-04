@@ -3,169 +3,166 @@ const mongoose = require('mongoose');
 const Product = require('./models/Product');
 
 const products = [
-    // Electronics
+    // Kids Fashion - Based on existing JPEG assets
     {
-        name: 'Smart Tech Accessory',
-        brand: 'GenZe Tech',
-        category: 'electronics',
-        price: 1499,
-        mrp: 2999,
-        image: 'assets/electronics/P 01.jpg',
-        images: ['assets/electronics/P 01.jpg', 'assets/electronics/P 01.1.jpg', 'assets/electronics/P 01.2.jpg'],
-        rating: 4.7,
-        reviews: 85,
-        tags: ['new', 'gadget'],
-        color: '#F1F1F1',
-        description: 'Advanced smart accessory for modern lifestyle efficiency and convenience.'
-    },
-    // Kids Fashion
-    {
-        name: 'Designer Ethnic Wear Set',
-        brand: 'GenZe Kids',
+        name: 'Classic Ethnic Wear Set',
+        brand: 'Kidvana',
         category: 'baby-kids',
         price: 1299,
         mrp: 1999,
-        image: 'assets/kids-fashion/K 01.jpg',
-        images: ['assets/kids-fashion/K 01.jpg', 'assets/kids-fashion/K 01.1.jpg', 'assets/kids-fashion/K 01.2.jpg'],
+        image: 'assets/kids-fashion/K01.jpeg',
+        images: ['assets/kids-fashion/K01.jpeg', 'assets/kids-fashion/K01.2.jpeg'],
         rating: 4.9,
         reviews: 156,
-        tags: ['new', 'festival', 'bestseller'],
-        color: '#FFE4E1',
-        description: 'Vibrant ethnic wear set, perfect for festive celebrations and special occasions.'
+        tags: ['new', 'ethnic'],
+        description: 'Premium quality ethnic wear for kids, perfect for special occasions.'
     },
     {
-        name: 'Casual Blue Kurta Set',
-        brand: 'GenZe Kids',
+        name: 'Designer Kurta Set',
+        brand: 'Kidvana',
         category: 'baby-kids',
         price: 899,
         mrp: 1499,
-        image: 'assets/kids-fashion/K 02.jpg',
-        images: ['assets/kids-fashion/K 02.jpg', 'assets/kids-fashion/K 02.1.jpg'],
+        image: 'assets/kids-fashion/K02.jpeg',
+        images: ['assets/kids-fashion/K02.jpeg', 'assets/kids-fashion/K02.1.jpeg', 'assets/kids-fashion/K02.2.jpeg'],
         rating: 4.6,
         reviews: 92,
         tags: ['casual', 'trending'],
-        color: '#E0F2F1',
-        description: 'Stylish and soft cotton kurta set for everyday comfort and small gatherings.'
+        description: 'Comfortable and stylish cotton kurta set for everyday use.'
     },
     {
         name: 'Festive Party Dress',
-        brand: 'GenZe Kids',
+        brand: 'Kidvana',
         category: 'baby-kids',
         price: 1599,
         mrp: 2499,
-        image: 'assets/kids-fashion/K 03.jpg',
-        images: ['assets/kids-fashion/K 03.jpg', 'assets/kids-fashion/K 03.1.jpg', 'assets/kids-fashion/K 03.2.jpg'],
+        image: 'assets/kids-fashion/K03.jpeg',
+        images: ['assets/kids-fashion/K03.jpeg', 'assets/kids-fashion/K03.1.jpeg'],
         rating: 4.8,
         reviews: 110,
         tags: ['party', 'elegant'],
-        color: '#FFF9C4',
-        description: 'Elegant party dress featuring premium fabric and comfortable fit for kids.'
+        description: 'Beautiful party dress with soft inner lining for comfort.'
     },
     {
-        name: 'Toddler Cotton Playwear',
-        brand: 'PlayTime',
+        name: 'Toddler Playwear Set',
+        brand: 'Kidvana',
         category: 'baby-kids',
         price: 499,
         mrp: 999,
-        image: 'assets/kids-fashion/K 04.jpg',
-        images: ['assets/kids-fashion/K 04.jpg', 'assets/kids-fashion/K 04.1.jpg', 'assets/kids-fashion/K 04.2.jpg', 'assets/kids-fashion/K 04.3.jpg'],
+        image: 'assets/kids-fashion/K04.jpeg',
+        images: ['assets/kids-fashion/K04.jpeg', 'assets/kids-fashion/K04.1.jpeg', 'assets/kids-fashion/K04.2.jpeg'],
         rating: 4.5,
         reviews: 240,
         tags: ['daily', 'soft'],
-        color: '#E8F5E9',
-        description: 'Breathable and soft cotton playwear set for toddlers, ideal for all-day play.'
+        description: 'Soft cotton playwear set for toddlers.'
     },
     {
-        name: 'Traditional Sherwani Set',
-        brand: 'GenZe Kids',
+        name: 'Traditional Sherwani',
+        brand: 'Kidvana',
         category: 'baby-kids',
         price: 1899,
         mrp: 3499,
-        image: 'assets/kids-fashion/K 05.jpg',
-        images: ['assets/kids-fashion/K 05.jpg', 'assets/kids-fashion/K 05.1.jpg', 'assets/kids-fashion/K 05.2.jpg'],
+        image: 'assets/kids-fashion/K05.jpeg',
+        images: ['assets/kids-fashion/K05.jpeg', 'assets/kids-fashion/K05.1.jpeg'],
         rating: 4.9,
         reviews: 74,
         tags: ['royal', 'premium'],
-        color: '#F3E5F5',
-        description: 'Exquisite traditional sherwani set for a royal touch to festive celebrations.'
+        description: 'Traditional sherwani set for a royal festive look.'
+    },
+    {
+        name: 'Casual Western Set',
+        brand: 'Kidvana',
+        category: 'baby-kids',
+        price: 799,
+        mrp: 1299,
+        image: 'assets/kids-fashion/K06.jpeg',
+        images: ['assets/kids-fashion/K06.jpeg', 'assets/kids-fashion/K06.2.jpeg', 'assets/kids-fashion/K06.3.jpeg'],
+        rating: 4.7,
+        reviews: 45,
+        tags: ['casual', 'new'],
+        description: 'Modern western wear set for kids.'
+    },
+    {
+        name: 'Floral Print Dress',
+        brand: 'Kidvana',
+        category: 'baby-kids',
+        price: 699,
+        mrp: 1199,
+        image: 'assets/kids-fashion/K07.jpeg',
+        images: ['assets/kids-fashion/K07.jpeg', 'assets/kids-fashion/K07.2.jpeg', 'assets/kids-fashion/K07.3.jpeg', 'assets/kids-fashion/K07.4.jpeg'],
+        rating: 4.6,
+        reviews: 38,
+        tags: ['summer', 'floral'],
+        description: 'Lightweight floral print dress for summer comfort.'
+    },
+    {
+        name: 'Baby Boy Festive Suit',
+        brand: 'Kidvana',
+        category: 'baby-kids',
+        price: 1399,
+        mrp: 2199,
+        image: 'assets/kids-fashion/K08.jpeg',
+        images: ['assets/kids-fashion/K08.jpeg', 'assets/kids-fashion/K08.1.jpeg', 'assets/kids-fashion/K08.2.jpeg'],
+        rating: 4.8,
+        reviews: 52,
+        tags: ['festive', 'suit'],
+        description: 'Smart festive suit for baby boys.'
+    },
+    {
+        name: 'Premium Cotton Kurta',
+        brand: 'Kidvana',
+        category: 'baby-kids',
+        price: 999,
+        mrp: 1799,
+        image: 'assets/kids-fashion/K09.jpeg',
+        images: ['assets/kids-fashion/K09.jpeg', 'assets/kids-fashion/K09.2.jpeg', 'assets/kids-fashion/K09.3.jpeg', 'assets/kids-fashion/K09.4.jpeg'],
+        rating: 4.7,
+        reviews: 63,
+        description: 'High-quality cotton kurta for all-day comfort.'
+    },
+    {
+        name: 'Embroidered Party Wear',
+        brand: 'Kidvana',
+        category: 'baby-kids',
+        price: 1699,
+        mrp: 2999,
+        image: 'assets/kids-fashion/K10.jpeg',
+        images: ['assets/kids-fashion/K10.jpeg', 'assets/kids-fashion/K10.1.jpeg', 'assets/kids-fashion/K10.2.jpeg'],
+        rating: 4.9,
+        reviews: 29,
+        description: 'Beautifully embroidered party wear for special occasions.'
+    },
+    {
+        name: 'Summer Shorts Set',
+        brand: 'Kidvana',
+        category: 'baby-kids',
+        price: 599,
+        mrp: 999,
+        image: 'assets/kids-fashion/K11.jpeg',
+        images: ['assets/kids-fashion/K11.jpeg', 'assets/kids-fashion/K11.1.jpeg', 'assets/kids-fashion/K11.2.jpeg'],
+        rating: 4.5,
+        reviews: 87,
+        tags: ['summer', 'play'],
+        description: 'Cool summer shorts set for active kids.'
     },
     // Toys & Games
     {
-        name: 'Interactive Learning Spinner',
-        brand: 'SmartPlay',
+        name: 'Interactive Learning Toy',
+        brand: 'Kidvana',
         category: 'toys',
         price: 349,
         mrp: 699,
         image: 'assets/toys/T 01.jpg',
-        images: ['assets/toys/T 01.jpg', 'assets/toys/T 01.1.jpg', 'assets/toys/T 01.2.jpg', 'assets/toys/T 01.3.jpg'],
+        images: ['assets/toys/T 01.jpg'],
         rating: 4.7,
         reviews: 312,
-        tags: ['learning', 'interactive'],
-        color: '#FFECB3',
-        description: 'Engaging spinner toy designed to improve sensory development and motor skills.'
-    },
-    {
-        name: 'Musical Rattle Toy Set',
-        brand: 'Melody',
-        category: 'toys',
-        price: 599,
-        mrp: 1299,
-        image: 'assets/toys/T 02.jpg',
-        images: ['assets/toys/T 02.jpg', 'assets/toys/T 02.1.jpg', 'assets/toys/T 02.2.jpg'],
-        rating: 4.6,
-        reviews: 185,
-        tags: ['music', 'baby'],
-        color: '#D1C4E9',
-        description: 'Colorful musical rattle set that introduces infants to delightful sounds.'
-    },
-    {
-        name: 'Educational Puzzle Blocks',
-        brand: 'Brainy',
-        category: 'toys',
-        price: 799,
-        mrp: 1599,
-        image: 'assets/toys/T 03.jpg',
-        images: ['assets/toys/T 03.jpg', 'assets/toys/T 03.1.jpg', 'assets/toys/T 03.2.jpg'],
-        rating: 4.8,
-        reviews: 215,
-        tags: ['puzzle', 'smart'],
-        color: '#C8E6C9',
-        description: 'Cognitive development puzzle blocks that encourage problem-solving and focus.'
-    },
-    {
-        name: 'Creative Building Blocks',
-        brand: 'BuildIt',
-        category: 'toys',
-        price: 1199,
-        mrp: 2499,
-        image: 'assets/toys/T 04.jpg',
-        images: ['assets/toys/T 04.jpg', 'assets/toys/T 04.1.jpg', 'assets/toys/T 04.2.jpg', 'assets/toys/T 04.3.jpg', 'assets/toys/T 04.4.jpg', 'assets/toys/T 04.5.jpg'],
-        rating: 4.9,
-        reviews: 420,
-        tags: ['creative', 'bestseller'],
-        color: '#B3E5FC',
-        description: 'Premium building blocks set for endless hours of creative play and construction.'
-    },
-    // Women Fashion
-    {
-        name: 'Elegant Designer Kurti',
-        brand: 'Kidvana Women',
-        category: 'fashion',
-        price: 1399,
-        mrp: 2999,
-        image: 'assets/women-fashion/W 01.jpg',
-        images: ['assets/women-fashion/W 01.jpg', 'assets/women-fashion/W 01.1.jpg', 'assets/women-fashion/W 01.2.jpg'],
-        rating: 4.8,
-        reviews: 128,
-        tags: ['new', 'ethnic', 'elegant'],
-        color: '#FCE4EC',
-        description: 'Sophisticated ethnic kurti featuring modern artistry and comfortable fit.'
+        description: 'Engaging toy designed to improve sensory development.'
     }
 ];
 
 async function seedProducts() {
     try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/kidvana');
+        await mongoose.connect(process.env.MONGODB_URI);
         console.log('Connected to MongoDB');
 
         await Product.deleteMany();

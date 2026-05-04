@@ -419,7 +419,7 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
                     price: Number(item.price || item.mrp || 0),
                     title: String(item.name || item.title || 'Product'),
                     sku: String(item.sku || variantId),
-                    image_url: String(item.image || item.image_url || '')
+                    image_url: toAbsoluteAssetUrl(req, item.image || item.image_url || '')
                 };
             }))
         },
