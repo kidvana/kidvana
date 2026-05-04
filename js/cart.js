@@ -192,10 +192,15 @@ async function buyNow(event, productId) {
             cart_data: {
                 items: orderInfo.items.map(item => ({
                     variant_id: String(item.productId || item.id || ''),
-                    quantity: Number(item.quantity || item.qty || 1)
+                    quantity: Number(item.quantity || item.qty || 1),
+                    price: Number(item.price || 0),
+                    title: String(item.name || 'Product'),
+                    sku: String(item.productId || item.id || ''),
+                    image_url: String(item.image || '')
                 }))
             },
-            redirect_url: redirectUrl
+            redirect_url: redirectUrl,
+            timestamp: Math.floor(Date.now() / 1000)
         });
 
         if (!shiprocketResponse?.token) {
