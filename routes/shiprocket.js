@@ -404,22 +404,32 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
             items: await Promise.all(cartItems.map(async (item) => {
                 const productId = item.variant_id || item.productId || item.id;
                 let variantId = productId;
-                
-                // Try to find the real Shiprocket Variant ID from DB
+                let price = Number(item.price || item.mrp || 0);
+                let title = String(item.name || item.title || 'Product');
+                let image = String(item.image || item.image_url || '');
+
+                // Fetch latest data from DB to ensure we have the real Shiprocket ID
                 try {
                     const dbProduct = await Product.findById(productId);
-                    if (dbProduct && dbProduct.shiprocketVariantId) {
-                        variantId = String(dbProduct.shiprocketVariantId);
+                    if (dbProduct) {
+                        if (dbProduct.shiprocketVariantId) {
+                            variantId = String(dbProduct.shiprocketVariantId);
+                        }
+                        price = dbProduct.price;
+                        title = dbProduct.name;
+                        image = dbProduct.image;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error('DB fetch failed for product:', productId, e.message);
+                }
 
                 return {
                     variant_id: String(variantId),
                     quantity: Number(item.quantity || item.qty || 1),
-                    price: Number(item.price || item.mrp || 0),
-                    title: String(item.name || item.title || 'Product'),
-                    sku: String(item.sku || variantId),
-                    image_url: toAbsoluteAssetUrl(req, item.image || item.image_url || '')
+                    price: Number(price),
+                    title: String(title),
+                    sku: String(productId),
+                    image_url: toAbsoluteAssetUrl(req, image)
                 };
             }))
         },
@@ -428,6 +438,7 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
     };
 
     try {
+        console.log('Shiprocket Checkout Payload:', JSON.stringify(payload, null, 2));
         const response = await axios.post(
             `${SHIPROCKET_BASE_URL}/api/v1/access-token/checkout`,
             payload,
@@ -435,6 +446,7 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
         );
 
         const data = response.data || {};
+        console.log('Shiprocket Checkout Response:', JSON.stringify(data, null, 2));
         const token = data?.result?.token || data?.token || '';
         const orderId = data?.result?.order_id || data?.order_id || data?.result?.orderId || data?.orderId || '';
 
