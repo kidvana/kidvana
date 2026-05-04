@@ -359,32 +359,34 @@
           <p class="section-subtitle">"Real Reviews from Happy Parents &amp; Kids at Kidvana!"</p>
         </div>
       </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
-          <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
-          <p class="testimonial-text">"Amazing quality toys! My son absolutely loves the building blocks. Fast delivery and great packaging. Will definitely order again!"</p>
-          <div class="testimonial-author-box">
-            <div class="testimonial-avatar">PS</div>
-            <p class="testimonial-author">Priya S.</p>
+      <div class="swiper testimonialSwiper">
+        <div class="swiper-wrapper testimonials-grid">
+          <div class="swiper-slide testimonial-card">
+            <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
+            <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+            <p class="testimonial-text">"Amazing quality toys! My son absolutely loves the building blocks. Fast delivery and great packaging. Will definitely order again!"</p>
+            <div class="testimonial-author-box">
+              <div class="testimonial-avatar">PS</div>
+              <p class="testimonial-author">Priya S.</p>
+            </div>
           </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
-          <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
-          <p class="testimonial-text">"Best prices compared to other stores. The kidswear collection is stunning and the fabric quality is premium. Highly recommend Kidvana!"</p>
-          <div class="testimonial-author-box">
-            <div class="testimonial-avatar">AK</div>
-            <p class="testimonial-author">Amit K.</p>
+          <div class="swiper-slide testimonial-card">
+            <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
+            <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+            <p class="testimonial-text">"Best prices compared to other stores. The kidswear collection is stunning and the fabric quality is premium. Highly recommend Kidvana!"</p>
+            <div class="testimonial-author-box">
+              <div class="testimonial-avatar">AK</div>
+              <p class="testimonial-author">Amit K.</p>
+            </div>
           </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
-          <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
-          <p class="testimonial-text">"Ordered a camera for my daughter's birthday. She couldn't stop smiling! The COD option was very convenient. Thank you Kidvana!"</p>
-          <div class="testimonial-author-box">
-            <div class="testimonial-avatar">NR</div>
-            <p class="testimonial-author">Neha R.</p>
+          <div class="swiper-slide testimonial-card">
+            <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
+            <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+            <p class="testimonial-text">"Ordered a camera for my daughter's birthday. She couldn't stop smiling! The COD option was very convenient. Thank you Kidvana!"</p>
+            <div class="testimonial-author-box">
+              <div class="testimonial-avatar">NR</div>
+              <p class="testimonial-author">Neha R.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -541,6 +543,17 @@
               1024: {
                   slidesPerView: 4,
                   spaceBetween: 24,
+                  enabled: false
+              }
+          }
+      });
+      const testimonialSwiper = new Swiper('.testimonialSwiper', {
+          slidesPerView: 1.1,
+          spaceBetween: 16,
+          breakpoints: {
+              1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 32,
                   enabled: false
               }
           }

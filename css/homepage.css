@@ -520,6 +520,28 @@
 
 .footer-logo img { height: 40px; }
 
+.footer-social {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.footer-social a {
+    color: var(--gray-400);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--radius-pill);
+}
+
+.footer-social a:hover {
+    color: var(--white);
+    background: var(--primary);
+}
+
 .footer h4 { 
     color: var(--white); 
     font-size: 0.9rem; 
@@ -593,8 +615,33 @@
         flex-shrink: 0;
         width: auto;
     }
-    .testimonials-grid { grid-template-columns: 1fr; }
-    .footer-grid { grid-template-columns: 1fr; }
+    .testimonials-grid { 
+        display: flex !important;
+        grid-template-columns: none !important;
+        gap: 0 !important;
+    }
+    .testimonial-card {
+        flex-shrink: 0;
+        width: auto;
+        height: 100%;
+    }
+    .footer-grid { 
+        grid-template-columns: 1fr 1fr; 
+        gap: 40px 24px; 
+        text-align: center;
+    }
+    .footer-brand, .footer-newsletter {
+        grid-column: 1 / -1;
+    }
+    .footer-logo {
+        justify-content: center;
+    }
+    .footer-social {
+        justify-content: center;
+    }
+    .footer-links ul li a:hover {
+        transform: none;
+    }
 }
 
 /* ── Brand Section ── */
