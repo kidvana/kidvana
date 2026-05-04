@@ -1,38 +1,45 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kidvana — Premium Kidswear, Toys & Next-Gen Gadgets</title>
-    <meta name="description" content="Kidvana is India's premier destination for high-end kidswear, educational toys, and modern gadgets. Experience premium quality with fast delivery.">
+  <title>Kidvana — Premium Kidswear, Toys & Next-Gen Gadgets</title>
+  <meta name="description" content="Kidvana is India's premier destination for high-end kidswear, educational toys, and modern gadgets. Experience premium quality with fast delivery.">
 
-    <!-- OpenGraph SEO -->
-    <meta property="og:title" content="Kidvana - Shop Smart, Live Bold">
-    <meta property="og:description" content="Discover India's most curated collection of premium kidswear, toys, and tech. Experience the future of shopping.">
-    <meta property="og:image" content="assets/logo/kidvana-logo.svg">
-    <meta property="og:url" content="https://kidvana.in">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Kidvana | Premium Online Shopping">
-    <meta name="twitter:description" content="High-end kidswear and tech for the next generation.">
+  <!-- OpenGraph SEO -->
+  <meta property="og:title" content="Kidvana - Shop Smart, Live Bold">
+  <meta property="og:description" content="Discover India's most curated collection of premium kidswear, toys, and tech. Experience the future of shopping.">
+  <meta property="og:image" content="assets/logo/kidvana-logo.svg">
+  <meta property="og:url" content="https://kidvana.in">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kidvana | Premium Online Shopping">
+  <meta name="twitter:description" content="High-end kidswear and tech for the next generation.">
   <link rel="icon" href="assets/logo/kidvana-logo.svg">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/homepage.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <!-- Phosphor Icons (Premium) -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Toyfort Swiper CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <!-- Core Scripts -->
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/wishlist.js"></script>
 </head>
 
 <body>
 
   <!-- ═══ TOP BAR ═══ -->
-  <div class="top-bar reveal">
+  <div class="top-bar">
     <div class="top-bar-inner container">
-      <marquee direction="left" scrollamount="5" width="100%" style="padding: 2px 0;">
-        Call us at +91 8744055175 for bulk orders or any other assistance
-      </marquee>
+      <div class="top-bar-ticker">
+        <span>Call us at +91 9354841822 for bulk orders or any other assistance</span>
+        <span>Premium Kidswear • Toys • Gadgets • PAN India Delivery</span>
+      </div>
     </div>
   </div>
 
@@ -52,27 +59,31 @@
       </a>
 
       <div class="header-search">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" placeholder="Search for products, brands and more..."
-          autocomplete="off">
+        <div class="search-input-wrapper">
+          <i class="ph ph-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input" placeholder="Search premium products..."
+            autocomplete="off">
+        </div>
         <div class="search-suggestions"></div>
       </div>
 
       <div class="header-actions">
         <a href="dashboard.html" class="header-action-btn" title="My Account">
-          <span class="action-icon">👤</span>
+          <div class="action-icon-wrapper">
+            <i class="ph ph-user-circle action-icon"></i>
+          </div>
           <span class="action-label">Account</span>
         </a>
         <a href="wishlist.html" class="header-action-btn" title="Wishlist">
           <div class="action-icon-wrapper">
-            <span class="action-icon">🤍</span>
+            <i class="ph ph-heart action-icon"></i>
             <span class="wishlist-count count-badge">0</span>
           </div>
           <span class="action-label">Wishlist</span>
         </a>
-        <a href="cart.html" class="header-action-btn" title="Shopping Cart">
+        <a href="cart.html" class="header-action-btn" title="Shopping Cart" onclick="openCartSidebar(); return false;">
           <div class="action-icon-wrapper">
-            <span class="action-icon">🛒</span>
+            <i class="ph ph-shopping-cart-simple action-icon"></i>
             <span class="cart-count count-badge">0</span>
           </div>
           <span class="action-label">Cart</span>
@@ -88,11 +99,39 @@
     </nav>
   </header>
 
-  <!-- Mobile Search -->
-  <div class="mobile-search">
-    <div class="mobile-search-inner">
-      <span class="search-icon">🔍</span>
-      <input type="text" class="search-input" placeholder="Search products...">
+
+  <!-- ═══ CART SIDEBAR (Drawer) ═══ -->
+  <div class="cart-sidebar-overlay" id="cartOverlay"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-sidebar-header">
+      <div class="cart-header-title">
+        <i class="ph ph-shopping-cart-simple"></i>
+        <h3>My Bag <span class="cart-count-title">(0 Items)</span></h3>
+      </div>
+      <button class="cart-sidebar-close" onclick="closeCartSidebar()">✕</button>
+    </div>
+    
+    <div class="cart-sidebar-content" id="cartSidebarContent">
+      <!-- Items rendered by JS -->
+      <div class="cart-empty-state">
+        <div class="empty-icon">🛒</div>
+        <p>Your bag is empty</p>
+        <a href="category.html" class="btn btn-primary">Start Shopping</a>
+      </div>
+    </div>
+
+    <div class="cart-sidebar-footer" id="cartSidebarFooter">
+      <div class="cart-total-row">
+        <span>Subtotal</span>
+        <span class="cart-subtotal-val">₹0</span>
+      </div>
+      <p class="cart-shipping-note">Shipping & taxes calculated at checkout</p>
+      <button class="btn btn-primary btn-block btn-lg" onclick="window.location.href='cart.html'">
+        Proceed to Checkout
+      </button>
+      <button class="btn btn-outline btn-block mt-2" onclick="closeCartSidebar()">
+        Continue Shopping
+      </button>
     </div>
   </div>
 
@@ -107,146 +146,119 @@
       <!-- Rendered by JS -->
     </nav>
   </div>
-
-  <!-- ═══ TOYFORT BANNER CONCEPT ═══ -->
-  <section class="toyfort-hero-intro mt-4 mb-2 text-center">
-    <div class="container">
-      <h2 style="font-size: 1.8rem; color: var(--gray-800); font-family: var(--font-display); margin-bottom:0;">Hot New Arrivals – Be the First to Own Them!</h2>
-    </div>
-  </section>
-
-  <section class="main-basic toyfort-main-section">
-    <div class="container main-slider-section">
-      <div class="slider-wrapper-inner">
-        <div class="swiper-container swiper mySwiper">
-          <div class="swiper-wrapper">
-            <!-- Slide 1 -->
-            <div class="swiper-slide">
-              <div class="pics-div">
-                <a href="category.html?cat=baby-kids" class="image-container">
-                  <img src="assets/hero-images/festive_hero.png" alt="Festive Kidswear Collection" class="pics">
-                </a>
-              </div>
-            </div>
-            <!-- Slide 2 -->
-            <div class="swiper-slide">
-              <div class="pics-div">
-                <a href="category.html?cat=toys" class="image-container">
-                  <img src="assets/hero-images/toys_hero.png" alt="Toys & Games" class="pics">
-                </a>
-              </div>
-            </div>
-            <!-- Slide 3 -->
-            <div class="swiper-slide">
-              <div class="pics-div">
-                <a href="category.html?cat=electronics" class="image-container">
-                  <img src="assets/hero-images/electronics_hero.png" alt="Electronics & Gadgets" class="pics">
-                </a>
-              </div>
-            </div>
-            <!-- Slide 4 -->
-            <div class="swiper-slide">
-              <div class="pics-div">
-                <a href="category.html" class="image-container">
-                  <img src="assets/hero-images/hero-1.png" alt="Best Deals" class="pics">
-                </a>
-              </div>
-            </div>
+  <!-- ═══ PREMIUM HERO SLIDER ═══ -->
+  <section class="premium-hero">
+    <div class="swiper heroSwiper">
+      <div class="swiper-wrapper">
+        <!-- Slide 1: Fashion -->
+        <div class="swiper-slide">
+          <div class="hero-slide-inner">
+            <a href="category.html?cat=baby-kids" class="hero-link">
+              <img src="assets/hero-images/festive_hero.png" alt="Festive Kidswear" class="hero-img">
+            </a>
           </div>
         </div>
-
-        <!-- Navigation Arrows -->
-        <div class="slider-arrow leftSlider">
-          <span style="transform: rotate(180deg); display:block;">➔</span>
+        <!-- Slide 2: Toys -->
+        <div class="swiper-slide">
+          <div class="hero-slide-inner">
+            <a href="category.html?cat=toys" class="hero-link">
+              <img src="assets/hero-images/toys_hero.png" alt="Creative Toys" class="hero-img">
+            </a>
+          </div>
         </div>
-        <div class="slider-arrow rightSlider">
-          <span style="display:block;">➔</span>
+        <!-- Slide 3: Tech -->
+        <div class="swiper-slide">
+          <div class="hero-slide-inner">
+            <a href="category.html?cat=electronics" class="hero-link">
+              <img src="assets/hero-images/electronics_hero.png" alt="Next-Gen Gadgets" class="hero-img">
+            </a>
+          </div>
         </div>
-        
-        <div class="swiper-pagination"></div>
+        <!-- Slide 4: Deals -->
+        <div class="swiper-slide">
+          <div class="hero-slide-inner">
+            <a href="category.html" class="hero-link">
+              <img src="assets/hero-images/hero-1.png" alt="Best Deals" class="hero-img">
+            </a>
+          </div>
+        </div>
       </div>
+      <!-- Slider Navigation -->
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
     </div>
   </section>
 
   <!-- ═══ SPARKLE OFFER BANNER ═══ -->
-  <div class="container text-center mt-4 mb-4 offer-main-div offerbanner basic">
+  <div class="container text-center mt-4 mb-4 offer-main-div offerbanner basic reveal">
       <div class="offer-banner">
           <div class="banner-shimmer"></div>
           <!-- 8 Star Sparkles -->
-          <div class="banner-sparkle" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
-          <div class="banner-sparkle" style="top: 15%; left: 35%; animation-delay: 1.5s;"></div>
-          <div class="banner-sparkle" style="top: 20%; right: 10%; animation-delay: 0.5s;"></div>
-          <div class="banner-sparkle" style="top: 40%; right: 30%; animation-delay: 2.5s;"></div>
-          <div class="banner-sparkle" style="bottom: 15%; left: 15%; animation-delay: 2s;"></div>
-          <div class="banner-sparkle" style="bottom: 25%; left: 50%; animation-delay: 1s;"></div>
-          <div class="banner-sparkle" style="bottom: 10%; right: 15%; animation-delay: 3s;"></div>
-          <div class="banner-sparkle" style="bottom: 30%; right: 5%; animation-delay: 3.5s;"></div>
+          <div class="banner-sparkle s1"></div>
+          <div class="banner-sparkle s2"></div>
+          <div class="banner-sparkle s3"></div>
+          <div class="banner-sparkle s4"></div>
+          <div class="banner-sparkle s5"></div>
+          <div class="banner-sparkle s6"></div>
+          <div class="banner-sparkle s7"></div>
+          <div class="banner-sparkle s8"></div>
 
           <div class="offer-text">
-              Special Prices, Premium Products, and Free Home Delivery PAN India –<span class="offer-code" style="color:#ffa500;"> It’s All Just A Click Away!</span>
+              Special Prices, Premium Products, and Free Home Delivery PAN India –<span class="offer-code"> It’s All Just A Click Away!</span>
           </div>
       </div>
   </div>
 
   <!-- ═══ HOLI PROMO BANNER ═══ -->
-  <div class="holi-banner container mb-4 promo-banner-wrap">
+  <div class="holi-banner container mb-4 promo-banner-wrap reveal">
       <a href="category.html">
-          <img src="assets/hero-images/hero-holi.png" alt="promo-banner" style="width: 100%; height:auto; aspect-ratio:16/4; object-fit:cover; border-radius:20px;">
+          <img src="assets/hero-images/hero-holi.png" alt="promo-banner" class="promo-img">
       </a>
   </div>
 
   <!-- ═══ FEATURES STRIP (Perks) ═══ -->
   <div class="container mb-5">
-    <div class="features-grid homepage-perks-grid">
+    <div class="features-grid homepage-perks-grid reveal">
       <div class="feature-item">
-        <span style="font-size:32px; display:block; margin-bottom:8px;">🚚</span>
-        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">Free Shipping</p>
+        <div class="feature-icon-wrapper">
+          <i class="ph-duotone ph-truck"></i>
+        </div>
+        <div>
+          <p class="feature-label">Free Shipping</p>
+          <span class="feature-sub">On orders above ₹999</span>
+        </div>
       </div>
       <div class="feature-item">
-        <span style="font-size:32px; display:block; margin-bottom:8px;">💳</span>
-        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">Secured Payments</p>
+        <div class="feature-icon-wrapper">
+          <i class="ph-duotone ph-shield-check"></i>
+        </div>
+        <div>
+          <p class="feature-label">Secured Payments</p>
+          <span class="feature-sub">100% safe transactions</span>
+        </div>
       </div>
       <div class="feature-item">
-        <span style="font-size:32px; display:block; margin-bottom:8px;">🎉</span>
-        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">Exciting Offers</p>
+        <div class="feature-icon-wrapper">
+          <i class="ph-duotone ph-tag"></i>
+        </div>
+        <div>
+          <p class="feature-label">Exciting Offers</p>
+          <span class="feature-sub">Best prices guaranteed</span>
+        </div>
       </div>
       <div class="feature-item">
-        <span style="font-size:32px; display:block; margin-bottom:8px;">🛡️</span>
-        <p style="font-weight:700; font-size:0.85rem; color:var(--gray-700);">100% Genuine</p>
+        <div class="feature-icon-wrapper">
+          <i class="ph-duotone ph-certificate"></i>
+        </div>
+        <div>
+          <p class="feature-label">100% Genuine</p>
+          <span class="feature-sub">Authentic products only</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <section class="section reveal">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2>Explore Our Departments</h2>
-          <p class="section-subtitle">Toyfort-style category discovery, adapted for Kidvana's catalog.</p>
-        </div>
-      </div>
-      <div class="department-section-card">
-        <div class="category-grid-homepage" id="featuredCategories">
-          <!-- Rendered by JS -->
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-alt reveal">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2>Shop By Famous Brand</h2>
-          <p class="section-subtitle">Browse our most visible brands the way big retail marketplaces do.</p>
-        </div>
-        <a href="category.html" class="view-all-link">Explore Catalog</a>
-      </div>
-      <div class="brand-scroll" id="brandShowcase">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-  </section>
 
   <section class="section reveal">
     <div class="container">
@@ -279,9 +291,6 @@
       <button class="scroll-arrow right" aria-label="Scroll right">›</button>
     </div>
   </section>
-
-
-
 
   <!-- ═══ KIDS FASHION ═══ -->
   <section class="section section-alt scroll-section reveal">
@@ -335,107 +344,44 @@
     </div>
   </section>
 
-  <!-- TRENDING CATEGORIES (Animated Icons) -->
-  <section class="section section-alt reveal">
-    <div class="container">
-      <div class="section-header" style="justify-content:center; text-align:center;">
-        <div>
-          <h2>Trending Categories</h2>
-        </div>
-      </div>
-      <div class="tcat-grid">
-        <a href="category.html?cat=baby-kids" class="tcat-card">
-          <div class="tcat-icon tcat-pink"><span>&#x1F476;</span></div>
-          <p>Baby Care</p>
-        </a>
-        <a href="category.html?cat=toys" class="tcat-card">
-          <div class="tcat-icon tcat-purple"><span>&#x1F9F8;</span></div>
-          <p>Dolls</p>
-        </a>
-        <a href="category.html?cat=electronics" class="tcat-card">
-          <div class="tcat-icon tcat-blue"><span>&#x1F4F7;</span></div>
-          <p>Cameras</p>
-        </a>
-        <a href="category.html?cat=toys" class="tcat-card">
-          <div class="tcat-icon tcat-orange"><span>&#x1F52B;</span></div>
-          <p>Guns</p>
-        </a>
-        <a href="category.html?cat=toys" class="tcat-card">
-          <div class="tcat-icon tcat-green"><span>&#x1F3B2;</span></div>
-          <p>Board Games</p>
-        </a>
-        <a href="category.html?cat=electronics" class="tcat-card">
-          <div class="tcat-icon tcat-yellow"><span>&#x231A;</span></div>
-          <p>Kids Watch</p>
-        </a>
-        <a href="category.html?cat=toys" class="tcat-card">
-          <div class="tcat-icon tcat-red"><span>&#x1F9F1;</span></div>
-          <p>Building Sets</p>
-        </a>
-        <a href="category.html?cat=toys" class="tcat-card">
-          <div class="tcat-icon tcat-teal"><span>&#x1F3E0;</span></div>
-          <p>Doll Houses</p>
-        </a>
-        <a href="category.html?cat=electronics" class="tcat-card">
-          <div class="tcat-icon tcat-indigo"><span>&#x1F3AE;</span></div>
-          <p>Video Games</p>
-        </a>
-        <a href="category.html?cat=sports" class="tcat-card">
-          <div class="tcat-icon tcat-lime"><span>&#x26BD;</span></div>
-          <p>Sports</p>
-        </a>
-        <a href="category.html?cat=baby-kids" class="tcat-card">
-          <div class="tcat-icon tcat-rose"><span>&#x1F37C;</span></div>
-          <p>Strollers</p>
-        </a>
-        <a href="category.html?cat=toys" class="tcat-card">
-          <div class="tcat-icon tcat-amber"><span>&#x1F373;</span></div>
-          <p>Kitchen Set</p>
-        </a>
-      </div>
-    </div>
-  </section>
 
-  <section class="section reveal">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2>Popular Shopping Lanes</h2>
-          <p class="section-subtitle">High-density category shortcuts inspired by the Toyfort navigation pattern.</p>
-        </div>
-      </div>
-      <div class="department-section-card">
-        <div class="category-links-grid" id="categoryQuickLinks">
-          <!-- Rendered by JS -->
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- TESTIMONIALS -->
   <section class="section reveal">
     <div class="container">
-      <div class="section-header" style="justify-content:center; text-align:center;">
+      <div class="section-header center">
         <div>
           <h2>What Our Customers Say</h2>
-          <p class="section-subtitle" style="margin:4px auto 0;">"Real Reviews from Happy Parents &amp; Kids at Kidvana!"</p>
+          <p class="section-subtitle">"Real Reviews from Happy Parents &amp; Kids at Kidvana!"</p>
         </div>
       </div>
       <div class="testimonials-grid">
         <div class="testimonial-card">
-          <div style="color:#FFC107; font-size:1rem; margin-bottom:12px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p style="font-size:0.9rem; color:var(--gray-600); margin-bottom:16px; line-height:1.6;">"Amazing quality toys! My son absolutely loves the building blocks. Fast delivery and great packaging. Will definitely order again!"</p>
-          <p style="font-weight:700; font-size:0.85rem; color:var(--gray-800);">&mdash; Priya S.</p>
+          <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
+          <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+          <p class="testimonial-text">"Amazing quality toys! My son absolutely loves the building blocks. Fast delivery and great packaging. Will definitely order again!"</p>
+          <div class="testimonial-author-box">
+            <div class="testimonial-avatar">PS</div>
+            <p class="testimonial-author">Priya S.</p>
+          </div>
         </div>
         <div class="testimonial-card">
-          <div style="color:#FFC107; font-size:1rem; margin-bottom:12px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p style="font-size:0.9rem; color:var(--gray-600); margin-bottom:16px; line-height:1.6;">"Best prices compared to other stores. The kidswear collection is stunning and the fabric quality is premium. Highly recommend Kidvana!"</p>
-          <p style="font-weight:700; font-size:0.85rem; color:var(--gray-800);">&mdash; Amit K.</p>
+          <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
+          <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+          <p class="testimonial-text">"Best prices compared to other stores. The kidswear collection is stunning and the fabric quality is premium. Highly recommend Kidvana!"</p>
+          <div class="testimonial-author-box">
+            <div class="testimonial-avatar">AK</div>
+            <p class="testimonial-author">Amit K.</p>
+          </div>
         </div>
         <div class="testimonial-card">
-          <div style="color:#FFC107; font-size:1rem; margin-bottom:12px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p style="font-size:0.9rem; color:var(--gray-600); margin-bottom:16px; line-height:1.6;">"Ordered a camera for my daughter's birthday. She couldn't stop smiling! The COD option was very convenient. Thank you Kidvana!"</p>
-          <p style="font-weight:700; font-size:0.85rem; color:var(--gray-800);">&mdash; Neha R.</p>
+          <div class="testimonial-quote"><i class="ph-duotone ph-quotes"></i></div>
+          <div class="testimonial-stars"><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i><i class="ph-fill ph-star"></i></div>
+          <p class="testimonial-text">"Ordered a camera for my daughter's birthday. She couldn't stop smiling! The COD option was very convenient. Thank you Kidvana!"</p>
+          <div class="testimonial-author-box">
+            <div class="testimonial-avatar">NR</div>
+            <p class="testimonial-author">Neha R.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -443,34 +389,34 @@
 
   <!-- MISSION SECTION (Redesigned) -->
   <section class="reveal mission-polish-section">
-    <div style="position:absolute; top:30px; left:40px; width:80px; height:80px; background:rgba(228,52,52,0.06); border-radius:50%; animation: float 6s ease-in-out infinite;"></div>
-    <div style="position:absolute; bottom:40px; right:60px; width:120px; height:120px; background:rgba(255,193,7,0.08); border-radius:50%; animation: float 8s ease-in-out infinite reverse;"></div>
-    <div style="position:absolute; top:50%; left:80%; width:60px; height:60px; background:rgba(40,167,69,0.06); border-radius:50%; animation: float 5s ease-in-out infinite;"></div>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
     
     <div class="container">
       <div class="mission-polish-grid">
         <div class="mission-polish-copy">
-          <span style="display:inline-block; background:rgba(228,52,52,0.1); color:var(--primary); font-size:0.8rem; font-weight:700; padding:6px 16px; border-radius:var(--radius-full); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">&#x1F31F; Our Mission</span>
-          <h2 class="mission-polish-title">Making Every <br><span style="color:var(--primary);">Childhood</span> Magical</h2>
-          <p style="font-size:1.05rem; color:var(--gray-600); margin-bottom:32px; max-width:500px; line-height:1.7;">At Kidvana, we curate products that spark imagination, foster learning, and bring endless joy. Every item is handpicked to ensure safety, quality, and delight for your little ones.</p>
+          <span class="mission-badge">&#x1F31F; Our Mission</span>
+          <h2 class="mission-polish-title">Making Every <br><span class="highlight">Childhood</span> Magical</h2>
+          <p class="mission-desc">At Kidvana, we curate products that spark imagination, foster learning, and bring endless joy. Every item is handpicked to ensure safety, quality, and delight for your little ones.</p>
           <div class="mission-polish-stats">
-            <div class="mission-polish-stat" style="text-align:center;">
-              <div style="font-size:2.2rem; font-weight:900; color:var(--primary); font-family:var(--font-display); animation: pulse 3s ease-in-out infinite;">50k+</div>
-              <div style="font-size:0.75rem; color:var(--gray-500); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Happy Families</div>
+            <div class="mission-polish-stat">
+              <div class="stat-num pulse-anim">50k+</div>
+              <div class="stat-label">Happy Families</div>
             </div>
-            <div class="mission-polish-stat" style="text-align:center;">
-              <div style="font-size:2.2rem; font-weight:900; color:#28A745; font-family:var(--font-display); animation: pulse 3s ease-in-out infinite 0.5s;">10k+</div>
-              <div style="font-size:0.75rem; color:var(--gray-500); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Products</div>
+            <div class="mission-polish-stat">
+              <div class="stat-num pulse-anim delay-1">10k+</div>
+              <div class="stat-label">Products</div>
             </div>
-            <div class="mission-polish-stat" style="text-align:center;">
-              <div style="font-size:2.2rem; font-weight:900; color:#FFC107; font-family:var(--font-display); animation: pulse 3s ease-in-out infinite 1s;">24/7</div>
-              <div style="font-size:0.75rem; color:var(--gray-500); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Support</div>
+            <div class="mission-polish-stat">
+              <div class="stat-num pulse-anim delay-2">24/7</div>
+              <div class="stat-label">Support</div>
             </div>
           </div>
         </div>
         <div class="mission-polish-gallery">
-          <img src="assets/kids-fashion/K 01.jpg" alt="Kids Fashion" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.1); transform:translateY(-10px); animation: float 6s ease-in-out infinite;">
-          <img src="assets/toys/T 01.jpg" alt="Toys Collection" style="width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.1); transform:translateY(10px); animation: float 6s ease-in-out infinite reverse;">
+          <img src="assets/kids-fashion/K 01.jpg" alt="Kids Fashion" class="gallery-img img-1">
+          <img src="assets/toys/T 01.jpg" alt="Toys Collection" class="gallery-img img-2">
         </div>
       </div>
     </div>
@@ -478,10 +424,10 @@
 
   <section class="section section-alt reveal">
     <div class="container">
-      <div class="section-header" style="justify-content:center; text-align:center;">
+      <div class="section-header center">
         <div>
           <h2>Frequently Asked Questions</h2>
-          <p class="section-subtitle" style="margin:4px auto 0; max-width:680px;">Common buyer questions, order confidence, and checkout clarity in the same spirit as large catalog stores.</p>
+          <p class="section-subtitle">Common buyer questions, order confidence, and checkout clarity.</p>
         </div>
       </div>
       <div class="faq-stack" id="homeFaqAccordion">
@@ -489,9 +435,6 @@
       </div>
     </div>
   </section>
-
-
-
 
   <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
@@ -504,9 +447,9 @@
           </a>
           <p>India's leading destination for premium kidswear, toys, and tech. Curating joy for the next generation.</p>
           <div class="footer-social">
-            <a href="contact.html" aria-label="Contact Support">Support</a>
-            <a href="track-order.html" aria-label="Track Order">Track</a>
-            <a href="privacy-policy.html" aria-label="Privacy Policy">Privacy</a>
+            <a href="contact.html">Support</a>
+            <a href="track-order.html">Track</a>
+            <a href="privacy-policy.html">Privacy</a>
           </div>
         </div>
 
@@ -516,7 +459,7 @@
             <li><a href="dashboard.html">My Profile</a></li>
             <li><a href="dashboard.html">Order History</a></li>
             <li><a href="wishlist.html">My Wishlist</a></li>
-            <li><a href="cart.html">View Cart</a></li>
+            <li><a href="cart.html" onclick="openCartSidebar(); return false;">View Cart</a></li>
           </ul>
         </div>
 
@@ -546,49 +489,9 @@
     </div>
   </footer>
 
-  <!-- ═══ AUTH MODAL ═══ -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeLoginModal()">✕</button>
-      <div style="text-align:center;margin-bottom:24px">
-        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" style="width: 48px; height: 48px; margin-bottom: 8px;">
-        <h3 style="font-size:1.2rem">Welcome to Kidvana</h3>
-        <p style="font-size:0.82rem;color:var(--gray-500)">Use your phone number to continue</p>
-      </div>
-      <div style="display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--gray-100)">
-        <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')"
-          style="flex:1;padding:10px;font-weight:600;font-size:0.88rem;background:none;border:none;cursor:pointer;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px">Login</button>
-        <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')"
-          style="flex:1;padding:10px;font-weight:600;font-size:0.88rem;background:none;border:none;cursor:pointer;color:var(--gray-400);border-bottom:2px solid transparent;margin-bottom:-2px">Sign
-          Up</button>
-      </div>
-      <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label class="form-label">Phone Number</label>
-          <input type="tel" id="loginPhone" class="form-input" placeholder="Enter 10-digit mobile number" maxlength="10"
-            required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Continue</button>
-      </form>
-      <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="signupName" class="form-input" placeholder="Enter your full name" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Phone Number</label>
-          <input type="tel" id="signupPhone" class="form-input" placeholder="Enter 10-digit mobile number"
-            maxlength="10" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-lg" style="width:100%">Create Account</button>
-      </form>
-    </div>
-  </div>
 
   <!-- ═══ SCRIPTS ═══ -->
-  <script src="js/products.js"></script>
-  <script src="js/wishlist.js"></script>
-  <script src="js/cart.js"></script>
+  <!-- ═══ SCRIPTS ═══ -->
   <script src="js/carousel.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/quickview.js"></script>
@@ -599,33 +502,22 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      const swiper = new Swiper('.swiper', {
+      const swiper = new Swiper('.heroSwiper', {
           loop: true,
+          effect: 'fade',
+          fadeEffect: { crossFade: true },
           autoplay: {
-              delay: 4000,
+              delay: 5000,
               disableOnInteraction: false,
           },
           pagination: {
               el: '.swiper-pagination',
               clickable: true,
-              dynamicBullets: true,
           },
           navigation: {
-              nextEl: '.rightSlider',
-              prevEl: '.leftSlider',
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
           },
-          spaceBetween: 20,
-          slidesPerView: 1,
-          breakpoints: {
-              768: {
-                  slidesPerView: 1,
-                  spaceBetween: 20,
-              },
-              1024: {
-                  slidesPerView: 1,
-                  spaceBetween: 20,
-              }
-          }
       });
     });
   </script>
@@ -634,8 +526,6 @@
     // Auth tab switching style fix
     function switchAuthTab(tab) {
       document.querySelectorAll('.auth-tab').forEach(t => {
-        t.style.color = 'var(--gray-400)';
-        t.style.borderBottomColor = 'transparent';
         t.classList.remove('active');
       });
       document.querySelectorAll('.auth-form').forEach(f => {
@@ -645,8 +535,6 @@
       const activeTab = document.querySelector(`.auth-tab[data-tab="${tab}"]`);
       const activeForm = document.getElementById(`${tab}Form`);
       if (activeTab) {
-        activeTab.style.color = 'var(--primary)';
-        activeTab.style.borderBottomColor = 'var(--primary)';
         activeTab.classList.add('active');
       }
       if (activeForm) {

@@ -20,8 +20,19 @@ function openQuickView(productId) {
         <div class="modal quick-view-modal">
             <button class="modal-close" onclick="closeQuickView()">✕</button>
             <div class="quick-view-grid">
-                <div class="quick-view-media" style="background:${product.color}">
-                    <img src="${product.image}" alt="${product.name}">
+                <div class="quick-view-media-wrap">
+                    <div class="quick-view-media" style="background:${product.color}">
+                        <img id="qvMainImage" src="${product.image}" alt="${product.name}">
+                    </div>
+                    ${product.images && product.images.length > 1 ? `
+                        <div class="quick-view-thumbs">
+                            ${product.images.map((img, i) => `
+                                <div class="qv-thumb ${i === 0 ? 'active' : ''}" onclick="updateQVImage(this, '${img}')">
+                                    <img src="${img}" alt="Thumb">
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="quick-view-details">
                     <div class="quick-view-brand">${product.brand}</div>
@@ -68,6 +79,13 @@ function openQuickView(productId) {
             closeQuickView();
         }
     });
+}
+
+function updateQVImage(thumb, src) {
+    const mainImg = document.getElementById('qvMainImage');
+    if (mainImg) mainImg.src = src;
+    document.querySelectorAll('.qv-thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
 }
 
 function closeQuickView() {
