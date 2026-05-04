@@ -73,18 +73,18 @@ async function getShiprocketToken() {
     return response.data.token;
 }
 
-function buildSignature(payload) {
+function buildSignature(payload, encoding = 'hex') {
     return crypto
         .createHmac('sha256', SHIPROCKET_SECRET_KEY)
         .update(JSON.stringify(payload))
-        .digest('base64');
+        .digest(encoding);
 }
 
 function getShiprocketHeaders(payload) {
     return {
         'Content-Type': 'application/json',
         'X-Api-Key': SHIPROCKET_API_KEY,
-        'X-Api-HMAC-SHA256': buildSignature(payload)
+        'X-Api-HMAC-SHA256': buildSignature(payload, 'hex')
     };
 }
 
@@ -318,39 +318,55 @@ router.get('/config', (req, res) => {
 
 // Debug endpoint — tests actual Shiprocket API call without auth
 router.get('/debug-checkout', async (req, res) => {
+    const origin = getOrigin(req);
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    const testPayload = {
+        cart_data: {
+            items: [{
+                variant_id: 274443330,
+                quantity: 1,
+                price: 1299,
+                title: 'Classic Ethnic Wear Set',
+                sku: '69f83282b0d95cc83f5ccb94',
+                image_url: `${origin}/assets/kids-fashion/K01.jpeg`
+            }]
+        },
+        redirect_url: `${origin}/order-success.html?checkout=shiprocket&ref=debug`,
+        timestamp,
+        seller_domain: origin
+    };
+
+    const hexSig = buildSignature(testPayload, 'hex');
+    const base64Sig = buildSignature(testPayload, 'base64');
+
     try {
-        const testPayload = {
-            cart_data: {
-                items: [{
-                    variant_id: '274443330',
-                    quantity: 1,
-                    price: 1299,
-                    title: 'Classic Ethnic Wear Set',
-                    sku: '69f83282b0d95cc83f5ccb94',
-                    image_url: `${getOrigin(req)}/assets/kids-fashion/K01.jpeg`
-                }]
-            },
-            redirect_url: `${getOrigin(req)}/order-success.html?checkout=shiprocket&ref=debug`,
-            timestamp: Math.floor(Date.now() / 1000)
-        };
-
-        console.log('Debug payload:', JSON.stringify(testPayload, null, 2));
-        console.log('Headers:', JSON.stringify(getShiprocketHeaders(testPayload), null, 2));
-
         const response = await axios.post(
             `${SHIPROCKET_BASE_URL}/api/v1/access-token/checkout`,
             testPayload,
-            { headers: getShiprocketHeaders(testPayload), timeout: 15000 }
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Api-Key': SHIPROCKET_API_KEY,
+                    'X-Api-HMAC-SHA256': hexSig
+                },
+                timeout: 15000
+            }
         );
-
-        return res.json({ success: true, data: response.data });
+        return res.json({ success: true, data: response.data, signatureUsed: 'hex' });
     } catch (err) {
         return res.json({
             success: false,
             status: err.response?.status,
             error: err.response?.data || err.message,
-            apiKey: SHIPROCKET_API_KEY ? `${SHIPROCKET_API_KEY.slice(0,4)}****` : 'MISSING',
-            baseUrl: SHIPROCKET_BASE_URL
+            debugInfo: {
+                apiKey: SHIPROCKET_API_KEY ? `${SHIPROCKET_API_KEY.slice(0,4)}****` : 'MISSING',
+                secretKeyFirst4: SHIPROCKET_SECRET_KEY ? SHIPROCKET_SECRET_KEY.slice(0,4) : 'MISSING',
+                baseUrl: SHIPROCKET_BASE_URL,
+                hexSignature: hexSig.slice(0, 16) + '...',
+                base64Signature: base64Sig.slice(0, 16) + '...',
+                payloadSent: testPayload
+            }
         });
     }
 });
