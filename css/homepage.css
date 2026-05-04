@@ -577,7 +577,22 @@
 @media (max-width: 768px) {
     .hero-title { font-size: 2rem; }
     .pics { height: 350px !important; }
-    .homepage-perks-grid { grid-template-columns: 1fr 1fr; }
+    .homepage-perks-grid { 
+        display: flex !important;
+        grid-template-columns: none !important;
+        gap: 0 !important;
+        padding: 20px !important;
+        background: rgba(255, 255, 255, 0.7) !important;
+        backdrop-filter: blur(10px);
+    }
+    .perksSwiper {
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+    }
+    .homepage-perks-grid .feature-item {
+        flex-shrink: 0;
+        width: auto;
+    }
     .testimonials-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; }
 }

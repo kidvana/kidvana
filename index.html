@@ -217,43 +217,45 @@
       </a>
   </div>
 
-  <!-- ═══ FEATURES STRIP (Perks) ═══ -->
+  <!-- ═══ FEATURES STRIP (Perks Slider for Mobile) ═══ -->
   <div class="container mb-5">
-    <div class="features-grid homepage-perks-grid reveal">
-      <div class="feature-item">
-        <div class="feature-icon-wrapper">
-          <i class="ph-duotone ph-truck"></i>
+    <div class="swiper perksSwiper">
+      <div class="swiper-wrapper features-grid homepage-perks-grid">
+        <div class="swiper-slide feature-item">
+          <div class="feature-icon-wrapper">
+            <i class="ph-duotone ph-truck"></i>
+          </div>
+          <div>
+            <p class="feature-label">Free Shipping</p>
+            <span class="feature-sub">On orders above ₹999</span>
+          </div>
         </div>
-        <div>
-          <p class="feature-label">Free Shipping</p>
-          <span class="feature-sub">On orders above ₹999</span>
+        <div class="swiper-slide feature-item">
+          <div class="feature-icon-wrapper">
+            <i class="ph-duotone ph-shield-check"></i>
+          </div>
+          <div>
+            <p class="feature-label">Secured Payments</p>
+            <span class="feature-sub">100% safe transactions</span>
+          </div>
         </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon-wrapper">
-          <i class="ph-duotone ph-shield-check"></i>
+        <div class="swiper-slide feature-item">
+          <div class="feature-icon-wrapper">
+            <i class="ph-duotone ph-tag"></i>
+          </div>
+          <div>
+            <p class="feature-label">Exciting Offers</p>
+            <span class="feature-sub">Best prices guaranteed</span>
+          </div>
         </div>
-        <div>
-          <p class="feature-label">Secured Payments</p>
-          <span class="feature-sub">100% safe transactions</span>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon-wrapper">
-          <i class="ph-duotone ph-tag"></i>
-        </div>
-        <div>
-          <p class="feature-label">Exciting Offers</p>
-          <span class="feature-sub">Best prices guaranteed</span>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon-wrapper">
-          <i class="ph-duotone ph-certificate"></i>
-        </div>
-        <div>
-          <p class="feature-label">100% Genuine</p>
-          <span class="feature-sub">Authentic products only</span>
+        <div class="swiper-slide feature-item">
+          <div class="feature-icon-wrapper">
+            <i class="ph-duotone ph-certificate"></i>
+          </div>
+          <div>
+            <p class="feature-label">100% Genuine</p>
+            <span class="feature-sub">Authentic products only</span>
+          </div>
         </div>
       </div>
     </div>
@@ -518,6 +520,17 @@
               nextEl: '.swiper-button-next',
               prevEl: '.swiper-button-prev',
           },
+      });
+      const perksSwiper = new Swiper('.perksSwiper', {
+          slidesPerView: 1.2,
+          spaceBetween: 16,
+          breakpoints: {
+              768: {
+                  slidesPerView: 4,
+                  spaceBetween: 0,
+                  enabled: false // Disable slider on desktop
+              }
+          }
       });
     });
   </script>
