@@ -408,7 +408,7 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
                 let title = String(item.name || item.title || 'Product');
                 let image = String(item.image || item.image_url || '');
 
-                // Fetch latest data from DB to ensure we have the real Shiprocket ID
+                // First try DB lookup
                 try {
                     const dbProduct = await Product.findById(productId);
                     if (dbProduct) {
@@ -420,7 +420,29 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
                         image = dbProduct.image;
                     }
                 } catch (e) {
-                    console.error('DB fetch failed for product:', productId, e.message);
+                    // DB not available — try mockProducts
+                    const mockProduct = (req.mockProducts || []).find(
+                        p => String(p._id) === String(productId) || String(p.id) === String(productId)
+                    );
+                    if (mockProduct) {
+                        if (mockProduct.shiprocketVariantId) {
+                            variantId = String(mockProduct.shiprocketVariantId);
+                        }
+                        price = price || mockProduct.price;
+                        title = title || mockProduct.name;
+                        image = image || mockProduct.image;
+                    }
+                    console.error('DB fetch failed, used mock fallback for product:', productId);
+                }
+
+                // If still no Shiprocket ID found from DB, try mock fallback
+                if (variantId === productId) {
+                    const mockProduct = (req.mockProducts || []).find(
+                        p => String(p._id) === String(productId) || String(p.id) === String(productId)
+                    );
+                    if (mockProduct?.shiprocketVariantId) {
+                        variantId = String(mockProduct.shiprocketVariantId);
+                    }
                 }
 
                 return {
