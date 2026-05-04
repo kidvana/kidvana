@@ -50,23 +50,11 @@ function ensureMongoConnection() {
 
 ensureMongoConnection();
 
-// Shiprocket variant ID map — used when MongoDB is not connected
-const SHIPROCKET_VARIANT_MAP = {
-    'mock201': '274443330',
-    'mock202': '274443331',
-    'mock203': '274443332',
-    'mock204': '274443334',
-    'mock205': '274443335',
-    'mock301': '274443348',
-    'mock302': '274443346',
-    'mock303': '274443344',
-    'mock304': '274443345',
-    'mock401': '274443340',
-};
+// NOTE: _id values below are the REAL MongoDB IDs — so URLs and Shiprocket lookups work even without DB
 
 const MOCK_PRODUCTS = [
     {
-        _id: 'mock201',
+        _id: '69f83282b0d95cc83f5ccb94',
         name: 'Classic Ethnic Wear Set',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -82,7 +70,7 @@ const MOCK_PRODUCTS = [
         description: 'Vibrant ethnic wear set, perfect for festive celebrations and special occasions.'
     },
     {
-        _id: 'mock202',
+        _id: '69f83282b0d95cc83f5ccb95',
         name: 'Designer Kurta Set',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -98,7 +86,7 @@ const MOCK_PRODUCTS = [
         description: 'Stylish and soft cotton kurta set for everyday comfort and small gatherings.'
     },
     {
-        _id: 'mock203',
+        _id: '69f83282b0d95cc83f5ccb96',
         name: 'Festive Party Dress',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -114,7 +102,7 @@ const MOCK_PRODUCTS = [
         description: 'Elegant party dress featuring premium fabric and comfortable fit for kids.'
     },
     {
-        _id: 'mock204',
+        _id: '69f83282b0d95cc83f5ccb97',
         name: 'Toddler Playwear Set',
         brand: 'PlayTime',
         category: 'baby-kids',
@@ -130,7 +118,7 @@ const MOCK_PRODUCTS = [
         description: 'Breathable and soft cotton playwear set for toddlers, ideal for all-day play.'
     },
     {
-        _id: 'mock205',
+        _id: '69f83282b0d95cc83f5ccb98',
         name: 'Traditional Sherwani',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -146,7 +134,7 @@ const MOCK_PRODUCTS = [
         description: 'Exquisite traditional sherwani set for a royal touch to festive celebrations.'
     },
     {
-        _id: 'mock206',
+        _id: '69f83282b0d95cc83f5ccb99',
         name: 'Casual Western Set',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -162,7 +150,7 @@ const MOCK_PRODUCTS = [
         description: 'Comfortable and stylish western wear set for kids everyday casual outings.'
     },
     {
-        _id: 'mock207',
+        _id: '69f83282b0d95cc83f5ccb9a',
         name: 'Floral Print Dress',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -178,7 +166,7 @@ const MOCK_PRODUCTS = [
         description: 'Beautiful floral print dress for girls, perfect for summer and spring occasions.'
     },
     {
-        _id: 'mock208',
+        _id: '69f83282b0d95cc83f5ccb9b',
         name: 'Baby Boy Festive Suit',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -194,7 +182,7 @@ const MOCK_PRODUCTS = [
         description: 'Dapper festive suit for baby boys, ideal for weddings and special celebrations.'
     },
     {
-        _id: 'mock209',
+        _id: '69f83282b0d95cc83f5ccb9c',
         name: 'Premium Cotton Kurta',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -210,7 +198,7 @@ const MOCK_PRODUCTS = [
         description: 'Premium pure cotton kurta for kids, breathable and perfect for daily ethnic wear.'
     },
     {
-        _id: 'mock210',
+        _id: '69f83282b0d95cc83f5ccb9d',
         name: 'Embroidered Party Wear',
         brand: 'GenZe Kids',
         category: 'baby-kids',
@@ -226,7 +214,7 @@ const MOCK_PRODUCTS = [
         description: 'Beautifully embroidered party wear for kids, crafted for special occasions.'
     },
     {
-        _id: 'mock211',
+        _id: '69f83282b0d95cc83f5ccb9e',
         name: 'Summer Shorts Set',
         brand: 'PlayTime',
         category: 'baby-kids',
@@ -242,7 +230,7 @@ const MOCK_PRODUCTS = [
         description: 'Light and comfortable summer shorts set for active kids who love to play.'
     },
     {
-        _id: 'mock301',
+        _id: '69f83282b0d95cc83f5ccb9f',
         name: 'Interactive Learning Toy',
         brand: 'SmartPlay',
         category: 'toys',
