@@ -82,10 +82,10 @@ function ensureAuthModal() {
                     <p style="font-size:0.9rem;color:var(--gray-500)">Enter the 4-digit code sent to <br><strong id="displayUserPhone"></strong></p>
                 </div>
                 <div class="otp-input-group" style="display:flex;justify-content:center;gap:12px;margin-bottom:32px">
-                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next')" onkeydown="moveOTPFocus(this, 'prev')">
-                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next')" onkeydown="moveOTPFocus(this, 'prev')">
-                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next')" onkeydown="moveOTPFocus(this, 'prev')">
-                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next')" onkeydown="moveOTPFocus(this, 'prev')">
+                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next', event)" onkeydown="moveOTPFocus(this, 'prev', event)">
+                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next', event)" onkeydown="moveOTPFocus(this, 'prev', event)">
+                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next', event)" onkeydown="moveOTPFocus(this, 'prev', event)">
+                    <input type="text" maxlength="1" class="otp-field" onkeyup="moveOTPFocus(this, 'next', event)" onkeydown="moveOTPFocus(this, 'prev', event)">
                 </div>
                 <button class="btn btn-primary btn-lg" style="width:100%;margin-bottom:16px" onclick="verifyMockOTP()">Verify & Login</button>
                 <p style="text-align:center;font-size:0.85rem;color:var(--gray-400)">
@@ -219,12 +219,12 @@ function showMockOTPHint() {
     setTimeout(() => hint.remove(), 10000);
 }
 
-function moveOTPFocus(field, direction) {
+function moveOTPFocus(field, direction, e) {
     if (direction === 'next' && field.value.length === 1) {
         const next = field.nextElementSibling;
         if (next) next.focus();
     }
-    if (direction === 'prev' && event.key === 'Backspace' && field.value.length === 0) {
+    if (direction === 'prev' && e && e.key === 'Backspace' && field.value.length === 0) {
         const prev = field.previousElementSibling;
         if (prev) prev.focus();
     }
