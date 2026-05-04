@@ -12,6 +12,8 @@ const SHIPROCKET_ORDER_DETAILS_URL = process.env.SHIPROCKET_CHECKOUT_ORDER_DETAI
 const SHIPROCKET_API_KEY = process.env.SHIPROCKET_CHECKOUT_API_KEY || '';
 const SHIPROCKET_SECRET_KEY = process.env.SHIPROCKET_CHECKOUT_SECRET_KEY || '';
 const SHIPROCKET_WEBHOOK_SECRET = process.env.SHIPROCKET_CHECKOUT_WEBHOOK_SECRET || '';
+const SHIPROCKET_API_EMAIL = process.env.SHIPROCKET_API_EMAIL || '';
+const SHIPROCKET_API_PASSWORD = process.env.SHIPROCKET_API_PASSWORD || '';
 
 const CATEGORY_META = {
     'baby-kids': {
@@ -58,6 +60,17 @@ function isShiprocketConfigured() {
         !SHIPROCKET_API_KEY.includes('PASTE_YOUR_') && 
         !SHIPROCKET_SECRET_KEY.includes('PASTE_YOUR_')
     );
+}
+
+async function getShiprocketToken() {
+    if (!SHIPROCKET_API_EMAIL || !SHIPROCKET_API_PASSWORD) {
+        throw new Error('Shiprocket Standard API credentials missing in .env');
+    }
+    const response = await axios.post('https://apiv2.shiprocket.in/v1/external/auth/login', {
+        email: SHIPROCKET_API_EMAIL,
+        password: SHIPROCKET_API_PASSWORD
+    });
+    return response.data.token;
 }
 
 function buildSignature(payload) {
@@ -117,7 +130,7 @@ async function getCatalogProducts(req) {
 }
 
 function normalizeCatalogProduct(product, req) {
-    const id = String(product._id || product.id || '');
+    const id = String(product.shiprocketVariantId || product._id || product.id || '');
     const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12;
     const updatedAt = product.updatedAt || product.createdAt || new Date().toISOString();
     const imageUrl = toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '');
@@ -139,7 +152,7 @@ function normalizeCatalogProduct(product, req) {
                 title: String(product.name || ''),
                 price: Number(product.price || 0).toFixed(2),
                 quantity: stock,
-                sku: id,
+                sku: String(product.sku || product._id || id),
                 updated_at: updatedAt,
                 image: {
                     src: imageUrl
@@ -388,13 +401,26 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
 
     const payload = {
         cart_data: {
-            items: cartItems.map(item => ({
-                variant_id: String(item.variant_id || item.productId || item.id || ''),
-                quantity: Number(item.quantity || item.qty || 1),
-                price: Number(item.price || item.mrp || 0),
-                title: String(item.name || item.title || 'Product'),
-                sku: String(item.sku || item.variant_id || item.productId || item.id || ''),
-                image_url: String(item.image || item.image_url || '')
+            items: await Promise.all(cartItems.map(async (item) => {
+                const productId = item.variant_id || item.productId || item.id;
+                let variantId = productId;
+                
+                // Try to find the real Shiprocket Variant ID from DB
+                try {
+                    const dbProduct = await Product.findById(productId);
+                    if (dbProduct && dbProduct.shiprocketVariantId) {
+                        variantId = String(dbProduct.shiprocketVariantId);
+                    }
+                } catch (e) {}
+
+                return {
+                    variant_id: String(variantId),
+                    quantity: Number(item.quantity || item.qty || 1),
+                    price: Number(item.price || item.mrp || 0),
+                    title: String(item.name || item.title || 'Product'),
+                    sku: String(item.sku || variantId),
+                    image_url: String(item.image || item.image_url || '')
+                };
             }))
         },
         redirect_url: redirectUrl,
@@ -553,6 +579,58 @@ router.post('/webhooks/order', async (req, res) => {
         }, req);
 
         return res.json({ status: 'received' });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+});
+
+router.post('/sync-products', requireAuth, async (req, res) => {
+    try {
+        const token = await getShiprocketToken();
+        const products = await Product.find({ 
+            $or: [
+                { shiprocketVariantId: { $exists: false } },
+                { shiprocketVariantId: null }
+            ]
+        });
+
+        const results = [];
+        for (const product of products) {
+            try {
+                const response = await axios.post(
+                    'https://apiv2.shiprocket.in/v1/external/products',
+                    {
+                        sku: String(product._id), // Use full ID as SKU
+                        name: product.name,
+                        type: 'Single',
+                        qty: 100,
+                        price: product.price,
+                        mrp: product.mrp,
+                        brand: product.brand,
+                        category_code: 'Othe_',
+                        description: product.description
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                if (response.data && response.data.id) {
+                    product.shiprocketProductId = response.data.id;
+                    // In single type, variant ID is usually the same as product ID in some versions, 
+                    // or we might need to fetch it. For now, we'll store product ID.
+                    product.shiprocketVariantId = response.data.id;
+                    await product.save();
+                    results.push({ name: product.name, status: 'synced', id: response.data.id });
+                }
+            } catch (err) {
+                results.push({ 
+                    name: product.name, 
+                    status: 'failed', 
+                    error: err.response?.data?.message || err.message 
+                });
+            }
+        }
+
+        return res.json({ message: 'Sync complete', results });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }

@@ -12,7 +12,9 @@ const productSchema = new mongoose.Schema({
     reviews: { type: Number, default: 0 },
     tags: [String],
     color: { type: String },
-    description: { type: String }
+    description: { type: String },
+    shiprocketProductId: { type: Number },
+    shiprocketVariantId: { type: Number }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);
