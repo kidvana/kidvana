@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="css/product.css">
     <link rel="stylesheet" href="css/homepage.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <!-- Core Scripts -->
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <!-- Phosphor Icons (Premium) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         .category-hero {
             padding: 60px 0 40px;
@@ -110,46 +115,106 @@
 <body>
     <div class="scroll-progress"></div>
 
-    <header class="header">
-        <div class="container header-main">
-            <div class="hamburger"><span></span><span></span><span></span></div>
-            <a href="index.html" class="header-logo">
-                <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo">
-                <div class="logo-text-group">
-                    <span class="logo-text">Kidvana</span>
-                    <span class="logo-sub">Shop Smart &bull; Live Bold</span>
-                </div>
-            </a>
-            <div class="header-search">
-                <input type="text" class="search-input" placeholder="Search premium products...">
-                <button class="search-btn">&#128269;</button>
-            </div>
-            <div class="header-actions">
-                <a href="dashboard.html" class="header-action-btn" title="My Account">
-                    <span class="action-icon">&#128100;</span>
-                    <span class="action-label">Account</span>
-                </a>
-                <a href="wishlist.html" class="header-action-btn" title="Wishlist">
-                    <div class="action-icon-wrapper">
-                        <span class="action-icon">&#9825;</span>
-                        <span class="wishlist-count count-badge">0</span>
-                    </div>
-                    <span class="action-label">Wishlist</span>
-                </a>
-                <a href="cart.html" class="header-action-btn" title="Shopping Cart">
-                    <div class="action-icon-wrapper">
-                        <span class="action-icon">&#128722;</span>
-                        <span class="cart-count count-badge">0</span>
-                    </div>
-                    <span class="action-label">Cart</span>
-                </a>
-            </div>
-        </div>
-    </header>
+  <!-- ═══ TOP BAR ═══ -->
+  <div class="top-bar">
+    <div class="top-bar-inner container">
+      <div class="top-bar-ticker">
+        <span>Call us at +91 9354841822 for bulk orders or any other assistance</span>
+        <span>Premium Kidswear • Toys • Gadgets • PAN India Delivery</span>
+      </div>
+    </div>
+  </div>
 
+  <!-- ═══ HEADER ═══ -->
+  <header class="header" id="mainHeader">
+    <div class="header-main">
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <a href="index.html" class="header-logo">
+        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="logo-img">
+        <div class="logo-text-group">
+          <div class="logo-text">Kidvana</div>
+          <span class="logo-sub">Shop Smart • Live Bold</span>
+        </div>
+      </a>
+
+      <div class="header-search">
+        <div class="search-input-wrapper">
+          <i class="ph ph-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input" placeholder="Search premium products..."
+            autocomplete="off">
+        </div>
+        <div class="search-suggestions"></div>
+      </div>
+
+      <div class="header-actions">
+        <a href="dashboard.html" class="header-action-btn" title="My Account">
+          <div class="action-icon-wrapper">
+            <i class="ph ph-user-circle action-icon"></i>
+          </div>
+          <span class="action-label">Account</span>
+        </a>
+        <a href="wishlist.html" class="header-action-btn" title="Wishlist">
+          <div class="action-icon-wrapper">
+            <i class="ph ph-heart action-icon"></i>
+            <span class="wishlist-count count-badge">0</span>
+          </div>
+          <span class="action-label">Wishlist</span>
+        </a>
+        <a href="cart.html" class="header-action-btn" title="Shopping Cart" onclick="openCartSidebar(); return false;">
+          <div class="action-icon-wrapper">
+            <i class="ph ph-shopping-cart-simple action-icon"></i>
+            <span class="cart-count count-badge">0</span>
+          </div>
+          <span class="action-label">Cart</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Category Navigation -->
     <nav class="category-nav">
-        <div class="container"><ul class="category-nav-list"></ul></div>
+      <ul class="category-nav-list">
+        <!-- Rendered by JS -->
+      </ul>
     </nav>
+  </header>
+
+  <!-- ═══ CART SIDEBAR (Drawer) ═══ -->
+  <div class="cart-sidebar-overlay" id="cartOverlay"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-sidebar-header">
+      <div class="cart-header-title">
+        <i class="ph ph-shopping-cart-simple"></i>
+        <h3>My Bag <span class="cart-count-title">(0 Items)</span></h3>
+      </div>
+      <button class="cart-sidebar-close" onclick="closeCartSidebar()">✕</button>
+    </div>
+    
+    <div class="cart-sidebar-content" id="cartSidebarContent">
+      <!-- Items rendered by JS -->
+      <div class="cart-empty-state">
+        <div class="empty-icon">🛒</div>
+        <p>Your bag is empty</p>
+        <a href="category.html" class="btn btn-primary">Start Shopping</a>
+      </div>
+    </div>
+
+    <div class="cart-sidebar-footer" id="cartSidebarFooter">
+      <div class="cart-total-row">
+        <span>Subtotal</span>
+        <span class="cart-subtotal-val">₹0</span>
+      </div>
+      <p class="cart-shipping-note">Shipping & taxes calculated at checkout</p>
+      <button class="btn btn-primary btn-block btn-lg" onclick="window.location.href='cart.html'">
+        Proceed to Checkout
+      </button>
+      <button class="btn btn-outline btn-block mt-2" onclick="closeCartSidebar()">
+        Continue Shopping
+      </button>
+    </div>
+  </div>
 
     <main>
         <section class="category-hero reveal">
@@ -253,8 +318,6 @@
 
     <button class="back-to-top">&#8593;</button>
 
-    <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script src="js/quickview.js"></script>

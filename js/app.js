@@ -1,19 +1,19 @@
-﻿// Main storefront app helpers
+// Main storefront app helpers
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderCommonHeader();
-    initScrollRefinements();
-    initMobileMenu();
-    initSearch();
-    initIntersectionObserver();
-    renderFeaturedCategories();
-    renderHomeSections();
-    renderHomeCategoryLinks();
-    renderAgeShowcase();
-    renderHomeFaqs();
-    renderFloatingSupport();
-    initFaqAccordion();
-    initStorefrontForms();
+    try { renderCommonHeader(); } catch(e) { console.error(e); }
+    try { initScrollRefinements(); } catch(e) { console.error(e); }
+    try { initMobileMenu(); } catch(e) { console.error(e); }
+    try { initSearch(); } catch(e) { console.error(e); }
+    try { initIntersectionObserver(); } catch(e) { console.error(e); }
+    try { renderFeaturedCategories(); } catch(e) { console.error(e); }
+    try { renderHomeSections(); } catch(e) { console.error(e); }
+    try { renderHomeCategoryLinks(); } catch(e) { console.error(e); }
+    try { renderAgeShowcase(); } catch(e) { console.error(e); }
+    try { renderHomeFaqs(); } catch(e) { console.error(e); }
+    try { renderFloatingSupport(); } catch(e) { console.error(e); }
+    try { initFaqAccordion(); } catch(e) { console.error(e); }
+    try { initStorefrontForms(); } catch(e) { console.error(e); }
 
     if (typeof fetchProducts === 'function') {
         fetchProducts();
@@ -297,7 +297,7 @@ function renderCommonHeader() {
                     <span class="nav-icon">${category.icon}</span> ${category.name}
                 </a>
             `).join('')}
-            <a href="cart.html"><span class="nav-icon">&#128722;</span> My Cart</a>
+            <a href="cart.html" onclick="openCartSidebar(); return false;"><span class="nav-icon">&#128722;</span> My Cart</a>
             <a href="dashboard.html"><span class="nav-icon">&#128100;</span> My Profile</a>
         `;
     }
