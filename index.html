@@ -498,6 +498,40 @@
 
   <!-- ═══ SCRIPTS ═══ -->
   <!-- ═══ SCRIPTS ═══ -->
+  <!-- ═══ AUTH MODAL ═══ -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <div class="auth-modal-header">
+        <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" class="auth-logo">
+        <h3>Welcome to Kidvana</h3>
+        <p>Use your phone number to continue</p>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" data-tab="signup" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="loginPhone" class="form-input" placeholder="Enter 10-digit mobile number" maxlength="10" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg full-width">Continue</button>
+      </form>
+      <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="signupName" class="form-input" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" id="signupPhone" class="form-input" placeholder="Enter 10-digit mobile number" maxlength="10" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg full-width">Create Account</button>
+      </form>
+    </div>
+  </div>
+
   <script src="js/carousel.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/quickview.js"></script>
