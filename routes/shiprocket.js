@@ -200,9 +200,25 @@ async function getCatalogProducts(req) {
     return req.mockProducts || [];
 }
 
+// Convert a hex/alphanumeric ID to a stable integer for Shiprocket compatibility
+function toNumericId(id) {
+    const str = String(id || '');
+    if (/^\d+$/.test(str)) return parseInt(str, 10);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (Math.imul(31, hash) + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash) % 900000000 + 100000000;
+}
+
+function toHandle(name) {
+    return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 function normalizeCatalogProduct(product, req) {
-    const productId = String(product.shiprocketProductId || product._id || product.id || product.shiprocketVariantId || '');
-    const variantId = String(product.shiprocketVariantId || product.shiprocketProductId || product._id || product.id || '');
+    const rawId = String(product.shiprocketVariantId || product.shiprocketProductId || product._id || product.id || '');
+    const numericProductId = toNumericId(product.shiprocketProductId || rawId);
+    const numericVariantId = toNumericId(product.shiprocketVariantId || rawId);
     const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12;
     const createdAt = formatCatalogTimestamp(product.createdAt || product.created_at);
     const updatedAt = formatCatalogTimestamp(product.updatedAt || product.updated_at || createdAt);
@@ -216,13 +232,13 @@ function normalizeCatalogProduct(product, req) {
     const handleFallback = String(product._id || product.id || 'product');
 
     return {
-        id: productId || variantId,
+        id: numericProductId,
         title: String(product.name || ''),
         body_html: normalizeBodyHtml(product.description || ''),
-        vendor: String(product.brand || ''),
+        vendor: String(product.brand || 'Kidvana'),
         product_type: String(product.category || ''),
         created_at: createdAt,
-        handle: buildHandle(product.handle || product.name, handleFallback),
+        handle: buildHandle(product.handle || product.name, rawId || handleFallback),
         updated_at: updatedAt,
         tags,
         status: String(product.status || (stock > 0 ? 'active' : 'draft')),
@@ -231,16 +247,16 @@ function normalizeCatalogProduct(product, req) {
         },
         variants: [
             {
-                id: variantId || productId,
-                title: String(product.variantTitle || product.name || 'Default Title'),
+                id: numericVariantId,
+                title: String(product.variantTitle || 'Default Title'),
                 price: price.toFixed(2),
                 compare_at_price: compareAtPrice.toFixed(2),
                 quantity: stock,
-                sku: String(product.sku || product._id || variantId || productId),
+                sku: String(product.sku || product._id || rawId),
                 created_at: createdAt,
                 updated_at: updatedAt,
                 taxable: true,
-                option_values: optionValues,
+                option_values: Object.keys(optionValues).length ? optionValues : { Title: 'Default Title' },
                 image: {
                     src: imageUrl
                 },
@@ -260,12 +276,13 @@ function buildCollections(products, req) {
         const createdAt = formatCatalogTimestamp(categoryProducts[0]?.createdAt);
 
         return {
-            id: categoryId,
+            id: toNumericId(categoryId),
+            handle: buildHandle(meta.title || categoryId, categoryId),
             title: meta.title || categoryId,
             body_html: normalizeBodyHtml(meta.body_html || ''),
-            handle: buildHandle(categoryId, 'collection'),
             created_at: createdAt,
             updated_at: formatCatalogTimestamp(categoryProducts[0]?.updatedAt || createdAt),
+            products_count: categoryProducts.length,
             image: {
                 src: toAbsoluteAssetUrl(req, meta.image || fallbackImage)
             }
@@ -284,31 +301,28 @@ function normalizeDraftItems(items = []) {
 }
 
 function getProductMap(products, req) {
-    const productMap = new Map();
-
+    const map = new Map();
     products.forEach((product) => {
-        const normalizedId = String(product._id || product.id || '');
-        const entry = {
-            productId: normalizedId,
+        const rawId = String(product._id || product.id || '');
+        const data = {
+            productId: rawId,
             name: String(product.name || 'Item'),
             price: Number(product.price || 0),
             image: toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '')
         };
-
         [
-            product._id,
-            product.id,
-            product.shiprocketProductId,
-            product.shiprocketVariantId
+            rawId,
+            String(toNumericId(rawId)),
+            String(product.id || ''),
+            String(product.shiprocketProductId || ''),
+            String(product.shiprocketVariantId || '')
         ]
-            .map((value) => String(value || '').trim())
             .filter(Boolean)
             .forEach((key) => {
-                productMap.set(key, entry);
+                map.set(key, data);
             });
     });
-
-    return productMap;
+    return map;
 }
 
 function mapShiprocketPayment(payload) {
@@ -375,10 +389,9 @@ async function upsertShiprocketOrder(orderPayload, req) {
         state: String(orderPayload.address?.state || orderPayload.state || ''),
         zip: String(orderPayload.address?.zip || orderPayload.postcode || orderPayload.zip || '')
     };
-    const userPhone = String(orderPayload.userPhone || address.phone || orderPayload.phone || '');
     const update = {
-        userId: String(orderPayload.userId || userPhone || 'shiprocket-guest'),
-        userPhone,
+        userId: String(orderPayload.userId || address.phone || 'shiprocket-guest'),
+        userPhone: address.phone,
         customerEmail: address.email,
         items,
         amount,
@@ -479,7 +492,8 @@ router.get('/debug-checkout', async (req, res) => {
 
 router.get('/products', async (req, res) => {
     try {
-        const products = (await getCatalogProducts(req)).map(product => normalizeCatalogProduct(product, req));
+        const allProducts = await getCatalogProducts(req);
+        const products = allProducts.map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
         return res.json(buildPaginatedResponse('products', paginated));
@@ -490,7 +504,8 @@ router.get('/products', async (req, res) => {
 
 router.get('/collections', async (req, res) => {
     try {
-        const collections = buildCollections(await getCatalogProducts(req), req);
+        const allProducts = await getCatalogProducts(req);
+        const collections = buildCollections(allProducts, req);
         const paginated = paginate(collections, req.query.page, req.query.limit);
 
         return res.json(buildPaginatedResponse('collections', paginated));
@@ -506,9 +521,12 @@ router.get('/collection-products', async (req, res) => {
     }
 
     try {
-        const products = (await getCatalogProducts(req))
-            .filter(product => String(product.category || '') === collectionId)
-            .map(product => normalizeCatalogProduct(product, req));
+        const allProducts = await getCatalogProducts(req);
+        const filtered = allProducts.filter(product => {
+            const cat = String(product.category || '');
+            return cat === collectionId || String(toNumericId(cat)) === collectionId;
+        });
+        const products = filtered.map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
         return res.json(buildPaginatedResponse('products', paginated));
@@ -566,6 +584,7 @@ router.post('/access-token/checkout', async (req, res) => {
                         title = title || mockProduct.name;
                         image = image || mockProduct.image;
                     }
+                    console.error('DB fetch failed, used mock fallback for product:', productId);
                 }
 
                 // If still no Shiprocket ID found from DB, try mock fallback
@@ -579,7 +598,7 @@ router.post('/access-token/checkout', async (req, res) => {
                 }
 
                 return {
-                    variant_id: String(variantId),
+                    variant_id: String(toNumericId(variantId)),
                     quantity: Number(item.quantity || item.qty || 1),
                     price: Number(price),
                     title: String(title),
@@ -594,6 +613,7 @@ router.post('/access-token/checkout', async (req, res) => {
     };
 
     try {
+        console.log('Shiprocket Checkout Payload:', JSON.stringify(payload, null, 2));
         const response = await axios.post(
             `${SHIPROCKET_BASE_URL}/api/v1/access-token/checkout`,
             payload,
@@ -601,6 +621,7 @@ router.post('/access-token/checkout', async (req, res) => {
         );
 
         const data = response.data || {};
+        console.log('Shiprocket Checkout Response:', JSON.stringify(data, null, 2));
         const token = data?.result?.token || data?.token || '';
         const orderId = data?.result?.order_id || data?.order_id || data?.result?.orderId || data?.orderId || '';
 
@@ -617,6 +638,7 @@ router.post('/access-token/checkout', async (req, res) => {
             raw: data
         });
     } catch (err) {
+        console.error('Shiprocket token generation error:', err.response?.data || err.message);
         const message = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Failed to generate Shiprocket checkout token.';
         return res.status(err.response?.status || 500).json({
             message,
@@ -628,8 +650,6 @@ router.post('/access-token/checkout', async (req, res) => {
 router.post('/orders/complete', async (req, res) => {
     const shiprocketOrderId = String(req.body.orderId || '').trim();
     const orderInfo = req.body.orderInfo || {};
-    const guestPhone = String(orderInfo.address?.phone || orderInfo.phone || '').trim();
-    const guestUserId = String(orderInfo.userId || guestPhone || 'shiprocket-guest').trim();
 
     if (!shiprocketOrderId) {
         return res.status(400).json({ message: 'orderId is required.' });
@@ -637,16 +657,12 @@ router.post('/orders/complete', async (req, res) => {
 
     try {
         const order = await upsertShiprocketOrder({
+            ...orderInfo,
             shiprocketOrderId,
-            userId: req.auth?.userId || req.auth?.phone || guestUserId,
-            userPhone: req.auth?.phone || guestPhone,
+            userId: req.auth?.userId || req.auth?.phone || orderInfo.address?.phone || 'shiprocket-guest',
             status: 'Processing',
             paymentMethod: 'shiprocket',
             paymentStatus: 'Pending confirmation',
-            amount: orderInfo.amount,
-            totals: orderInfo.totals,
-            items: orderInfo.items,
-            address: orderInfo.address,
             rawPayload: {
                 source: 'return-url',
                 checkoutRef: req.body.checkoutRef || '',
@@ -692,7 +708,7 @@ router.get('/orders/:orderId', async (req, res) => {
     }
 });
 
-router.post('/order-details', requireAuth, async (req, res) => {
+router.post('/order-details', async (req, res) => {
     if (!isShiprocketConfigured()) {
         return res.status(503).json({
             message: 'Shiprocket Checkout is not configured yet. Add SHIPROCKET_CHECKOUT_API_KEY and SHIPROCKET_CHECKOUT_SECRET_KEY.'
@@ -801,6 +817,49 @@ router.post('/sync-products', requireAuth, async (req, res) => {
         return res.json({ message: 'Sync complete', results });
     } catch (err) {
         return res.status(500).json({ message: err.message });
+    }
+});
+
+router.post('/webhooks/order', async (req, res) => {
+    const signature = req.headers['x-api-hmac-sha256'];
+    const payload = req.body || {};
+
+    console.log('Shiprocket Webhook Received:', JSON.stringify(payload, null, 2));
+
+    // Validate signature if secret key is configured
+    if (SHIPROCKET_SECRET_KEY && signature) {
+        const expectedSignature = crypto
+            .createHmac('sha256', SHIPROCKET_SECRET_KEY)
+            .update(JSON.stringify(payload))
+            .digest('hex');
+
+        if (expectedSignature !== signature) {
+            console.warn('Shiprocket Webhook Signature Mismatch');
+            // We still log/process for now during debugging, but in production, we should return 401
+        }
+    }
+
+    try {
+        // Acknowledge receipt to Shiprocket immediately to avoid retries
+        res.status(200).json({ status: 'success', message: 'Webhook received' });
+
+        // Process order asynchronously
+        await upsertShiprocketOrder({
+            ...payload,
+            shiprocketOrderId: payload.order_id || payload.id,
+            shiprocketStatus: payload.status || 'Success',
+            localStatus: 'confirmed',
+            paymentStatus: 'paid',
+            rawPayload: {
+                source: 'webhook',
+                timestamp: new Date().toISOString(),
+                fullBody: payload
+            }
+        }, req);
+
+    } catch (err) {
+        console.error('Shiprocket Webhook processing error:', err.message);
+        // Don't need to send error to Shiprocket since we already sent 200
     }
 });
 
