@@ -1,521 +1,96 @@
 /* ── RESPONSIVE BREAKPOINTS ── */
 
-/* Tablet */
+/* Tablet & Smaller Desktop */
 @media (max-width: 1024px) {
-    .hero-carousel {
-        height: 320px;
-    }
-
-    .hero-slide-content h1 {
-        font-size: 1.8rem;
-    }
-
-    .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-    }
-
-    .features-glass {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
-        padding: 32px;
-    }
-
-    .mission-grid {
-        gap: 40px;
-    }
-
-    .mission-content h2 {
-        font-size: 2.5rem;
-    }
-
-    .product-detail-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-6);
-    }
-
-    .cart-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cart-summary {
-        position: static;
-    }
-
-    .category-page-grid {
-        grid-template-columns: 220px 1fr;
-    }
-
-    .category-grid-homepage {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    /* Trending Categories - Tablet */
-    .tcat-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-    }
-
-    /* Testimonials - Tablet */
-    .testimonials-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
+    .container { padding: 0 32px; }
+    
+    .mission-polish-title { font-size: 2.8rem; }
+    .hero-title { font-size: 2.2rem; }
+    
+    .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 48px; }
 }
 
 /* Mobile Large */
 @media (max-width: 768px) {
-    :root {
-        --header-height: 56px;
-    }
+    .container { padding: 0 20px; }
 
-    .header-main {
-        gap: var(--space-3);
-        padding: var(--space-2) var(--space-3);
-    }
-
-    .header-search {
-        display: none;
-    }
-
-    .hamburger {
-        display: flex;
-    }
-
-    .header-login-btn span {
-        display: none;
-    }
-
-    .header-login-btn {
-        padding: 8px 12px;
-    }
-
-    .header-logo .logo-sub {
-        display: none;
-    }
-
-    .header-logo .logo-text {
-        font-size: 1.1rem;
-    }
-
-    .header-action-btn .action-label {
-        display: none;
-    }
-
-    .header-action-btn {
-        padding: var(--space-2);
-    }
-
-    .category-nav-item a {
-        padding: 8px 12px;
-        font-size: 0.72rem;
-    }
-
-    .hero-carousel {
-        height: 260px;
-        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    }
-
-    .hero-slide-content {
-        padding: var(--space-6) var(--space-5);
-    }
-
-    .hero-slide-content h1 {
-        font-size: 1.4rem;
-    }
-
-    .hero-slide-content p {
-        font-size: 0.85rem;
-    }
-
-    .hero-cta {
-        padding: 10px 20px;
-        font-size: 0.82rem;
-    }
-
-    .section {
-        padding: 60px 0;
-    }
-
-    .top-bar-inner {
-        gap: var(--space-4);
-        justify-content: flex-start;
-        overflow-x: auto;
-        scrollbar-width: none;
-        padding: 0 var(--space-4);
-    }
-    .top-bar-inner::-webkit-scrollbar { display: none; }
+    .header-main { padding: 12px 20px; gap: 16px; }
+    .logo-text { font-size: 1.4rem; }
     
-    .top-bar-text {
-        font-size: 0.65rem;
-    }
-
-    .section-header h2 {
-        font-size: 1.2rem;
-    }
-
-    .container {
-        padding: 0 var(--space-3);
-    }
-
-    .product-scroll-row .product-card {
-        flex: 0 0 160px;
-    }
-
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-3);
-    }
-
-    .features-glass {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 24px;
-        margin-top: -30px;
-    }
-
-    .mission-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-    }
-
-    .mission-content h2 {
-        font-size: 2rem;
-    }
-
-    .mission-stats {
-        justify-content: center;
-        gap: 24px;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-    }
-
-    .feature-item {
-        flex-direction: row;
-        text-align: left;
-        padding: var(--space-3) var(--space-4);
-        align-items: center;
-        gap: var(--space-4);
-    }
-
-    .feature-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 1.1rem;
-    }
+    .hero-intro { padding: 40px 0 10px; }
+    .hero-title { font-size: 1.8rem; }
     
-    .feature-text h4 {
-        font-size: 0.8rem;
-    }
+    .pics { height: 300px !important; }
     
-    .feature-text p {
-        font-size: 0.68rem;
-    }
+    .homepage-perks-grid { grid-template-columns: repeat(2, 1fr); padding: 32px 20px; }
+    .feature-icon { font-size: 2.2rem; }
+    
+    .mission-polish-grid { gap: 48px; }
+    .mission-polish-title { font-size: 2.2rem; }
+    .mission-desc { font-size: 1.1rem; }
+    
+    .testimonials-grid { gap: 24px; }
+    
+    .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+    .footer-logo, .footer-social, .newsletter-form { justify-content: center; }
+    
+    .product-price { font-size: 2rem; }
+    .product-info h1 { font-size: 2rem; }
 
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 48px;
-        text-align: center;
-    }
-
-    .footer-social, .newsletter-form {
-        justify-content: center;
-    }
-
-    .category-page-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .category-sidebar {
-        position: static;
-    }
-
-    .deals-banner {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--space-3);
-    }
-
-    .product-detail-grid {
-        padding: var(--space-4);
-    }
-
-    .product-info h1 {
-        font-size: 1.3rem;
-    }
-
-    .emi-options {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .cart-item {
-        flex-direction: column;
-        gap: var(--space-3);
-    }
-
-    .cart-item-image {
-        width: 100%;
-        height: 180px;
-    }
-
-    .cart-item-price {
-        width: 100%;
-        text-align: left;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: var(--space-2);
-        padding-top: var(--space-3);
-        border-top: 1px solid var(--gray-50);
-    }
-
-    /* Mobile Search refined in header.css */
-
-    .category-grid-homepage {
-        grid-template-columns: repeat(4, 1fr);
-        gap: var(--space-2);
-    }
-
-    /* Header Grid - Mobile */
-    .header-main {
-        grid-template-columns: auto 1fr auto;
-        gap: 10px;
-        padding: 8px 12px;
-    }
-
-    /* Trending Categories - Mobile */
-    .tcat-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-    }
-
-    .tcat-icon {
-        width: 70px;
-        height: 70px;
-        font-size: 1.8rem;
-    }
-
-    .tcat-card p {
-        font-size: 0.72rem;
-    }
-
-    /* Testimonials - Mobile */
-    .testimonials-grid {
-        grid-template-columns: 1fr !important;
-        gap: 16px !important;
-    }
-
-    /* Mission Section - Mobile */
-    .mission-section {
-        padding: 50px 0 !important;
-    }
-
-    /* Fix inline mission grid on mobile */
-    [style*="grid-template-columns:1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-        gap: 30px !important;
-        text-align: center;
-    }
-
-    /* Section padding mobile */
-    .section {
-        padding: 35px 0;
-    }
-
-    /* Slider - Mobile */
-    .pics {
-        height: 200px !important;
-        border-radius: 12px !important;
-    }
-
-    /* Offer banner mobile */
-    .offer-banner {
-        border-radius: 12px;
-        padding: 16px 20px;
-    }
-
-    .offer-text {
-        font-size: 0.85rem;
-    }
-
-    /* Holi banner mobile */
-    .holi-banner {
-        padding: 0 12px !important;
-    }
-
-    /* Section header mobile */
-    .section-header {
-        flex-direction: column;
-        gap: 8px;
-        align-items: flex-start;
-        margin-bottom: 20px;
-    }
-
-    .section-header h2 {
-        font-size: 1.3rem;
-    }
-
-    /* Footer mobile */
-    .footer {
-        padding: 60px 0 40px;
-    }
-
-    .footer-grid {
-        gap: 32px;
-    }
-
-    /* Scroll arrows hide on mobile */
-    .scroll-arrow {
-        display: none;
-    }
-
-    /* Features strip mobile */
-    .features-grid {
-        padding: 16px;
-        border-radius: var(--radius-md);
-    }
-
-    .feature-item {
-        gap: 12px;
-    }
+    .age-grid { grid-template-columns: repeat(2, 1fr); }
+    .category-grid-homepage { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* Mobile Small */
 @media (max-width: 480px) {
-    .hero-carousel {
-        height: 220px;
-    }
+    .container { padding: 0 16px; }
+    
+    .logo-text { font-size: 1.2rem; }
+    .action-icon { font-size: 1.2rem; }
+    
+    .hero-title { font-size: 1.5rem; }
+    .pics { height: 200px !important; border-radius: var(--radius-lg) !important; }
+    
+    .offer-banner { padding: 24px 20px; }
+    .offer-text { font-size: 1rem; }
+    
+    .homepage-perks-grid { grid-template-columns: 1fr; gap: 32px; }
+    
+    .mission-polish-title { font-size: 1.8rem; }
+    .mission-polish-stats { gap: 24px; justify-content: space-around; }
+    .stat-num { font-size: 2rem; }
+    
+    .gallery-img { border-radius: var(--radius-lg); }
+    .img-1 { transform: translateY(-15px); }
+    .img-2 { transform: translateY(15px); }
+    
+    .faq-question { padding: 16px 20px; font-size: 1rem; }
+    
+    .cart-items-wrapper { padding: 24px; }
+    .cart-item { flex-direction: column; align-items: center; text-align: center; }
+    .qty-control { margin: 16px auto 0; }
+    
+    .btn-lg { padding: 12px 24px; font-size: 1rem; }
 
-    .hero-slide-content h1 {
-        font-size: 1.15rem;
-    }
-
-    .hero-slide-content p {
-        display: none;
-    }
-
-    .hero-cta-group {
-        flex-direction: column;
-    }
-
-    .product-scroll-row .product-card {
-        flex: 0 0 145px;
-    }
-
-    .product-card .card-body {
-        padding: var(--space-2) var(--space-3) var(--space-3);
-    }
-
-    .product-card .card-title {
-        font-size: 0.75rem;
-        min-height: auto;
-        -webkit-line-clamp: 1;
-        line-clamp: 1;
-    }
-
-    .product-card .emi-price .amount {
-        font-size: 0.95rem;
-    }
-
-    .features-strip {
-        grid-template-columns: 1fr;
-        gap: var(--space-2);
-    }
-
-    .brand-card {
-        flex: 0 0 110px;
-    }
-
-    .top-bar {
-        font-size: 0.68rem;
-    }
-
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    h2 {
-        font-size: 1.3rem;
-    }
-
-    .cart-item-image {
-        width: 100px;
-        height: 100px;
-    }
-
-    .product-thumbnails {
-        overflow-x: auto;
-        padding-bottom: var(--space-2);
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-    .product-thumbnails::-webkit-scrollbar { display: none; }
-
-    .product-thumb {
-        flex: 0 0 60px;
-        height: 60px;
-    }
-
-    /* Trending Categories - Small Mobile */
-    .tcat-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-    }
-
-    .tcat-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-    }
-
-    .tcat-card p {
-        font-size: 0.68rem;
-    }
-
-    /* Mission heading mobile small */
-    [style*="font-size:2.8rem"] {
-        font-size: 1.6rem !important;
-    }
-
-    /* Mission stats mobile */
-    [style*="display:flex; gap:40px"] {
-        gap: 20px !important;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    [style*="font-size:2.2rem"] {
-        font-size: 1.6rem !important;
-    }
-
-    /* Slider small mobile */
-    .pics {
-        height: 160px !important;
-        border-radius: 10px !important;
-    }
-
-    .container {
-        padding: 0 12px;
-    }
-
-    .section {
-        padding: 28px 0;
-    }
+    .age-grid { grid-template-columns: 1fr; }
+    .category-grid-homepage { grid-template-columns: repeat(2, 1fr); }
+    .brand-card { flex: 0 0 130px; }
 }
 
-/* Desktop large */
-@media (min-width: 1400px) {
-    .container {
-        max-width: 1360px;
-    }
+/* ── Specific Component Tweaks ── */
 
-    .hero-carousel {
-        height: 460px;
-    }
+/* Reveal animations trigger earlier on mobile */
+@media (max-width: 768px) {
+    .reveal { transform: translateY(20px); }
+    .reveal.active { transform: translateY(0); }
+}
 
-    .hero-slide-content h1 {
-        font-size: 2.8rem;
-    }
+/* Better scrolling for category and brand rows */
+.brand-scroll, .product-scroll-row {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+.brand-card, .product-card {
+    scroll-snap-align: start;
 }
