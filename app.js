@@ -10,6 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname));
+app.use(express.static(__dirname));
 
 let isConnected = false;
 mongoose.set('bufferCommands', false);

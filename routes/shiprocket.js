@@ -73,7 +73,7 @@ async function getShiprocketToken() {
     return response.data.token;
 }
 
-function buildSignature(payload, encoding = 'hex') {
+function buildSignature(payload, encoding = 'base64') {
     return crypto
         .createHmac('sha256', SHIPROCKET_SECRET_KEY)
         .update(JSON.stringify(payload))
@@ -84,7 +84,7 @@ function getShiprocketHeaders(payload) {
     return {
         'Content-Type': 'application/json',
         'X-Api-Key': SHIPROCKET_API_KEY,
-        'X-Api-HMAC-SHA256': buildSignature(payload, 'hex')
+        'X-Api-HMAC-SHA256': buildSignature(payload, 'base64')
     };
 }
 
@@ -106,13 +106,11 @@ function toAbsoluteAssetUrl(req, assetPath) {
 }
 
 function normalizeSellerDomain(rawValue, req) {
-    const value = String(rawValue || '').trim();
-    if (!value) return getOrigin(req);
-    if (/^https?:\/\//i.test(value)) return value;
-
-    const origin = getOrigin(req);
-    const protocol = origin.split('://')[0] || 'https';
-    return `${protocol}://${value}`;
+    let d = String(rawValue || '').trim();
+    if (!d) d = req.get('host');
+    d = d.replace(/^https?:\/\//i, '');
+    d = d.split('/')[0];
+    return d;
 }
 
 function formatCatalogTimestamp(rawValue) {
@@ -440,6 +438,8 @@ router.get('/debug-checkout', async (req, res) => {
     const origin = getOrigin(req);
     const timestamp = Math.floor(Date.now() / 1000);
 
+    const normalizedOrigin = normalizeSellerDomain(origin, req);
+
     const testPayload = {
         cart_data: {
             items: [{
@@ -453,7 +453,7 @@ router.get('/debug-checkout', async (req, res) => {
         },
         redirect_url: `${origin}/order-success.html?checkout=shiprocket&ref=debug`,
         timestamp,
-        seller_domain: origin
+        seller_domain: normalizedOrigin
     };
 
     const hexSig = buildSignature(testPayload, 'hex');
@@ -467,12 +467,12 @@ router.get('/debug-checkout', async (req, res) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Api-Key': SHIPROCKET_API_KEY,
-                    'X-Api-HMAC-SHA256': hexSig
+                    'X-Api-HMAC-SHA256': base64Sig
                 },
                 timeout: 15000
             }
         );
-        return res.json({ success: true, data: response.data, signatureUsed: 'hex' });
+        return res.json({ success: true, data: response.data, signatureUsed: 'base64' });
     } catch (err) {
         return res.json({
             success: false,
@@ -639,9 +639,19 @@ router.post('/access-token/checkout', async (req, res) => {
         });
     } catch (err) {
         console.error('Shiprocket token generation error:', err.response?.data || err.message);
-        const message = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Failed to generate Shiprocket checkout token.';
+        
+        let message = 'Failed to generate Shiprocket checkout token.';
+        if (err.response?.status === 401) {
+            message = 'Shiprocket Authentication failed. Please verify your API Key and Secret Key in .env.';
+        } else if (err.response?.data?.message || err.response?.data?.error?.message) {
+            message = err.response.data.message || err.response.data.error.message;
+        } else {
+            message = err.message;
+        }
+
         return res.status(err.response?.status || 500).json({
             message,
+            error: err.message,
             raw: err.response?.data || null
         });
     }
@@ -820,47 +830,6 @@ router.post('/sync-products', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/webhooks/order', async (req, res) => {
-    const signature = req.headers['x-api-hmac-sha256'];
-    const payload = req.body || {};
-
-    console.log('Shiprocket Webhook Received:', JSON.stringify(payload, null, 2));
-
-    // Validate signature if secret key is configured
-    if (SHIPROCKET_SECRET_KEY && signature) {
-        const expectedSignature = crypto
-            .createHmac('sha256', SHIPROCKET_SECRET_KEY)
-            .update(JSON.stringify(payload))
-            .digest('hex');
-
-        if (expectedSignature !== signature) {
-            console.warn('Shiprocket Webhook Signature Mismatch');
-            // We still log/process for now during debugging, but in production, we should return 401
-        }
-    }
-
-    try {
-        // Acknowledge receipt to Shiprocket immediately to avoid retries
-        res.status(200).json({ status: 'success', message: 'Webhook received' });
-
-        // Process order asynchronously
-        await upsertShiprocketOrder({
-            ...payload,
-            shiprocketOrderId: payload.order_id || payload.id,
-            shiprocketStatus: payload.status || 'Success',
-            localStatus: 'confirmed',
-            paymentStatus: 'paid',
-            rawPayload: {
-                source: 'webhook',
-                timestamp: new Date().toISOString(),
-                fullBody: payload
-            }
-        }, req);
-
-    } catch (err) {
-        console.error('Shiprocket Webhook processing error:', err.message);
-        // Don't need to send error to Shiprocket since we already sent 200
-    }
-});
+// Webhook handler is defined above at line 745. Removing the redundant one below.
 
 module.exports = router;
