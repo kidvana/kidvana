@@ -194,16 +194,22 @@ function normalizeDraftItems(items = []) {
 }
 
 function getProductMap(products, req) {
-    return new Map(products.map((product) => {
-        const normalizedId = String(product._id || product.id || '');
-
-        return [normalizedId, {
-            productId: normalizedId,
+    const map = new Map();
+    products.forEach((product) => {
+        const rawId = String(product._id || product.id || '');
+        const data = {
+            productId: rawId,
             name: String(product.name || 'Item'),
             price: Number(product.price || 0),
             image: toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '')
-        }];
-    }));
+        };
+        map.set(rawId, data);
+        map.set(String(toNumericId(rawId)), data);
+        if (product.shiprocketVariantId) {
+            map.set(String(product.shiprocketVariantId), data);
+        }
+    });
+    return map;
 }
 
 function mapShiprocketPayment(payload) {
@@ -503,7 +509,7 @@ router.post('/access-token/checkout', async (req, res) => {
                 }
 
                 return {
-                    variant_id: String(variantId),
+                    variant_id: String(toNumericId(variantId)),
                     quantity: Number(item.quantity || item.qty || 1),
                     price: Number(price),
                     title: String(title),
@@ -551,7 +557,7 @@ router.post('/access-token/checkout', async (req, res) => {
     }
 });
 
-router.post('/orders/complete', requireAuth, async (req, res) => {
+router.post('/orders/complete', async (req, res) => {
     const shiprocketOrderId = String(req.body.orderId || '').trim();
     const orderInfo = req.body.orderInfo || {};
 
@@ -561,15 +567,12 @@ router.post('/orders/complete', requireAuth, async (req, res) => {
 
     try {
         const order = await upsertShiprocketOrder({
+            ...orderInfo,
             shiprocketOrderId,
-            userId: req.auth.userId || req.auth.phone,
+            userId: req.auth?.userId || req.auth?.phone || orderInfo.address?.phone || 'shiprocket-guest',
             status: 'Processing',
             paymentMethod: 'shiprocket',
             paymentStatus: 'Pending confirmation',
-            amount: orderInfo.amount,
-            totals: orderInfo.totals,
-            items: orderInfo.items,
-            address: orderInfo.address,
             rawPayload: {
                 source: 'return-url',
                 checkoutRef: req.body.checkoutRef || '',
@@ -615,7 +618,7 @@ router.get('/orders/:orderId', async (req, res) => {
     }
 });
 
-router.post('/order-details', requireAuth, async (req, res) => {
+router.post('/order-details', async (req, res) => {
     if (!isShiprocketConfigured()) {
         return res.status(503).json({
             message: 'Shiprocket Checkout is not configured yet. Add SHIPROCKET_CHECKOUT_API_KEY and SHIPROCKET_CHECKOUT_SECRET_KEY.'
