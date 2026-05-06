@@ -8,25 +8,6 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-
-// ═══ API ROUTES (PRIORITY) ═══
-const productRoutes = require('./routes/products');
-const authRoutes = require('./routes/auth');
-const orderRoutes = require('./routes/orders');
-const shiprocketRoutes = require('./routes/shiprocket');
-
-app.use((req, res, next) => {
-    req.isConnected = isConnected;
-    req.mockProducts = MOCK_PRODUCTS;
-    next();
-});
-
-app.use('/api/products', productRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/shiprocket', shiprocketRoutes);
-
-// ═══ STATIC ASSETS ═══
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname));
 
@@ -68,6 +49,8 @@ function ensureMongoConnection() {
 }
 
 ensureMongoConnection();
+
+// NOTE: _id values below are the REAL MongoDB IDs — so URLs and Shiprocket lookups work even without DB
 
 const MOCK_PRODUCTS = [
     {
@@ -263,5 +246,21 @@ const MOCK_PRODUCTS = [
         description: 'Engaging spinner toy designed to improve sensory development and motor skills.'
     }
 ];
+
+const productRoutes = require('./routes/products');
+const authRoutes = require('./routes/auth');
+const orderRoutes = require('./routes/orders');
+const shiprocketRoutes = require('./routes/shiprocket');
+
+app.use((req, res, next) => {
+    req.isConnected = isConnected;
+    req.mockProducts = MOCK_PRODUCTS;
+    next();
+});
+
+app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/shiprocket', shiprocketRoutes);
 
 module.exports = app;
