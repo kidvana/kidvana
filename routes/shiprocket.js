@@ -129,35 +129,59 @@ async function getCatalogProducts(req) {
     return req.mockProducts || [];
 }
 
+// Convert a hex/alphanumeric ID to a stable integer for Shiprocket compatibility
+function toNumericId(id) {
+    const str = String(id || '');
+    if (/^\d+$/.test(str)) return parseInt(str, 10);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (Math.imul(31, hash) + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash) % 900000000 + 100000000;
+}
+
+function toHandle(name) {
+    return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 function normalizeCatalogProduct(product, req) {
-    const id = String(product.shiprocketVariantId || product._id || product.id || '');
-    const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12;
-    const updatedAt = product.updatedAt || product.createdAt || new Date().toISOString();
+    const rawId = String(product.shiprocketVariantId || product._id || product.id || '');
+    const numericProductId = toNumericId(rawId);
+    const numericVariantId = toNumericId(String(product.shiprocketVariantId || rawId));
+    const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 42;
+    const now = new Date().toISOString();
+    const createdAt = product.createdAt || now;
+    const updatedAt = product.updatedAt || createdAt;
     const imageUrl = toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '');
+    const price = Number(product.price || 0).toFixed(2);
+    const compareAtPrice = Number(product.mrp || product.compare_at_price || (product.price * 1.5) || 0).toFixed(2);
 
     return {
-        id,
+        id: numericProductId,
         title: String(product.name || ''),
         body_html: String(product.description || ''),
-        vendor: String(product.brand || ''),
+        vendor: String(product.brand || 'Kidvana'),
         product_type: String(product.category || ''),
+        created_at: createdAt,
+        handle: toHandle(product.name || rawId),
         updated_at: updatedAt,
+        tags: Array.isArray(product.tags) ? product.tags.join(', ') : String(product.tags || ''),
         status: stock > 0 ? 'active' : 'draft',
-        image: {
-            src: imageUrl
-        },
+        image: { src: imageUrl },
         variants: [
             {
-                id,
-                title: String(product.name || ''),
-                price: Number(product.price || 0).toFixed(2),
+                id: numericVariantId,
+                title: 'Default Title',
+                price: price,
+                compare_at_price: compareAtPrice,
+                sku: String(product.sku || product._id || rawId),
                 quantity: stock,
-                sku: String(product.sku || product._id || id),
+                created_at: createdAt,
                 updated_at: updatedAt,
-                image: {
-                    src: imageUrl
-                },
-                weight: Number(product.weight || 0.5)
+                taxable: true,
+                image: { src: imageUrl },
+                weight: Number(product.weight || 0.5),
+                option_values: { Title: 'Default Title' }
             }
         ]
     };
@@ -170,15 +194,17 @@ function buildCollections(products, req) {
         const meta = CATEGORY_META[categoryId] || {};
         const categoryProducts = products.filter(product => String(product.category || '') === categoryId);
         const fallbackImage = categoryProducts[0]?.image || categoryProducts[0]?.images?.[0] || '';
+        const now = new Date().toISOString();
 
         return {
-            id: categoryId,
+            id: toNumericId(categoryId),
+            handle: toHandle(meta.title || categoryId),
             title: meta.title || categoryId,
             body_html: meta.body_html || '',
-            updated_at: new Date().toISOString(),
-            image: {
-                src: toAbsoluteAssetUrl(req, meta.image || fallbackImage)
-            }
+            created_at: now,
+            updated_at: now,
+            products_count: categoryProducts.length,
+            image: { src: toAbsoluteAssetUrl(req, meta.image || fallbackImage) }
         };
     });
 }
@@ -379,12 +405,15 @@ router.get('/debug-checkout', async (req, res) => {
 
 router.get('/products', async (req, res) => {
     try {
-        const products = (await getCatalogProducts(req)).map(product => normalizeCatalogProduct(product, req));
+        const allProducts = await getCatalogProducts(req);
+        const products = allProducts.map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
         return res.json({
-            data: paginated.items,
-            products: paginated.items,
+            data: {
+                total: paginated.total,
+                products: paginated.items
+            },
             pagination: {
                 page: paginated.page,
                 limit: paginated.limit,
@@ -400,12 +429,15 @@ router.get('/products', async (req, res) => {
 
 router.get('/collections', async (req, res) => {
     try {
-        const collections = buildCollections(await getCatalogProducts(req), req);
+        const allProducts = await getCatalogProducts(req);
+        const collections = buildCollections(allProducts, req);
         const paginated = paginate(collections, req.query.page, req.query.limit);
 
         return res.json({
-            data: paginated.items,
-            collections: paginated.items,
+            data: {
+                total: paginated.total,
+                collections: paginated.items
+            },
             pagination: {
                 page: paginated.page,
                 limit: paginated.limit,
@@ -426,14 +458,19 @@ router.get('/collection-products', async (req, res) => {
     }
 
     try {
-        const products = (await getCatalogProducts(req))
-            .filter(product => String(product.category || '') === collectionId)
-            .map(product => normalizeCatalogProduct(product, req));
+        const allProducts = await getCatalogProducts(req);
+        const filtered = allProducts.filter(product => {
+            const cat = String(product.category || '');
+            return cat === collectionId || String(toNumericId(cat)) === collectionId;
+        });
+        const products = filtered.map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
         return res.json({
-            data: paginated.items,
-            products: paginated.items,
+            data: {
+                total: paginated.total,
+                products: paginated.items
+            },
             pagination: {
                 page: paginated.page,
                 limit: paginated.limit,
