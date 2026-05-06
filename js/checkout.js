@@ -275,13 +275,6 @@ function launchShiprocketCheckout(event, token, redirectUrl) {
 async function placeOrder(event) {
     if (checkoutInProgress) return;
 
-    const user = getAuthUser();
-    if (!user?.token) {
-        showToast('Please login to place your order.', 'error');
-        openLoginModal();
-        return;
-    }
-
     const items = getCheckoutItems();
     if (!items.length) {
         showToast('Your cart is empty.', 'error');
@@ -299,8 +292,9 @@ async function placeOrder(event) {
 
     checkoutData.totals = calculateCheckoutTotals(items);
 
+    const currentUser = getAuthUser();
     const orderInfo = {
-        userId: user._id || user.phone,
+        userId: currentUser?._id || currentUser?.phone || checkoutData.shipping.phone || 'guest',
         items,
         amount: checkoutData.totals.total,
         address: checkoutData.shipping,

@@ -33,7 +33,7 @@ function normalizeItems(items = []) {
     }));
 }
 
-router.post('/create-order', requireAuth, async (req, res) => {
+router.post('/create-order', async (req, res) => {
     const amount = Number(req.body.amount) || 0;
     const items = normalizeItems(req.body.items);
 
@@ -69,7 +69,7 @@ router.post('/create-order', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/verify-payment', requireAuth, async (req, res) => {
+router.post('/verify-payment', async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderInfo } = req.body;
     const paymentMethod = orderInfo?.paymentMethod || 'razorpay';
     const isMock = razorpay_order_id && razorpay_order_id.startsWith('order_mock_');
@@ -96,9 +96,13 @@ router.post('/verify-payment', requireAuth, async (req, res) => {
             }
         }
 
+        // Use shipping address phone for user tracking (no login required)
+        const userPhone = orderInfo?.address?.phone || orderInfo?.userId || 'guest';
+        const userId = orderInfo?.userId || userPhone;
+
         const newOrder = new Order({
-            userId: req.auth.userId || req.auth.phone,
-            userPhone: req.auth.phone,
+            userId,
+            userPhone,
             customerEmail: orderInfo?.address?.email || '',
             items,
             amount,
