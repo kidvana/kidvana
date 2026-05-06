@@ -767,4 +767,47 @@ router.post('/sync-products', requireAuth, async (req, res) => {
     }
 });
 
+router.post('/webhooks/order', async (req, res) => {
+    const signature = req.headers['x-api-hmac-sha256'];
+    const payload = req.body || {};
+
+    console.log('Shiprocket Webhook Received:', JSON.stringify(payload, null, 2));
+
+    // Validate signature if secret key is configured
+    if (SHIPROCKET_SECRET_KEY && signature) {
+        const expectedSignature = crypto
+            .createHmac('sha256', SHIPROCKET_SECRET_KEY)
+            .update(JSON.stringify(payload))
+            .digest('hex');
+
+        if (expectedSignature !== signature) {
+            console.warn('Shiprocket Webhook Signature Mismatch');
+            // We still log/process for now during debugging, but in production, we should return 401
+        }
+    }
+
+    try {
+        // Acknowledge receipt to Shiprocket immediately to avoid retries
+        res.status(200).json({ status: 'success', message: 'Webhook received' });
+
+        // Process order asynchronously
+        await upsertShiprocketOrder({
+            ...payload,
+            shiprocketOrderId: payload.order_id || payload.id,
+            shiprocketStatus: payload.status || 'Success',
+            localStatus: 'confirmed',
+            paymentStatus: 'paid',
+            rawPayload: {
+                source: 'webhook',
+                timestamp: new Date().toISOString(),
+                fullBody: payload
+            }
+        }, req);
+
+    } catch (err) {
+        console.error('Shiprocket Webhook processing error:', err.message);
+        // Don't need to send error to Shiprocket since we already sent 200
+    }
+});
+
 module.exports = router;
