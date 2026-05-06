@@ -350,7 +350,7 @@ function renderAgeShowcase() {
     if (!container || typeof AGE_GROUPS === 'undefined') return;
 
     container.innerHTML = AGE_GROUPS.map(group => `
-        <a href="${group.href}" class="age-card">
+        <a href="${group.href}" class="swiper-slide age-card">
             <div class="age-icon">${group.icon}</div>
             <div class="age-copy">
                 <strong>${group.title}</strong>
