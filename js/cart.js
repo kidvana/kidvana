@@ -18,6 +18,7 @@ function getCart() {
 function saveCart(cart) {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
     updateCartUI();
+    renderCartSidebar();
 }
 
 function addItemToCart(productId, qty = 1) {
@@ -49,7 +50,8 @@ function addItemToCart(productId, qty = 1) {
 function addToCart(productId) {
     const product = addItemToCart(productId, 1);
     if (!product) return;
-    showToast(`${product.name} added to cart!`, 'success');
+    showToast(`${product.name} added to bag!`, 'success');
+    openCartSidebar();
 }
 
 function buildShiprocketCheckoutRef() {
@@ -68,7 +70,7 @@ function buildInstantOrderInfo(product, quantity = 1) {
     const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
 
     return {
-        userId: String(user?._id || user?.phone || ''),
+        userId: String(user?._id || user?.phone || 'shiprocket-guest'),
         items: [{
             id: String(product.id || product._id || ''),
             productId: String(product.id || product._id || ''),
@@ -173,13 +175,6 @@ async function buyNow(event, productId) {
     const product = getProductById(productId);
     if (!product) return;
 
-    const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
-    if (!user?.token) {
-        showToast('Please login to continue.', 'error');
-        if (typeof openLoginModal === 'function') openLoginModal();
-        return;
-    }
-
     const orderInfo = buildInstantOrderInfo(product, 1);
     const checkoutRef = buildShiprocketCheckoutRef();
     const redirectUrl = buildShiprocketRedirectUrl(checkoutRef);
@@ -235,6 +230,11 @@ function removeFromCart(productId) {
     cart = cart.filter(item => item.id !== productId);
     saveCart(cart);
 }
+
+window.removeItemFromCartGlobally = function(productId) {
+    removeFromCart(productId);
+    showToast('Item removed from bag', 'info');
+};
 
 // Update quantity
 function updateQty(productId, delta) {
@@ -367,5 +367,100 @@ function updateHeaderCounts() {
     });
 }
 
-// Initialize cart UI on page load
-document.addEventListener('DOMContentLoaded', updateCartUI);
+// ── CART SIDEBAR LOGIC ──
+window.openCartSidebar = function() {
+    document.getElementById('cartSidebar')?.classList.add('active');
+    document.getElementById('cartOverlay')?.classList.add('active');
+    document.body.style.overflow = 'hidden'; // prevent scroll
+    renderCartSidebar();
+};
+
+window.closeCartSidebar = function() {
+    document.getElementById('cartSidebar')?.classList.remove('active');
+    document.getElementById('cartOverlay')?.classList.remove('active');
+    document.body.style.overflow = '';
+};
+
+function renderCartSidebar() {
+    const cart = getCart();
+    const content = document.getElementById('cartSidebarContent');
+    const footer = document.getElementById('cartSidebarFooter');
+    const titleCount = document.querySelector('.cart-count-title');
+    
+    if (!content) return;
+
+    // Update Title Count
+    if (titleCount) titleCount.textContent = `(${getCartCount()} Items)`;
+
+    if (cart.length === 0) {
+        content.innerHTML = `
+            <div class="cart-empty-state">
+                <div class="empty-icon">🛒</div>
+                <p>Your bag is empty</p>
+                <a href="category.html" class="btn btn-primary">Start Shopping</a>
+            </div>
+        `;
+        if (footer) footer.style.display = 'none';
+        return;
+    }
+
+    if (footer) footer.style.display = 'block';
+
+    let html = '';
+    cart.forEach(item => {
+        html += `
+            <div class="cart-item-drawer">
+                <div class="cart-item-img-wrapper">
+                    <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                </div>
+                <div class="cart-item-info">
+                    <div class="cart-item-header">
+                        <a href="product.html?id=${item.id}" class="cart-item-name">${item.name}</a>
+                        <button class="cart-item-remove" onclick="removeItemFromCartGlobally('${item.id}')">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </div>
+                    <div class="cart-item-brand">${item.brand || 'Kidvana'}</div>
+                    <div class="cart-item-price-row">
+                        <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
+                        <div class="qty-control-sm">
+                            <button class="qty-btn-sm" onclick="updateQty('${item.id}', -1)">−</button>
+                            <span class="qty-val-sm">${item.qty}</span>
+                            <button class="qty-btn-sm" onclick="updateQty('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    content.innerHTML = html;
+
+    // Update Totals
+    const subtotalEl = document.querySelector('.cart-subtotal-val');
+    if (subtotalEl) {
+        subtotalEl.textContent = `₹${getCartTotal().toLocaleString('en-IN')}`;
+    }
+}
+
+// Attach listener to all cart links (using delegation for dynamic elements)
+document.addEventListener('click', (e) => {
+    const cartBtn = e.target.closest('a[href="cart.html"]');
+    if (cartBtn) {
+        // If it's a "Proceed to Checkout" or similar internal cart link, we might want to let it navigate
+        // but for the header/sidebar cart icons, we want the drawer.
+        // We'll check if it's NOT the checkout button inside the sidebar.
+        if (!cartBtn.closest('.cart-sidebar-footer')) {
+            e.preventDefault();
+            openCartSidebar();
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Close on overlay click
+    document.getElementById('cartOverlay')?.addEventListener('click', closeCartSidebar);
+    
+    updateHeaderCounts();
+    renderCartSidebar();
+});

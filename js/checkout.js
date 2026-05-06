@@ -276,7 +276,8 @@ async function placeOrder(event) {
     if (checkoutInProgress) return;
 
     const user = getAuthUser();
-    if (!user?.token) {
+    const requiresAuthenticatedCheckout = checkoutData.payment !== SHIPROCKET_METHOD;
+    if (requiresAuthenticatedCheckout && !user?.token) {
         showToast('Please login to place your order.', 'error');
         openLoginModal();
         return;
@@ -300,7 +301,7 @@ async function placeOrder(event) {
     checkoutData.totals = calculateCheckoutTotals(items);
 
     const orderInfo = {
-        userId: user._id || user.phone,
+        userId: user?._id || user?.phone || checkoutData.shipping.phone || 'shiprocket-guest',
         items,
         amount: checkoutData.totals.total,
         address: checkoutData.shipping,

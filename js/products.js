@@ -1,13 +1,13 @@
 // Product catalog and storefront filtering
 
 const CATEGORIES = [
-    { id: 'baby-kids', name: 'Kids Fashion', icon: '&#128118;' },
-    { id: 'toys', name: 'Toys & Games', icon: '&#129528;' },
-    { id: 'fashion', name: 'Women Fashion', icon: '&#128087;' },
-    { id: 'electronics', name: 'Electronics', icon: '&#127911;' },
-    { id: 'kitchen', name: 'Kitchen & Home', icon: '&#127859;' },
-    { id: 'health', name: 'Health & Wellness', icon: '&#128170;' },
-    { id: 'sports', name: 'Sports & Fitness', icon: '&#9917;' }
+    { id: 'baby-kids', name: 'Kids Fashion', icon: '<i class="ph-duotone ph-baby"></i>' },
+    { id: 'toys', name: 'Toys & Games', icon: '<i class="ph-duotone ph-game-controller"></i>' },
+    { id: 'fashion', name: 'Women Fashion', icon: '<i class="ph-duotone ph-dress"></i>' },
+    { id: 'electronics', name: 'Electronics', icon: '<i class="ph-duotone ph-headphones"></i>' },
+    { id: 'kitchen', name: 'Kitchen & Home', icon: '<i class="ph-duotone ph-cooking-pot"></i>' },
+    { id: 'health', name: 'Health & Wellness', icon: '<i class="ph-duotone ph-heartbeat"></i>' },
+    { id: 'sports', name: 'Sports & Fitness', icon: '<i class="ph-duotone ph-basketball"></i>' }
 ];
 
 const MEGA_NAV_SECTIONS = {
@@ -158,25 +158,25 @@ const AGE_GROUPS = [
         title: '0-2 Years',
         caption: 'Soft-touch essentials and sensory-friendly products for infants.',
         href: 'category.html?cat=baby-kids',
-        icon: '&#128118;'
+        icon: '<i class="ph-duotone ph-baby"></i>'
     },
     {
         title: '3-5 Years',
         caption: 'Musical toys, pretend play, and colorful early-learning gifts.',
         href: 'category.html?search=musical',
-        icon: '&#127912;'
+        icon: '<i class="ph-duotone ph-palette"></i>'
     },
     {
         title: '6-8 Years',
         caption: 'Building sets, puzzles, and smart activity toys that teach through play.',
         href: 'category.html?search=building',
-        icon: '&#129513;'
+        icon: '<i class="ph-duotone ph-puzzle-piece"></i>'
     },
     {
         title: '9-12 Years',
         caption: 'Tech accessories, hobby toys, and gifts for growing curiosity.',
         href: 'category.html?cat=electronics',
-        icon: '&#128187;'
+        icon: '<i class="ph-duotone ph-laptop"></i>'
     }
 ];
 
@@ -209,7 +209,7 @@ const FALLBACK_PRODUCTS = [
         price: 1299,
         mrp: 1999,
         image: 'assets/kids-fashion/K01.jpeg',
-        images: ['assets/kids-fashion/K01.jpeg'],
+        images: ['assets/kids-fashion/K01.jpeg', 'assets/kids-fashion/K01.2.jpeg'],
         rating: 4.9,
         reviews: 156,
         tags: ['new', 'festival', 'bestseller'],
@@ -225,7 +225,7 @@ const FALLBACK_PRODUCTS = [
         price: 899,
         mrp: 1499,
         image: 'assets/kids-fashion/K02.jpeg',
-        images: ['assets/kids-fashion/K02.jpeg'],
+        images: ['assets/kids-fashion/K02.jpeg', 'assets/kids-fashion/K02.1.jpeg', 'assets/kids-fashion/K02.2.jpeg'],
         rating: 4.6,
         reviews: 92,
         tags: ['casual', 'trending'],
@@ -241,7 +241,7 @@ const FALLBACK_PRODUCTS = [
         price: 1599,
         mrp: 2499,
         image: 'assets/kids-fashion/K03.jpeg',
-        images: ['assets/kids-fashion/K03.jpeg'],
+        images: ['assets/kids-fashion/K03.jpeg', 'assets/kids-fashion/K03.1.jpeg'],
         rating: 4.8,
         reviews: 110,
         tags: ['party', 'elegant', 'trending'],
@@ -257,7 +257,7 @@ const FALLBACK_PRODUCTS = [
         price: 499,
         mrp: 999,
         image: 'assets/kids-fashion/K04.jpeg',
-        images: ['assets/kids-fashion/K04.jpeg'],
+        images: ['assets/kids-fashion/K04.jpeg', 'assets/kids-fashion/K04.1.jpeg', 'assets/kids-fashion/K04.2.jpeg'],
         rating: 4.5,
         reviews: 240,
         tags: ['daily', 'soft', 'deal'],
@@ -273,7 +273,7 @@ const FALLBACK_PRODUCTS = [
         price: 1899,
         mrp: 3499,
         image: 'assets/kids-fashion/K05.jpeg',
-        images: ['assets/kids-fashion/K05.jpeg'],
+        images: ['assets/kids-fashion/K05.jpeg', 'assets/kids-fashion/K05.1.jpeg'],
         rating: 4.9,
         reviews: 74,
         tags: ['royal', 'premium', 'bestseller'],
@@ -289,7 +289,7 @@ const FALLBACK_PRODUCTS = [
         price: 799,
         mrp: 1499,
         image: 'assets/kids-fashion/K06.jpeg',
-        images: ['assets/kids-fashion/K06.jpeg'],
+        images: ['assets/kids-fashion/K06.jpeg', 'assets/kids-fashion/K06.2.jpeg', 'assets/kids-fashion/K06.3.jpeg'],
         rating: 4.6,
         reviews: 88,
         tags: ['casual', 'trending'],
@@ -305,7 +305,7 @@ const FALLBACK_PRODUCTS = [
         price: 699,
         mrp: 1299,
         image: 'assets/kids-fashion/K07.jpeg',
-        images: ['assets/kids-fashion/K07.jpeg'],
+        images: ['assets/kids-fashion/K07.jpeg', 'assets/kids-fashion/K07.2.jpeg', 'assets/kids-fashion/K07.3.jpeg', 'assets/kids-fashion/K07.4.jpeg'],
         rating: 4.7,
         reviews: 134,
         tags: ['floral', 'trending', 'deal'],
@@ -321,7 +321,7 @@ const FALLBACK_PRODUCTS = [
         price: 1399,
         mrp: 2499,
         image: 'assets/kids-fashion/K08.jpeg',
-        images: ['assets/kids-fashion/K08.jpeg'],
+        images: ['assets/kids-fashion/K08.jpeg', 'assets/kids-fashion/K08.1.jpeg', 'assets/kids-fashion/K08.2.jpeg'],
         rating: 4.8,
         reviews: 96,
         tags: ['party', 'elegant', 'bestseller'],
@@ -337,7 +337,7 @@ const FALLBACK_PRODUCTS = [
         price: 999,
         mrp: 1799,
         image: 'assets/kids-fashion/K09.jpeg',
-        images: ['assets/kids-fashion/K09.jpeg'],
+        images: ['assets/kids-fashion/K09.jpeg', 'assets/kids-fashion/K09.2.jpeg', 'assets/kids-fashion/K09.3.jpeg', 'assets/kids-fashion/K09.4.jpeg'],
         rating: 4.7,
         reviews: 112,
         tags: ['premium', 'bestseller'],
@@ -353,7 +353,7 @@ const FALLBACK_PRODUCTS = [
         price: 1699,
         mrp: 2999,
         image: 'assets/kids-fashion/K10.jpeg',
-        images: ['assets/kids-fashion/K10.jpeg'],
+        images: ['assets/kids-fashion/K10.jpeg', 'assets/kids-fashion/K10.1.jpeg', 'assets/kids-fashion/K10.2.jpeg'],
         rating: 4.9,
         reviews: 68,
         tags: ['party', 'premium', 'trending'],
@@ -369,7 +369,7 @@ const FALLBACK_PRODUCTS = [
         price: 599,
         mrp: 999,
         image: 'assets/kids-fashion/K11.jpeg',
-        images: ['assets/kids-fashion/K11.jpeg'],
+        images: ['assets/kids-fashion/K11.jpeg', 'assets/kids-fashion/K11.1.jpeg', 'assets/kids-fashion/K11.2.jpeg'],
         rating: 4.5,
         reviews: 178,
         tags: ['casual', 'daily', 'deal'],
@@ -385,7 +385,7 @@ const FALLBACK_PRODUCTS = [
         price: 349,
         mrp: 699,
         image: 'assets/toys/T 01.jpg',
-        images: ['assets/toys/T 01.jpg'],
+        images: ['assets/toys/T 01.jpg', 'assets/toys/T 02.jpg', 'assets/toys/T 03.jpg'],
         rating: 4.7,
         reviews: 312,
         tags: ['learning', 'interactive', 'deal'],
@@ -649,9 +649,14 @@ function createProductCardHTML(product) {
                         <span class="discount">${discount}% off</span>
                     </div>
                 </div>
-                <button class="card-add-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
-                    Add to Cart
-                </button>
+                <div class="card-footer-actions">
+                    <button class="card-add-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
+                        Add to Cart
+                    </button>
+                    <button class="card-buy-btn" onclick="event.stopPropagation(); buyNow(event, '${product.id}')">
+                        Buy Now
+                    </button>
+                </div>
             </div>
         </div>
     `;

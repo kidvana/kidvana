@@ -375,9 +375,10 @@ async function upsertShiprocketOrder(orderPayload, req) {
         state: String(orderPayload.address?.state || orderPayload.state || ''),
         zip: String(orderPayload.address?.zip || orderPayload.postcode || orderPayload.zip || '')
     };
+    const userPhone = String(orderPayload.userPhone || address.phone || orderPayload.phone || '');
     const update = {
-        userId: String(orderPayload.userId || address.phone || 'shiprocket-guest'),
-        userPhone: address.phone,
+        userId: String(orderPayload.userId || userPhone || 'shiprocket-guest'),
+        userPhone,
         customerEmail: address.email,
         items,
         amount,
@@ -516,7 +517,7 @@ router.get('/collection-products', async (req, res) => {
     }
 });
 
-router.post('/access-token/checkout', requireAuth, async (req, res) => {
+router.post('/access-token/checkout', async (req, res) => {
     if (!isShiprocketConfigured()) {
         return res.status(503).json({
             message: 'Shiprocket Checkout is not configured yet. Add SHIPROCKET_CHECKOUT_API_KEY and SHIPROCKET_CHECKOUT_SECRET_KEY.'
@@ -565,7 +566,6 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
                         title = title || mockProduct.name;
                         image = image || mockProduct.image;
                     }
-                    console.error('DB fetch failed, used mock fallback for product:', productId);
                 }
 
                 // If still no Shiprocket ID found from DB, try mock fallback
@@ -594,7 +594,6 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
     };
 
     try {
-        console.log('Shiprocket Checkout Payload:', JSON.stringify(payload, null, 2));
         const response = await axios.post(
             `${SHIPROCKET_BASE_URL}/api/v1/access-token/checkout`,
             payload,
@@ -602,7 +601,6 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
         );
 
         const data = response.data || {};
-        console.log('Shiprocket Checkout Response:', JSON.stringify(data, null, 2));
         const token = data?.result?.token || data?.token || '';
         const orderId = data?.result?.order_id || data?.order_id || data?.result?.orderId || data?.orderId || '';
 
@@ -619,7 +617,6 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
             raw: data
         });
     } catch (err) {
-        console.error('Shiprocket token generation error:', err.response?.data || err.message);
         const message = err.response?.data?.error?.message || err.response?.data?.message || err.message || 'Failed to generate Shiprocket checkout token.';
         return res.status(err.response?.status || 500).json({
             message,
@@ -628,9 +625,11 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
     }
 });
 
-router.post('/orders/complete', requireAuth, async (req, res) => {
+router.post('/orders/complete', async (req, res) => {
     const shiprocketOrderId = String(req.body.orderId || '').trim();
     const orderInfo = req.body.orderInfo || {};
+    const guestPhone = String(orderInfo.address?.phone || orderInfo.phone || '').trim();
+    const guestUserId = String(orderInfo.userId || guestPhone || 'shiprocket-guest').trim();
 
     if (!shiprocketOrderId) {
         return res.status(400).json({ message: 'orderId is required.' });
@@ -639,7 +638,8 @@ router.post('/orders/complete', requireAuth, async (req, res) => {
     try {
         const order = await upsertShiprocketOrder({
             shiprocketOrderId,
-            userId: req.auth.userId || req.auth.phone,
+            userId: req.auth?.userId || req.auth?.phone || guestUserId,
+            userPhone: req.auth?.phone || guestPhone,
             status: 'Processing',
             paymentMethod: 'shiprocket',
             paymentStatus: 'Pending confirmation',

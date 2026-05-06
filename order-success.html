@@ -139,10 +139,11 @@
 
             try {
                 let resolvedOrder = null;
+                const lookupPhone = String(pendingCheckout.orderInfo.address?.phone || '').trim();
 
-                if (pendingCheckout.orderId) {
+                if (pendingCheckout.orderId && lookupPhone) {
                     const lookupResponse = await fetch(
-                        `/api/shiprocket/orders/${encodeURIComponent(pendingCheckout.orderId)}?phone=${encodeURIComponent(pendingCheckout.orderInfo.address?.phone || '')}`,
+                        `/api/shiprocket/orders/${encodeURIComponent(pendingCheckout.orderId)}?phone=${encodeURIComponent(lookupPhone)}`,
                         { headers: getAuthHeaders() }
                     );
 
