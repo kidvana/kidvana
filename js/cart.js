@@ -200,7 +200,8 @@ async function buyNow(event, productId) {
                 }))
             },
             redirect_url: redirectUrl,
-            timestamp: Math.floor(Date.now() / 1000)
+            timestamp: Math.floor(Date.now() / 1000),
+            seller_domain: window.location.origin
         });
 
         if (!shiprocketResponse?.token) {

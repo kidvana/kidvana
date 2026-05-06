@@ -105,6 +105,77 @@ function toAbsoluteAssetUrl(req, assetPath) {
     return `${getOrigin(req)}${normalizedPath}`;
 }
 
+function normalizeSellerDomain(rawValue, req) {
+    const value = String(rawValue || '').trim();
+    if (!value) return getOrigin(req);
+    if (/^https?:\/\//i.test(value)) return value;
+
+    const origin = getOrigin(req);
+    const protocol = origin.split('://')[0] || 'https';
+    return `${protocol}://${value}`;
+}
+
+function formatCatalogTimestamp(rawValue) {
+    const timestamp = rawValue ? new Date(rawValue) : new Date();
+    if (Number.isNaN(timestamp.getTime())) {
+        return new Date().toISOString();
+    }
+
+    return timestamp.toISOString();
+}
+
+function buildHandle(value, fallback = 'product') {
+    const handle = String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    return handle || fallback;
+}
+
+function normalizeBodyHtml(rawValue) {
+    const value = String(rawValue || '').trim();
+    if (!value) return '';
+    if (/<[a-z][\s\S]*>/i.test(value)) return value;
+
+    return `<p>${value}</p>`;
+}
+
+function getVariantOptionValues(product) {
+    const optionValues = {};
+
+    if (product.color) {
+        optionValues.Color = String(product.color);
+    }
+
+    if (product.size) {
+        optionValues.Size = String(product.size);
+    }
+
+    return optionValues;
+}
+
+function buildPaginatedResponse(resourceKey, paginated) {
+    const pagination = {
+        page: paginated.page,
+        limit: paginated.limit,
+        total: paginated.total,
+        total_pages: paginated.total_pages,
+        has_next_page: paginated.has_next_page
+    };
+
+    return {
+        data: {
+            total: paginated.total,
+            [resourceKey]: paginated.items,
+            ...pagination
+        },
+        [resourceKey]: paginated.items,
+        pagination
+    };
+}
+
 function paginate(items, rawPage, rawLimit) {
     const page = Math.max(1, Number.parseInt(rawPage, 10) || 1);
     const limit = Math.max(1, Math.min(250, Number.parseInt(rawLimit, 10) || 100));
@@ -130,30 +201,46 @@ async function getCatalogProducts(req) {
 }
 
 function normalizeCatalogProduct(product, req) {
-    const id = String(product.shiprocketVariantId || product._id || product.id || '');
+    const productId = String(product.shiprocketProductId || product._id || product.id || product.shiprocketVariantId || '');
+    const variantId = String(product.shiprocketVariantId || product.shiprocketProductId || product._id || product.id || '');
     const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12;
-    const updatedAt = product.updatedAt || product.createdAt || new Date().toISOString();
+    const createdAt = formatCatalogTimestamp(product.createdAt || product.created_at);
+    const updatedAt = formatCatalogTimestamp(product.updatedAt || product.updated_at || createdAt);
     const imageUrl = toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '');
+    const optionValues = getVariantOptionValues(product);
+    const tags = Array.isArray(product.tags)
+        ? product.tags.map(tag => String(tag).trim()).filter(Boolean).join(', ')
+        : String(product.tags || '').trim();
+    const price = Number(product.price || 0);
+    const compareAtPrice = Number(product.mrp || product.compare_at_price || price);
+    const handleFallback = String(product._id || product.id || 'product');
 
     return {
-        id,
+        id: productId || variantId,
         title: String(product.name || ''),
-        body_html: String(product.description || ''),
+        body_html: normalizeBodyHtml(product.description || ''),
         vendor: String(product.brand || ''),
         product_type: String(product.category || ''),
+        created_at: createdAt,
+        handle: buildHandle(product.handle || product.name, handleFallback),
         updated_at: updatedAt,
-        status: stock > 0 ? 'active' : 'draft',
+        tags,
+        status: String(product.status || (stock > 0 ? 'active' : 'draft')),
         image: {
             src: imageUrl
         },
         variants: [
             {
-                id,
-                title: String(product.name || ''),
-                price: Number(product.price || 0).toFixed(2),
+                id: variantId || productId,
+                title: String(product.variantTitle || product.name || 'Default Title'),
+                price: price.toFixed(2),
+                compare_at_price: compareAtPrice.toFixed(2),
                 quantity: stock,
-                sku: String(product.sku || product._id || id),
+                sku: String(product.sku || product._id || variantId || productId),
+                created_at: createdAt,
                 updated_at: updatedAt,
+                taxable: true,
+                option_values: optionValues,
                 image: {
                     src: imageUrl
                 },
@@ -170,12 +257,15 @@ function buildCollections(products, req) {
         const meta = CATEGORY_META[categoryId] || {};
         const categoryProducts = products.filter(product => String(product.category || '') === categoryId);
         const fallbackImage = categoryProducts[0]?.image || categoryProducts[0]?.images?.[0] || '';
+        const createdAt = formatCatalogTimestamp(categoryProducts[0]?.createdAt);
 
         return {
             id: categoryId,
             title: meta.title || categoryId,
-            body_html: meta.body_html || '',
-            updated_at: new Date().toISOString(),
+            body_html: normalizeBodyHtml(meta.body_html || ''),
+            handle: buildHandle(categoryId, 'collection'),
+            created_at: createdAt,
+            updated_at: formatCatalogTimestamp(categoryProducts[0]?.updatedAt || createdAt),
             image: {
                 src: toAbsoluteAssetUrl(req, meta.image || fallbackImage)
             }
@@ -194,16 +284,31 @@ function normalizeDraftItems(items = []) {
 }
 
 function getProductMap(products, req) {
-    return new Map(products.map((product) => {
-        const normalizedId = String(product._id || product.id || '');
+    const productMap = new Map();
 
-        return [normalizedId, {
+    products.forEach((product) => {
+        const normalizedId = String(product._id || product.id || '');
+        const entry = {
             productId: normalizedId,
             name: String(product.name || 'Item'),
             price: Number(product.price || 0),
             image: toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '')
-        }];
-    }));
+        };
+
+        [
+            product._id,
+            product.id,
+            product.shiprocketProductId,
+            product.shiprocketVariantId
+        ]
+            .map((value) => String(value || '').trim())
+            .filter(Boolean)
+            .forEach((key) => {
+                productMap.set(key, entry);
+            });
+    });
+
+    return productMap;
 }
 
 function mapShiprocketPayment(payload) {
@@ -376,17 +481,7 @@ router.get('/products', async (req, res) => {
         const products = (await getCatalogProducts(req)).map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
-        return res.json({
-            data: paginated.items,
-            products: paginated.items,
-            pagination: {
-                page: paginated.page,
-                limit: paginated.limit,
-                total: paginated.total,
-                total_pages: paginated.total_pages,
-                has_next_page: paginated.has_next_page
-            }
-        });
+        return res.json(buildPaginatedResponse('products', paginated));
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -397,17 +492,7 @@ router.get('/collections', async (req, res) => {
         const collections = buildCollections(await getCatalogProducts(req), req);
         const paginated = paginate(collections, req.query.page, req.query.limit);
 
-        return res.json({
-            data: paginated.items,
-            collections: paginated.items,
-            pagination: {
-                page: paginated.page,
-                limit: paginated.limit,
-                total: paginated.total,
-                total_pages: paginated.total_pages,
-                has_next_page: paginated.has_next_page
-            }
-        });
+        return res.json(buildPaginatedResponse('collections', paginated));
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -425,17 +510,7 @@ router.get('/collection-products', async (req, res) => {
             .map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
-        return res.json({
-            data: paginated.items,
-            products: paginated.items,
-            pagination: {
-                page: paginated.page,
-                limit: paginated.limit,
-                total: paginated.total,
-                total_pages: paginated.total_pages,
-                has_next_page: paginated.has_next_page
-            }
-        });
+        return res.json(buildPaginatedResponse('products', paginated));
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -451,6 +526,7 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
     const cartItems = req.body?.cart_data?.items;
     const redirectUrl = String(req.body?.redirect_url || '').trim();
     const timestamp = req.body?.timestamp || Math.floor(Date.now() / 1000);
+    const sellerDomain = normalizeSellerDomain(req.body?.seller_domain, req);
 
     if (!Array.isArray(cartItems) || cartItems.length === 0 || !redirectUrl) {
         return res.status(400).json({ message: 'cart_data.items and redirect_url are required.' });
@@ -513,7 +589,8 @@ router.post('/access-token/checkout', requireAuth, async (req, res) => {
             }))
         },
         redirect_url: redirectUrl,
-        timestamp
+        timestamp,
+        seller_domain: sellerDomain
     };
 
     try {
