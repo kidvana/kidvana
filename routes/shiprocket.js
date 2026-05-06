@@ -441,7 +441,7 @@ router.get('/collection-products', async (req, res) => {
     }
 });
 
-router.post('/access-token/checkout', requireAuth, async (req, res) => {
+router.post('/access-token/checkout', async (req, res) => {
     if (!isShiprocketConfigured()) {
         return res.status(503).json({
             message: 'Shiprocket Checkout is not configured yet. Add SHIPROCKET_CHECKOUT_API_KEY and SHIPROCKET_CHECKOUT_SECRET_KEY.'
