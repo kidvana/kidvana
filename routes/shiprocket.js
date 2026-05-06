@@ -105,6 +105,77 @@ function toAbsoluteAssetUrl(req, assetPath) {
     return `${getOrigin(req)}${normalizedPath}`;
 }
 
+function normalizeSellerDomain(rawValue, req) {
+    const value = String(rawValue || '').trim();
+    if (!value) return getOrigin(req);
+    if (/^https?:\/\//i.test(value)) return value;
+
+    const origin = getOrigin(req);
+    const protocol = origin.split('://')[0] || 'https';
+    return `${protocol}://${value}`;
+}
+
+function formatCatalogTimestamp(rawValue) {
+    const timestamp = rawValue ? new Date(rawValue) : new Date();
+    if (Number.isNaN(timestamp.getTime())) {
+        return new Date().toISOString();
+    }
+
+    return timestamp.toISOString();
+}
+
+function buildHandle(value, fallback = 'product') {
+    const handle = String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    return handle || fallback;
+}
+
+function normalizeBodyHtml(rawValue) {
+    const value = String(rawValue || '').trim();
+    if (!value) return '';
+    if (/<[a-z][\s\S]*>/i.test(value)) return value;
+
+    return `<p>${value}</p>`;
+}
+
+function getVariantOptionValues(product) {
+    const optionValues = {};
+
+    if (product.color) {
+        optionValues.Color = String(product.color);
+    }
+
+    if (product.size) {
+        optionValues.Size = String(product.size);
+    }
+
+    return optionValues;
+}
+
+function buildPaginatedResponse(resourceKey, paginated) {
+    const pagination = {
+        page: paginated.page,
+        limit: paginated.limit,
+        total: paginated.total,
+        total_pages: paginated.total_pages,
+        has_next_page: paginated.has_next_page
+    };
+
+    return {
+        data: {
+            total: paginated.total,
+            [resourceKey]: paginated.items,
+            ...pagination
+        },
+        [resourceKey]: paginated.items,
+        pagination
+    };
+}
+
 function paginate(items, rawPage, rawLimit) {
     const page = Math.max(1, Number.parseInt(rawPage, 10) || 1);
     const limit = Math.max(1, Math.min(250, Number.parseInt(rawLimit, 10) || 100));
@@ -145,43 +216,51 @@ function toHandle(name) {
 }
 
 function normalizeCatalogProduct(product, req) {
-    const rawId = String(product.shiprocketVariantId || product._id || product.id || '');
-    const numericProductId = toNumericId(rawId);
-    const numericVariantId = toNumericId(String(product.shiprocketVariantId || rawId));
-    const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 42;
-    const now = new Date().toISOString();
-    const createdAt = product.createdAt || now;
-    const updatedAt = product.updatedAt || createdAt;
+    const rawId = String(product.shiprocketVariantId || product.shiprocketProductId || product._id || product.id || '');
+    const numericProductId = toNumericId(product.shiprocketProductId || rawId);
+    const numericVariantId = toNumericId(product.shiprocketVariantId || rawId);
+    const stock = Number.isFinite(Number(product.stock)) ? Number(product.stock) : 12;
+    const createdAt = formatCatalogTimestamp(product.createdAt || product.created_at);
+    const updatedAt = formatCatalogTimestamp(product.updatedAt || product.updated_at || createdAt);
     const imageUrl = toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '');
-    const price = Number(product.price || 0).toFixed(2);
-    const compareAtPrice = Number(product.mrp || product.compare_at_price || (product.price * 1.5) || 0).toFixed(2);
+    const optionValues = getVariantOptionValues(product);
+    const tags = Array.isArray(product.tags)
+        ? product.tags.map(tag => String(tag).trim()).filter(Boolean).join(', ')
+        : String(product.tags || '').trim();
+    const price = Number(product.price || 0);
+    const compareAtPrice = Number(product.mrp || product.compare_at_price || price);
+    const handleFallback = String(product._id || product.id || 'product');
 
     return {
         id: numericProductId,
         title: String(product.name || ''),
-        body_html: String(product.description || ''),
+        body_html: normalizeBodyHtml(product.description || ''),
         vendor: String(product.brand || 'Kidvana'),
         product_type: String(product.category || ''),
         created_at: createdAt,
-        handle: toHandle(product.name || rawId),
+        handle: buildHandle(product.handle || product.name, rawId || handleFallback),
         updated_at: updatedAt,
-        tags: Array.isArray(product.tags) ? product.tags.join(', ') : String(product.tags || ''),
-        status: stock > 0 ? 'active' : 'draft',
-        image: { src: imageUrl },
+        tags,
+        status: String(product.status || (stock > 0 ? 'active' : 'draft')),
+        image: {
+            src: imageUrl
+        },
         variants: [
             {
                 id: numericVariantId,
-                title: 'Default Title',
-                price: price,
-                compare_at_price: compareAtPrice,
-                sku: String(product.sku || product._id || rawId),
+                title: String(product.variantTitle || 'Default Title'),
+                price: price.toFixed(2),
+                compare_at_price: compareAtPrice.toFixed(2),
                 quantity: stock,
+                sku: String(product.sku || product._id || rawId),
                 created_at: createdAt,
                 updated_at: updatedAt,
                 taxable: true,
-                image: { src: imageUrl },
-                weight: Number(product.weight || 0.5),
-                option_values: { Title: 'Default Title' }
+                option_values: Object.keys(optionValues).length ? optionValues : { Title: 'Default Title' },
+                image: {
+                    src: imageUrl
+                },
+                weight: Number(product.weight || 0.5)
             }
         ]
     };
@@ -194,17 +273,19 @@ function buildCollections(products, req) {
         const meta = CATEGORY_META[categoryId] || {};
         const categoryProducts = products.filter(product => String(product.category || '') === categoryId);
         const fallbackImage = categoryProducts[0]?.image || categoryProducts[0]?.images?.[0] || '';
-        const now = new Date().toISOString();
+        const createdAt = formatCatalogTimestamp(categoryProducts[0]?.createdAt);
 
         return {
             id: toNumericId(categoryId),
-            handle: toHandle(meta.title || categoryId),
+            handle: buildHandle(meta.title || categoryId, categoryId),
             title: meta.title || categoryId,
-            body_html: meta.body_html || '',
-            created_at: now,
-            updated_at: now,
+            body_html: normalizeBodyHtml(meta.body_html || ''),
+            created_at: createdAt,
+            updated_at: formatCatalogTimestamp(categoryProducts[0]?.updatedAt || createdAt),
             products_count: categoryProducts.length,
-            image: { src: toAbsoluteAssetUrl(req, meta.image || fallbackImage) }
+            image: {
+                src: toAbsoluteAssetUrl(req, meta.image || fallbackImage)
+            }
         };
     });
 }
@@ -229,11 +310,17 @@ function getProductMap(products, req) {
             price: Number(product.price || 0),
             image: toAbsoluteAssetUrl(req, product.image || product.images?.[0] || '')
         };
-        map.set(rawId, data);
-        map.set(String(toNumericId(rawId)), data);
-        if (product.shiprocketVariantId) {
-            map.set(String(product.shiprocketVariantId), data);
-        }
+        [
+            rawId,
+            String(toNumericId(rawId)),
+            String(product.id || ''),
+            String(product.shiprocketProductId || ''),
+            String(product.shiprocketVariantId || '')
+        ]
+            .filter(Boolean)
+            .forEach((key) => {
+                map.set(key, data);
+            });
     });
     return map;
 }
@@ -409,19 +496,7 @@ router.get('/products', async (req, res) => {
         const products = allProducts.map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
-        return res.json({
-            data: {
-                total: paginated.total,
-                products: paginated.items
-            },
-            pagination: {
-                page: paginated.page,
-                limit: paginated.limit,
-                total: paginated.total,
-                total_pages: paginated.total_pages,
-                has_next_page: paginated.has_next_page
-            }
-        });
+        return res.json(buildPaginatedResponse('products', paginated));
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -433,19 +508,7 @@ router.get('/collections', async (req, res) => {
         const collections = buildCollections(allProducts, req);
         const paginated = paginate(collections, req.query.page, req.query.limit);
 
-        return res.json({
-            data: {
-                total: paginated.total,
-                collections: paginated.items
-            },
-            pagination: {
-                page: paginated.page,
-                limit: paginated.limit,
-                total: paginated.total,
-                total_pages: paginated.total_pages,
-                has_next_page: paginated.has_next_page
-            }
-        });
+        return res.json(buildPaginatedResponse('collections', paginated));
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -466,19 +529,7 @@ router.get('/collection-products', async (req, res) => {
         const products = filtered.map(product => normalizeCatalogProduct(product, req));
         const paginated = paginate(products, req.query.page, req.query.limit);
 
-        return res.json({
-            data: {
-                total: paginated.total,
-                products: paginated.items
-            },
-            pagination: {
-                page: paginated.page,
-                limit: paginated.limit,
-                total: paginated.total,
-                total_pages: paginated.total_pages,
-                has_next_page: paginated.has_next_page
-            }
-        });
+        return res.json(buildPaginatedResponse('products', paginated));
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -494,6 +545,7 @@ router.post('/access-token/checkout', async (req, res) => {
     const cartItems = req.body?.cart_data?.items;
     const redirectUrl = String(req.body?.redirect_url || '').trim();
     const timestamp = req.body?.timestamp || Math.floor(Date.now() / 1000);
+    const sellerDomain = normalizeSellerDomain(req.body?.seller_domain, req);
 
     if (!Array.isArray(cartItems) || cartItems.length === 0 || !redirectUrl) {
         return res.status(400).json({ message: 'cart_data.items and redirect_url are required.' });
@@ -556,7 +608,8 @@ router.post('/access-token/checkout', async (req, res) => {
             }))
         },
         redirect_url: redirectUrl,
-        timestamp
+        timestamp,
+        seller_domain: sellerDomain
     };
 
     try {

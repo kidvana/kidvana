@@ -316,6 +316,15 @@ async function placeOrder(event) {
         if (checkoutData.payment === SHIPROCKET_METHOD) {
             const checkoutRef = buildShiprocketCheckoutRef();
             const redirectUrl = buildShiprocketRedirectUrl(checkoutRef);
+
+            if (typeof ensureShiprocketSellerDomain === 'function') {
+                ensureShiprocketSellerDomain();
+            }
+
+            if (typeof ensureShiprocketCheckoutAssets === 'function') {
+                await ensureShiprocketCheckoutAssets();
+            }
+
             const shiprocketResponse = await createShiprocketAccessToken({
                 cart_data: {
                     items: items.map(item => ({
@@ -328,7 +337,8 @@ async function placeOrder(event) {
                     }))
                 },
                 redirect_url: redirectUrl,
-                timestamp: Math.floor(Date.now() / 1000)
+                timestamp: Math.floor(Date.now() / 1000),
+                seller_domain: window.location.origin
             });
 
             if (!shiprocketResponse?.token) {
