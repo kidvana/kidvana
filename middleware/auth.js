@@ -19,6 +19,7 @@ function requireAuth(req, res, next) {
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 
     if (!token) {
+        console.warn('[Auth] No token provided in Authorization header');
         return res.status(401).json({ message: 'Authentication required' });
     }
 
@@ -26,6 +27,7 @@ function requireAuth(req, res, next) {
         req.auth = jwt.verify(token, JWT_SECRET);
         next();
     } catch (err) {
+        console.error('[Auth] JWT Verification failed:', err.message);
         return res.status(401).json({ message: 'Session expired. Please login again.' });
     }
 }

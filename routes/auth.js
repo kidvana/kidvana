@@ -17,6 +17,7 @@ function sanitizeUser(user) {
 }
 
 router.post('/login', async (req, res) => {
+    console.log('[Auth] Login attempt for phone:', req.body.phone);
     const phone = String(req.body.phone || '').trim();
     const name = String(req.body.name || '').trim();
 
