@@ -16,7 +16,7 @@ const MEGA_NAV_SECTIONS = {
         spotlight: {
             title: 'Festive Kidswear',
             subtitle: 'Soft fabrics, premium finishing, and ready-to-gift looks.',
-            image: 'assets/kids-fashion/K 01.jpg',
+            image: 'assets/kids-fashion/K01.jpeg',
             href: 'category.html?cat=baby-kids'
         },
         groups: [

@@ -19,7 +19,7 @@ const CATEGORY_META = {
     'baby-kids': {
         title: 'Kids Fashion',
         body_html: 'Infant essentials, occasionwear, and everyday kids fashion.',
-        image: 'assets/kids-fashion/K 01.jpg'
+        image: 'assets/kids-fashion/K01.jpeg'
     },
     toys: {
         title: 'Toys & Games',
@@ -387,9 +387,10 @@ async function upsertShiprocketOrder(orderPayload, req) {
         state: String(orderPayload.address?.state || orderPayload.state || ''),
         zip: String(orderPayload.address?.zip || orderPayload.postcode || orderPayload.zip || '')
     };
+    const userPhone = String(orderPayload.userPhone || address.phone || orderPayload.phone || '');
     const update = {
-        userId: String(orderPayload.userId || address.phone || 'shiprocket-guest'),
-        userPhone: address.phone,
+        userId: String(orderPayload.userId || userPhone || 'shiprocket-guest'),
+        userPhone,
         customerEmail: address.email,
         items,
         amount,
@@ -584,7 +585,6 @@ router.post('/access-token/checkout', async (req, res) => {
                         title = title || mockProduct.name;
                         image = image || mockProduct.image;
                     }
-                    console.error('DB fetch failed, used mock fallback for product:', productId);
                 }
 
                 // If still no Shiprocket ID found from DB, try mock fallback
@@ -613,7 +613,6 @@ router.post('/access-token/checkout', async (req, res) => {
     };
 
     try {
-        console.log('Shiprocket Checkout Payload:', JSON.stringify(payload, null, 2));
         const response = await axios.post(
             `${SHIPROCKET_BASE_URL}/api/v1/access-token/checkout`,
             payload,
@@ -621,7 +620,6 @@ router.post('/access-token/checkout', async (req, res) => {
         );
 
         const data = response.data || {};
-        console.log('Shiprocket Checkout Response:', JSON.stringify(data, null, 2));
         const token = data?.result?.token || data?.token || '';
         const orderId = data?.result?.order_id || data?.order_id || data?.result?.orderId || data?.orderId || '';
 
@@ -638,11 +636,14 @@ router.post('/access-token/checkout', async (req, res) => {
             raw: data
         });
     } catch (err) {
-        console.error('Shiprocket token generation error:', err.response?.data || err.message);
-        
         let message = 'Failed to generate Shiprocket checkout token.';
         if (err.response?.status === 401) {
             message = 'Shiprocket Authentication failed. Please verify your API Key and Secret Key in .env.';
+        } else if (
+            err.response?.status === 500 &&
+            err.response?.data?.error?.message === 'Something went wrong! Please try again later.'
+        ) {
+            message = 'Shiprocket checkout API is rejecting this account or checkout configuration. API login and product sync work, so Shiprocket support needs to verify checkout enablement on their side.';
         } else if (err.response?.data?.message || err.response?.data?.error?.message) {
             message = err.response.data.message || err.response.data.error.message;
         } else {
@@ -660,6 +661,8 @@ router.post('/access-token/checkout', async (req, res) => {
 router.post('/orders/complete', async (req, res) => {
     const shiprocketOrderId = String(req.body.orderId || '').trim();
     const orderInfo = req.body.orderInfo || {};
+    const guestPhone = String(orderInfo.address?.phone || orderInfo.phone || '').trim();
+    const guestUserId = String(orderInfo.userId || guestPhone || 'shiprocket-guest').trim();
 
     if (!shiprocketOrderId) {
         return res.status(400).json({ message: 'orderId is required.' });
@@ -669,7 +672,8 @@ router.post('/orders/complete', async (req, res) => {
         const order = await upsertShiprocketOrder({
             ...orderInfo,
             shiprocketOrderId,
-            userId: req.auth?.userId || req.auth?.phone || orderInfo.address?.phone || 'shiprocket-guest',
+            userId: req.auth?.userId || req.auth?.phone || guestUserId,
+            userPhone: req.auth?.phone || guestPhone,
             status: 'Processing',
             paymentMethod: 'shiprocket',
             paymentStatus: 'Pending confirmation',
