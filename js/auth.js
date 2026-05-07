@@ -41,7 +41,7 @@ function ensureAuthModal() {
             <button class="modal-close" onclick="closeLoginModal()">X</button>
             <div id="authContentMain">
                 <div style="text-align:center;margin-bottom:24px">
-                    <img src="assets/logo/kidvana-logo.svg" alt="Kidvana Logo" style="width:48px;height:48px;margin-bottom:8px;">
+                    <img src="assets/logo/kidvana-logo.png" alt="Kidvana Logo" style="width:48px;height:48px;margin-bottom:8px;">
                     <h3 style="font-size:1.2rem">Welcome to Kidvana</h3>
                     <p style="font-size:0.82rem;color:var(--gray-500)">Use your phone number to continue</p>
                 </div>

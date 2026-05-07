@@ -7,9 +7,9 @@
     .mission-polish-title { font-size: 2.8rem; }
     .hero-title { font-size: 2.2rem; }
     
-    .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
-    .footer-brand,
-    .footer-newsletter { grid-column: 1 / -1; }
+    .footer-shell { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 28px; }
+    .footer-brand-panel,
+    .footer-map-column { grid-column: 1 / -1; }
 }
 
 /* Mobile Large */
@@ -48,10 +48,13 @@
     
     .testimonials-grid { gap: 24px; }
     
-    .footer-grid { grid-template-columns: 1fr; gap: 24px; text-align: left; }
-    .footer-logo, .footer-social { justify-content: flex-start; }
-    .newsletter-form { justify-content: flex-start; flex-direction: column; }
-    .footer-contact-list { max-width: none; margin: 24px 0 0; }
+    .footer { padding: 68px 0 24px; }
+    .footer-shell { grid-template-columns: 1fr; gap: 30px; }
+    .footer-brand-panel,
+    .footer-map-column { grid-column: auto; }
+    .footer-logo { justify-content: flex-start; }
+    .footer-map-panel { min-height: 260px; }
+    .footer-map-frame { height: 260px; }
     
     .product-price { font-size: 2rem; }
     .product-info h1 { font-size: 2rem; }

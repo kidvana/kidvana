@@ -1,6 +1,7 @@
 // Main storefront app helpers
 
 document.addEventListener('DOMContentLoaded', () => {
+    try { renderSharedFooter(); } catch(e) { console.error(e); }
     try { renderCommonHeader(); } catch(e) { console.error(e); }
     try { initScrollRefinements(); } catch(e) { console.error(e); }
     try { initMobileMenu(); } catch(e) { console.error(e); }
@@ -19,6 +20,113 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchProducts();
     }
 });
+
+function renderSharedFooter() {
+    const footers = document.querySelectorAll('.footer');
+    if (!footers.length) return;
+
+    const year = new Date().getFullYear();
+    const mapQuery = encodeURIComponent('Jhankar Road, Qutub Vihar, Goyla Dairy, Delhi 110071');
+    const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`;
+    const mapsOpenUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
+    const footerHtml = `
+        <div class="container">
+            <div class="footer-shell">
+                <div class="footer-brand-panel">
+                    <a href="index.html" class="footer-logo footer-logo-block">
+                        <img src="assets/logo/kidvana-logo.png" alt="Kidvana Logo">
+                        <span>Kidvana</span>
+                    </a>
+                    <p class="footer-brand-copy">Premium kidswear, toys, and gifting picks curated to make every childhood brighter.</p>
+                    <div class="footer-follow-block">
+                        <h4 class="footer-column-title">Follow Us On</h4>
+                        <div class="footer-social-row">
+                            <a href="contact.html" class="footer-social-link" aria-label="Facebook handle coming soon" title="Facebook handle coming soon">
+                                <i class="ph-fill ph-facebook-logo"></i>
+                            </a>
+                            <a href="contact.html" class="footer-social-link" aria-label="Instagram handle coming soon" title="Instagram handle coming soon">
+                                <i class="ph-fill ph-instagram-logo"></i>
+                            </a>
+                            <a href="contact.html" class="footer-social-link" aria-label="YouTube channel coming soon" title="YouTube channel coming soon">
+                                <i class="ph-fill ph-youtube-logo"></i>
+                            </a>
+                            <a href="contact.html" class="footer-social-link" aria-label="LinkedIn page coming soon" title="LinkedIn page coming soon">
+                                <i class="ph-fill ph-linkedin-logo"></i>
+                            </a>
+                            <a href="https://wa.me/919310841822" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="WhatsApp">
+                                <i class="ph-fill ph-whatsapp-logo"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h4 class="footer-column-title">Information</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="contact.html">About Us</a></li>
+                        <li><a href="terms-of-service.html">Terms & Conditions</a></li>
+                        <li><a href="shipping-policy.html">Shipping Policy</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="returns-refunds.html">Refund Policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 class="footer-column-title">Quick Links</h4>
+                    <ul class="footer-nav-list">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="category.html">Shop All</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                        <li><a href="track-order.html">Track Order</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 class="footer-column-title">Locate Me</h4>
+                    <div class="footer-contact-stack">
+                        <div class="footer-contact-line">
+                            <span class="footer-contact-icon"><i class="ph-fill ph-map-pin"></i></span>
+                            <span>Jhankar Road, Qutub Vihar, Goyla Dairy, Delhi - 110071</span>
+                        </div>
+                        <a href="tel:+919310841822" class="footer-contact-line">
+                            <span class="footer-contact-icon"><i class="ph-fill ph-phone-call"></i></span>
+                            <span>+91 9310841822</span>
+                        </a>
+                        <a href="mailto:kidvana.in@gmail.com" class="footer-contact-line">
+                            <span class="footer-contact-icon"><i class="ph-fill ph-envelope-simple"></i></span>
+                            <span>kidvana.in@gmail.com</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-column footer-map-column">
+                    <h4 class="footer-column-title">Our Location</h4>
+                    <div class="footer-map-panel">
+                        <a href="${mapsOpenUrl}" target="_blank" rel="noopener noreferrer" class="footer-map-toplink">Open in Maps</a>
+                        <iframe
+                            class="footer-map-frame"
+                            src="${mapEmbedUrl}"
+                            loading="lazy"
+                            allowfullscreen
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Kidvana location map">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-legal-bar">
+                <p>Copyright ${year} Kidvana - All Rights Reserved.</p>
+            </div>
+        </div>
+    `;
+
+    footers.forEach(footer => {
+        footer.innerHTML = footerHtml;
+    });
+}
 
 function renderFeaturedCategories() {
     const container = document.getElementById('featuredCategories');
