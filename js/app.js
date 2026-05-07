@@ -206,6 +206,14 @@ function initIntersectionObserver() {
 }
 
 function renderHomeSections() {
+    const hotArrivalsRow = document.getElementById('hotArrivalsRow');
+    if (hotArrivalsRow && typeof createProductCardHTML === 'function') {
+        const hotArrivalProducts = typeof PRODUCTS !== 'undefined' && Array.isArray(PRODUCTS)
+            ? PRODUCTS.slice(-12).reverse()
+            : [];
+        hotArrivalsRow.innerHTML = hotArrivalProducts.map(createProductCardHTML).join('');
+    }
+
     const bestSellersRow = document.getElementById('bestSellers');
     if (bestSellersRow && typeof getProductsByTag === 'function') {
         bestSellersRow.innerHTML = getProductsByTag('bestseller').slice(0, 12).map(createProductCardHTML).join('');

@@ -88,8 +88,63 @@ function initScrollArrows() {
     });
 }
 
+function initAutoScrollRows() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    document.querySelectorAll('.product-scroll-row[data-auto-scroll]').forEach(row => {
+        if (row.dataset.autoScrollBound === 'true') return;
+        row.dataset.autoScrollBound = 'true';
+
+        const intervalMs = Number(row.dataset.autoScroll) || 5000;
+        let autoScrollTimer = null;
+
+        function getScrollAmount() {
+            const firstCard = row.querySelector('.product-card');
+            if (!firstCard) return 320;
+
+            const styles = window.getComputedStyle(row);
+            const gap = parseFloat(styles.columnGap || styles.gap || 0) || 0;
+            return firstCard.getBoundingClientRect().width + gap;
+        }
+
+        function stepScroll() {
+            if (row.scrollWidth <= row.clientWidth) return;
+
+            const scrollAmount = getScrollAmount();
+            const reachedEnd = row.scrollLeft + row.clientWidth >= row.scrollWidth - scrollAmount;
+
+            if (reachedEnd) {
+                row.scrollTo({ left: 0, behavior: 'smooth' });
+                return;
+            }
+
+            row.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+
+        function startAutoScroll() {
+            stopAutoScroll();
+            autoScrollTimer = window.setInterval(stepScroll, intervalMs);
+        }
+
+        function stopAutoScroll() {
+            if (autoScrollTimer) {
+                window.clearInterval(autoScrollTimer);
+                autoScrollTimer = null;
+            }
+        }
+
+        row.addEventListener('mouseenter', stopAutoScroll);
+        row.addEventListener('mouseleave', startAutoScroll);
+        row.addEventListener('touchstart', stopAutoScroll, { passive: true });
+        row.addEventListener('touchend', startAutoScroll, { passive: true });
+
+        startAutoScroll();
+    });
+}
+
 // Init on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     initHeroCarousel();
     initScrollArrows();
+    initAutoScrollRows();
 });

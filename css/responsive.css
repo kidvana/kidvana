@@ -7,7 +7,9 @@
     .mission-polish-title { font-size: 2.8rem; }
     .hero-title { font-size: 2.2rem; }
     
-    .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 48px; }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+    .footer-brand,
+    .footer-newsletter { grid-column: 1 / -1; }
 }
 
 /* Mobile Large */
@@ -21,6 +23,21 @@
     .hero-title { font-size: 1.8rem; }
     
     .pics { height: 300px !important; }
+
+    .offer-banner {
+        padding: 24px;
+    }
+    .offer-banner-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .offer-copy {
+        width: 100%;
+    }
+    .offer-code {
+        width: 100%;
+        min-height: 52px;
+    }
     
     .homepage-perks-grid { grid-template-columns: repeat(2, 1fr); padding: 32px 20px; }
     .feature-icon { font-size: 2.2rem; }
@@ -31,8 +48,10 @@
     
     .testimonials-grid { gap: 24px; }
     
-    .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-    .footer-logo, .footer-social, .newsletter-form { justify-content: center; }
+    .footer-grid { grid-template-columns: 1fr; gap: 24px; text-align: left; }
+    .footer-logo, .footer-social { justify-content: flex-start; }
+    .newsletter-form { justify-content: flex-start; flex-direction: column; }
+    .footer-contact-list { max-width: none; margin: 24px 0 0; }
     
     .product-price { font-size: 2rem; }
     .product-info h1 { font-size: 2rem; }
@@ -51,8 +70,19 @@
     .hero-title { font-size: 1.5rem; }
     .pics { height: 200px !important; border-radius: var(--radius-lg) !important; }
     
-    .offer-banner { padding: 24px 20px; }
+    .offer-banner { padding: 20px 18px; }
+    .offer-kicker { font-size: 0.64rem; letter-spacing: 0.12em; }
     .offer-text { font-size: 1rem; }
+    .offer-meta { gap: 8px; }
+    .offer-meta-item {
+        font-size: 0.74rem;
+        padding: 7px 10px;
+    }
+    .offer-code {
+        min-height: 48px;
+        font-size: 0.92rem;
+        padding: 0 16px;
+    }
     
     .homepage-perks-grid { grid-template-columns: 1fr; gap: 32px; }
     

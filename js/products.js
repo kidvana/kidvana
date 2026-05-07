@@ -5,9 +5,7 @@ const CATEGORIES = [
     { id: 'toys', name: 'Toys & Games', icon: '<i class="ph-duotone ph-game-controller"></i>' },
     { id: 'fashion', name: 'Women Fashion', icon: '<i class="ph-duotone ph-dress"></i>' },
     { id: 'electronics', name: 'Electronics', icon: '<i class="ph-duotone ph-headphones"></i>' },
-    { id: 'kitchen', name: 'Kitchen & Home', icon: '<i class="ph-duotone ph-cooking-pot"></i>' },
-    { id: 'health', name: 'Health & Wellness', icon: '<i class="ph-duotone ph-heartbeat"></i>' },
-    { id: 'sports', name: 'Sports & Fitness', icon: '<i class="ph-duotone ph-basketball"></i>' }
+    { id: 'kitchen', name: 'Kitchen & Home', icon: '<i class="ph-duotone ph-cooking-pot"></i>' }
 ];
 
 const MEGA_NAV_SECTIONS = {
@@ -112,41 +110,6 @@ const MEGA_NAV_SECTIONS = {
                     { label: 'Featured Deals', href: 'category.html?search=deal' },
                     { label: 'Top Rated Tech', href: 'category.html?cat=electronics' },
                     { label: 'View All Electronics', href: 'category.html?cat=electronics' }
-                ]
-            }
-        ]
-    },
-    sports: {
-        description: 'Indoor games, active play, and sporty gifts for school-age kids and families.',
-        spotlight: {
-            title: 'Move & Play',
-            subtitle: 'Fitness and sports gear that turns screen time into play time.',
-            image: 'assets/toys/T 03.jpg',
-            href: 'category.html?cat=sports'
-        },
-        groups: [
-            {
-                title: 'Outdoor Fun',
-                links: [
-                    { label: 'Active Play', href: 'category.html?cat=sports' },
-                    { label: 'Family Games', href: 'category.html?search=games' },
-                    { label: 'Weekend Picks', href: 'category.html?cat=sports' }
-                ]
-            },
-            {
-                title: 'Skill Builders',
-                links: [
-                    { label: 'Board & Puzzle Games', href: 'category.html?search=board' },
-                    { label: 'Coordination Toys', href: 'category.html?search=learning' },
-                    { label: 'Smart Challenges', href: 'category.html?search=smart' }
-                ]
-            },
-            {
-                title: 'Shop Sports',
-                links: [
-                    { label: 'Budget Picks', href: 'category.html?cat=sports' },
-                    { label: 'Gift for Kids', href: 'category.html?search=gift' },
-                    { label: 'View All Sports', href: 'category.html?cat=sports' }
                 ]
             }
         ]
@@ -546,23 +509,83 @@ function initCategoryControls() {
 
 document.addEventListener('DOMContentLoaded', initCategoryControls);
 
+function getCategoryPageContext() {
+    const params = new URLSearchParams(window.location.search);
+
+    return {
+        categoryId: params.get('cat'),
+        searchTerm: params.get('q') || params.get('search') || ''
+    };
+}
+
+function getCategoryEmptyStateHTML(baseProducts) {
+    const { categoryId, searchTerm } = getCategoryPageContext();
+
+    if (!baseProducts.length && categoryId) {
+        const categoryName = getCategoryDisplayName(categoryId);
+
+        return `
+            <div class="empty-state" style="grid-column:1/-1; text-align:center; padding:72px 24px; background:var(--white); border:1px solid var(--gray-100); border-radius:var(--radius-2xl); box-shadow:var(--shadow-sm);">
+                <div style="font-size:3rem;margin-bottom:16px">Coming Soon</div>
+                <h3>${categoryName} will be added soon</h3>
+                <p style="color:var(--gray-500);margin:8px auto 20px;max-width:520px;line-height:1.7;">
+                    We are curating premium products for ${categoryName.toLowerCase()}. This category is not live yet, but fresh items will be added in a future update.
+                </p>
+                <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+                    <a href="category.html" class="btn btn-primary">Browse Available Products</a>
+                    <a href="index.html" class="btn btn-outline">Back to Home</a>
+                </div>
+            </div>
+        `;
+    }
+
+    if (!baseProducts.length && searchTerm) {
+        return `
+            <div class="empty-state" style="grid-column:1/-1; text-align:center; padding:72px 24px; background:var(--white); border:1px solid var(--gray-100); border-radius:var(--radius-2xl); box-shadow:var(--shadow-sm);">
+                <div style="font-size:3rem;margin-bottom:16px">No results</div>
+                <h3>No products found for "${searchTerm}"</h3>
+                <p style="color:var(--gray-500);margin:8px 0 20px;line-height:1.7;">
+                    Try another keyword or explore our currently available categories.
+                </p>
+                <a href="category.html" class="btn btn-primary">Explore All Products</a>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="empty-state" style="grid-column:1/-1; text-align:center; padding:72px 24px; background:var(--white); border:1px solid var(--gray-100); border-radius:var(--radius-2xl); box-shadow:var(--shadow-sm);">
+            <div style="font-size:3rem;margin-bottom:16px">No results</div>
+            <h3>No products match these filters</h3>
+            <p style="color:var(--gray-500);margin:8px 0 20px;line-height:1.7;">
+                Try adjusting your filters or sort options to see more products.
+            </p>
+            <a href="category.html" class="btn btn-primary">View All Products</a>
+        </div>
+    `;
+}
+
 function renderCategoryPage() {
     const grid = document.getElementById('categoryGrid');
     if (!grid) return;
 
-    const filteredProducts = applyCategoryFilters(getBaseCategoryProducts());
+    const baseProducts = getBaseCategoryProducts();
+    const filteredProducts = applyCategoryFilters(baseProducts);
+    const { categoryId, searchTerm } = getCategoryPageContext();
     const countEl = document.getElementById('categoryCount');
-    if (countEl) countEl.textContent = `${filteredProducts.length} items found`;
+    if (countEl) {
+        if (!baseProducts.length && categoryId) {
+            countEl.textContent = 'New products coming soon';
+        } else if (!baseProducts.length && searchTerm) {
+            countEl.textContent = 'No matching products found';
+        } else if (!filteredProducts.length) {
+            countEl.textContent = 'No items match the selected filters';
+        } else {
+            countEl.textContent = `${filteredProducts.length} items found`;
+        }
+    }
 
     if (!filteredProducts.length) {
-        grid.innerHTML = `
-            <div class="empty-state">
-                <div style="font-size:3rem;margin-bottom:16px">No results</div>
-                <h3>No products found</h3>
-                <p style="color:var(--gray-500);margin:8px 0 20px">Try adjusting your filters or search.</p>
-                <a href="index.html" class="btn btn-primary">Back to Home</a>
-            </div>
-        `;
+        grid.innerHTML = getCategoryEmptyStateHTML(baseProducts);
         return;
     }
 
