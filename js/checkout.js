@@ -40,9 +40,16 @@ function getCheckoutItems() {
     }));
 }
 
-function calculateCheckoutTotals(items = getCheckoutItems()) {
+function calculateCheckoutTotals(items = getCheckoutItems(), paymentMethod = checkoutData.payment) {
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = subtotal > 499 ? 0 : 40;
+    
+    let shipping = 0;
+    if (paymentMethod === 'cod') {
+        shipping = 150; // COD is always ₹150
+    } else {
+        shipping = subtotal >= 1000 ? 0 : 150; // ₹150 below ₹1000 for prepaid
+    }
+
     const tax = Math.round(subtotal * 0.18);
     const total = subtotal + shipping + tax;
 
@@ -128,10 +135,31 @@ function showSection(step) {
 }
 
 function selectPayment(method) {
+    if (method === 'cod') {
+        const state = (checkoutData.shipping.state || '').trim().toLowerCase();
+        if (state !== 'delhi') {
+            showToast('Cash on Delivery is available in Delhi only. Please use online payment.', 'error');
+            // If they were already on another method, stay there. 
+            // If we are initializing, we might need a default.
+            if (checkoutData.payment === 'cod') {
+                // If it was already COD but state changed, or initializing
+                method = 'shiprocket';
+            } else {
+                return; // Don't change from current non-cod method
+            }
+        }
+    }
+
     checkoutData.payment = method;
     document.querySelectorAll('.payment-option').forEach(option => {
         option.classList.toggle('active', option.dataset.method === method);
     });
+
+    // Recalculate totals and update UI
+    renderCheckoutSummary();
+    if (document.getElementById('sectionReview').style.display === 'block') {
+        renderOrderReview();
+    }
 }
 
 function handlePaymentSubmit() {

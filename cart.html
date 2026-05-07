@@ -215,6 +215,8 @@
             }
 
             const finalTotal = subtotal - couponDiscount;
+            const shipping = finalTotal >= 1000 ? 0 : 150;
+            const grandTotal = finalTotal + shipping;
             const totalSavings = originalSavings + couponDiscount;
 
             container.innerHTML = `
@@ -249,11 +251,12 @@
                         <div class="summary-row"><span>Original Price</span><span>Rs.${mrpTotal.toLocaleString()}</span></div>
                         <div class="summary-row"><span>Product Discount</span><span class="text-green">- Rs.${originalSavings.toLocaleString()}</span></div>
                         ${appliedCoupon ? `<div class="summary-row text-green font-bold"><span>Promo (${appliedCoupon.code})</span><span>- Rs.${couponDiscount.toLocaleString()}</span></div>` : ''}
-                        <div class="summary-row"><span>Shipping</span><span class="text-green">FREE</span></div>
+                        <div class="summary-row"><span>Shipping</span><span>${shipping === 0 ? '<span class="text-green">FREE</span>' : 'Rs.' + shipping}</span></div>
                         <div class="summary-row total mt-4 pt-4 border-t border-gray-100">
                             <span>Total Amount</span>
-                            <span>Rs.${finalTotal.toLocaleString()}</span>
+                            <span>Rs.${grandTotal.toLocaleString()}</span>
                         </div>
+                        <p class="text-xs text-gray-400 mt-2">Free shipping on orders above ₹1000</p>
                         
                         <div class="promo-box mt-6">
                             <div class="promo-box-actions">

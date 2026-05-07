@@ -66,7 +66,10 @@ function buildShiprocketRedirectUrl(checkoutRef) {
 }
 
 function buildInstantOrderInfo(product, quantity = 1) {
-    const amount = Number(product.price || 0) * quantity;
+    const subtotal = Number(product.price || 0) * quantity;
+    const shipping = subtotal >= 1000 ? 0 : 150;
+    const tax = Math.round(subtotal * 0.18);
+    const total = subtotal + shipping + tax;
     const user = typeof getAuthUser === 'function' ? getAuthUser() : null;
 
     return {
@@ -82,13 +85,13 @@ function buildInstantOrderInfo(product, quantity = 1) {
             qty: quantity,
             quantity
         }],
-        amount,
+        amount: total,
         address: {},
         totals: {
-            subtotal: amount,
-            shipping: 0,
-            tax: 0,
-            total: amount
+            subtotal,
+            shipping,
+            tax,
+            total
         },
         paymentMethod: 'shiprocket'
     };

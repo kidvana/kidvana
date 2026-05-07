@@ -196,13 +196,17 @@
                                 <small class="text-gray-400">Launch secure popup for UPI, cards, wallets, and faster checkout</small>
                             </div>
                         </div>
-                        <div class="payment-option active" data-method="cod" onclick="selectPayment('cod')">
-                            <span style="font-size:1.5rem">COD</span>
-                            <div>
-                                <strong class="block">Cash on Delivery</strong>
-                                <small class="text-gray-400">Pay when you receive</small>
-                            </div>
-                        </div>
+                                                <div class="payment-option" data-method="cod" onclick="selectPayment('cod')">
+                                    <div class="payment-option-header">
+                                        <div class="payment-radio"></div>
+                                        <strong>Cash on Delivery (COD)</strong>
+                                    </div>
+                                    <p>Pay when you receive your order.</p>
+                                    <p style="margin-top: 8px; font-size: 0.85rem; color: var(--gray-500); line-height: 1.4;">
+                                        <i class="ph ph-info" style="vertical-align: middle;"></i> Available in <strong>Delhi only</strong>. <br>
+                                        Flat ₹150 shipping applies to all COD orders.
+                                    </p>
+                                </div>
                     </div>
                     <div class="flex gap-4 mt-8">
                         <button type="button" class="btn btn-outline flex-1" onclick="showSection('Shipping')">Back</button>
