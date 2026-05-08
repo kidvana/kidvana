@@ -42,16 +42,19 @@ function renderSharedFooter() {
                     <div class="footer-follow-block">
                         <h4 class="footer-column-title">Follow Us On</h4>
                         <div class="footer-social-row">
-                            <a href="contact.html" class="footer-social-link" aria-label="Facebook handle coming soon" title="Facebook handle coming soon">
+                            <a href="https://www.facebook.com/profile.php?id=61589216710008" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Facebook" title="Facebook">
                                 <i class="ph-fill ph-facebook-logo"></i>
                             </a>
-                            <a href="contact.html" class="footer-social-link" aria-label="Instagram handle coming soon" title="Instagram handle coming soon">
+                            <a href="https://www.instagram.com/kidvana.in/?hl=en" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram" title="Instagram">
                                 <i class="ph-fill ph-instagram-logo"></i>
                             </a>
-                            <a href="contact.html" class="footer-social-link" aria-label="YouTube channel coming soon" title="YouTube channel coming soon">
-                                <i class="ph-fill ph-youtube-logo"></i>
+                            <a href="https://www.threads.com/@kidvana.in?xmt=AQG0Z3cA5_WYNjOvG4LAchkmcVycmV165PnIODXISxWOBbo" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Threads" title="Threads">
+                                <i class="ph-fill ph-threads-logo"></i>
                             </a>
-                            <a href="contact.html" class="footer-social-link" aria-label="LinkedIn page coming soon" title="LinkedIn page coming soon">
+                            <a href="https://x.com/InKidvana" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="X (Twitter)" title="X (Twitter)">
+                                <i class="ph-fill ph-x-logo"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/kidvana-undefined-533114409/" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="LinkedIn" title="LinkedIn">
                                 <i class="ph-fill ph-linkedin-logo"></i>
                             </a>
                             <a href="https://wa.me/919310841822" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="WhatsApp">
