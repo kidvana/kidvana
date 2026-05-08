@@ -221,6 +221,11 @@ async function buyNow(event, productId) {
         window.HeadlessCheckout.addToCart(event || window.event, shiprocketResponse.token, {
             fallbackUrl: redirectUrl
         });
+        
+        // Fix position via JS after launch
+        if (typeof fixShiprocketPosition === 'function') {
+            fixShiprocketPosition();
+        }
     } catch (err) {
         console.error(err);
         showToast(err.message || 'Failed to launch Shiprocket checkout.', 'error');
@@ -467,3 +472,36 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHeaderCounts();
     renderCartSidebar();
 });
+
+// ── Fix Shiprocket Position via JS ──
+function fixShiprocketPosition() {
+    const interval = setInterval(() => {
+        const bodyChildren = document.body.children;
+        for (let i = 0; i < bodyChildren.length; i++) {
+            const child = bodyChildren[i];
+            if (['SCRIPT', 'HEADER', 'MAIN', 'FOOTER'].includes(child.tagName)) {
+                continue;
+            }
+            // Check if it looks like the checkout module
+            if (child.innerText && child.innerText.includes('Provide your mobile number')) {
+                // Found it! Force it to be centered
+                child.style.position = 'fixed';
+                child.style.top = '50%';
+                child.style.left = '50%';
+                child.style.transform = 'translate(-50%, -50%)';
+                child.style.zIndex = '100000';
+                child.style.width = '400px';
+                child.style.height = '600px';
+                child.style.background = 'white';
+                child.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+                child.style.borderRadius = '12px';
+                child.style.overflow = 'hidden';
+                console.log('Fixed Shiprocket position via JS!');
+                clearInterval(interval);
+                break;
+            }
+        }
+    }, 500);
+    // Stop after 10 seconds
+    setTimeout(() => clearInterval(interval), 10000);
+}

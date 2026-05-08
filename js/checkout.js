@@ -298,6 +298,11 @@ function launchShiprocketCheckout(event, token, redirectUrl) {
     }
 
     checkoutLauncher.addToCart(event, token, { fallbackUrl: redirectUrl });
+    
+    // Fix position via JS after launch
+    if (typeof fixShiprocketPosition === 'function') {
+        fixShiprocketPosition();
+    }
 }
 
 async function placeOrder(event) {
