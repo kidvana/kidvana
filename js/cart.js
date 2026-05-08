@@ -142,7 +142,7 @@ function ensureShiprocketCheckoutAssets() {
         return Promise.resolve();
     }
 
-    const existingScript = document.querySelector('script[data-shiprocket-checkout="true"]');
+    const existingScript = document.querySelector('script[data-shiprocket-checkout="true"]') || document.querySelector('script[src*="checkout-ui.shiprocket.com"]');
     if (existingScript) {
         return new Promise((resolve, reject) => {
             existingScript.addEventListener('load', () => resolve(), { once: true });

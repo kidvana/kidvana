@@ -1665,3 +1665,23 @@ h4 { font-size: 1.25rem; }
   box-shadow: 0 10px 20px rgba(0,0,0,0.05);
   outline: none;
 }
+
+/* Force Shiprocket/Fastrr Checkout to appear as a centered popup */
+iframe[src*="checkout-ui.shiprocket.com"],
+iframe[src*="shiprocket"],
+[class*="sr-headless-checkout"],
+[class*="sr-popup"],
+[class*="sr-modal"],
+#headless-checkout-container {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 400px !important;
+  height: 600px !important;
+  z-index: 100000 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3) !important;
+  background: white !important;
+}
