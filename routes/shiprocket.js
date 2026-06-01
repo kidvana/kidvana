@@ -604,8 +604,8 @@ router.post('/orders/complete', async (req, res) => {
         const order = await upsertShiprocketOrder({
             ...orderInfo,
             shiprocketOrderId,
-            userId: req.auth?.userId || req.auth?.phone || guestUserId,
-            userPhone: req.auth?.phone || guestPhone,
+            userId: guestUserId,
+            userPhone: guestPhone,
             status: 'Processing',
             paymentMethod: 'shiprocket',
             paymentStatus: 'Pending confirmation',

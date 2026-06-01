@@ -9,10 +9,8 @@ router.get('/', async (req, res) => {
             const products = await Product.find().limit(200).lean();
             res.json(products);
         } else {
-            if (process.env.NODE_ENV === 'production') {
-                return res.status(503).json({ message: 'Service temporarily unavailable.' });
-            }
-            res.json(req.mockProducts);
+            // Fallback to mock products (needed for Vercel cold starts)
+            res.json(req.mockProducts || []);
         }
     } catch (err) {
         console.error('[Products] fetch error:', err.message);
