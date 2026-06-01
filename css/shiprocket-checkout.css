@@ -7,6 +7,7 @@
 .shiprocket-loading-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
     background: rgba(0,0,0,0.6);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -44,6 +45,7 @@
 .shiprocket-checkout-wrapper {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
     z-index: 99999;
     background: rgba(0,0,0,0.65);
     backdrop-filter: blur(12px);
@@ -59,7 +61,7 @@
     position: fixed;
     top: 16px;
     right: 16px;
-    z-index: 100001;
+    z-index: 100002;
     width: 40px; height: 40px;
     background: rgba(255,255,255,0.15);
     backdrop-filter: blur(8px);
@@ -78,23 +80,31 @@
     transform: scale(1.1);
 }
 
-/* Style the actual Shiprocket iframe */
+/* ═══ FORCE Shiprocket iframe styles ═══ */
+/* Target ALL possible Shiprocket iframes aggressively */
+iframe[src*="shiprocket"],
 iframe[src*="checkout-ui.shiprocket.com"],
 iframe[src*="checkout.shiprocket.com"],
-iframe[data-shiprocket-checkout] {
+iframe[data-shiprocket-checkout],
+div[id*="shiprocket"] iframe,
+div[class*="shiprocket"] iframe {
     position: fixed !important;
     z-index: 100000 !important;
     border: none !important;
-    border-radius: 0 !important;
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important;
     background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Desktop: Centered modal with rounded corners */
 @media (min-width: 769px) {
+    iframe[src*="shiprocket"],
     iframe[src*="checkout-ui.shiprocket.com"],
     iframe[src*="checkout.shiprocket.com"],
-    iframe[data-shiprocket-checkout] {
+    iframe[data-shiprocket-checkout],
+    div[id*="shiprocket"] iframe,
+    div[class*="shiprocket"] iframe {
         top: 2vh !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
@@ -107,20 +117,64 @@ iframe[data-shiprocket-checkout] {
     }
 }
 
-/* Mobile: Full screen */
+/* Mobile: ABSOLUTE full screen — no gaps */
 @media (max-width: 768px) {
+    iframe[src*="shiprocket"],
     iframe[src*="checkout-ui.shiprocket.com"],
     iframe[src*="checkout.shiprocket.com"],
-    iframe[data-shiprocket-checkout] {
+    iframe[data-shiprocket-checkout],
+    div[id*="shiprocket"] iframe,
+    div[class*="shiprocket"] iframe {
         top: 0 !important;
         left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        width: 100dvw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        max-width: 100vw !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+        transform: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Also force the wrapper container from Shiprocket SDK */
+    div[id*="shiprocket"],
+    div[class*="shiprocket"],
+    div[class*="Shiprocket"],
+    div[id*="headless-checkout"],
+    div[class*="headless-checkout"] {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
         width: 100vw !important;
         height: 100vh !important;
         height: 100dvh !important;
-        border-radius: 0 !important;
+        z-index: 100000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
     }
+
     .shiprocket-checkout-wrapper .sr-close-btn {
         top: 8px;
         right: 8px;
+        z-index: 100002;
+    }
+
+    /* Hide scrollbar on body when checkout is open */
+    body.sr-checkout-open {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
     }
 }

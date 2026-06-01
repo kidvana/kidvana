@@ -183,6 +183,7 @@ function showSRLoadingOverlay() {
     `;
     document.body.appendChild(overlay);
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('sr-checkout-open');
 }
 
 function showSRCheckoutWrapper() {
@@ -203,14 +204,20 @@ function showSRCheckoutWrapper() {
     });
     document.body.appendChild(wrapper);
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('sr-checkout-open');
 }
 
 function removeSROverlay() {
     document.getElementById('srLoadingOverlay')?.remove();
     document.getElementById('srCheckoutWrapper')?.remove();
     document.body.style.overflow = '';
-    document.querySelectorAll('iframe[src*="checkout-ui.shiprocket.com"], iframe[src*="checkout.shiprocket.com"]').forEach(iframe => {
+    document.body.classList.remove('sr-checkout-open');
+    document.querySelectorAll('iframe[src*="shiprocket"]').forEach(iframe => {
         iframe.remove();
+    });
+    // Also remove any Shiprocket SDK containers
+    document.querySelectorAll('div[id*="shiprocket"], div[class*="headless-checkout"]').forEach(el => {
+        el.remove();
     });
 }
 

@@ -65,12 +65,16 @@ app.use(cors({
         if (ALLOWED_ORIGINS.includes(origin)) {
             return callback(null, true);
         }
-        // In production, block unknown origins
-        if (process.env.NODE_ENV === 'production') {
-            return callback(new Error('Not allowed by CORS'));
+        // Allow all Vercel preview/production deployments
+        if (origin.endsWith('.vercel.app')) {
+            return callback(null, true);
         }
         // In development, allow all
-        return callback(null, true);
+        if (process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+        // Block unknown origins in production
+        return callback(new Error('Not allowed by CORS'));
     },
     credentials: true
 }));
