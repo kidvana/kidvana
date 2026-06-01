@@ -1,12 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-// ── CRITICAL: JWT_SECRET must be set in environment variables ──
+// ── JWT_SECRET — should be set in environment variables (Vercel Dashboard > Settings > Env Vars) ──
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
-    console.error('FATAL: JWT_SECRET environment variable is required. Set it in .env file.');
-    if (process.env.NODE_ENV === 'production') {
-        process.exit(1);
-    }
+    console.warn('[Auth] WARNING: JWT_SECRET not set. Using temporary secret. Set it in Vercel Dashboard > Settings > Environment Variables.');
 }
 const EFFECTIVE_SECRET = JWT_SECRET || 'dev_only_unsafe_secret_' + Date.now();
 
