@@ -172,6 +172,9 @@ async function createShiprocketAccessToken(payload) {
 }
 
 // ── Shiprocket Checkout Overlay Helpers (shared) ──
+// Strategy: Don't fight the SDK's iframe styling.
+// Instead, hide ALL page content behind a clean white fullscreen backdrop.
+
 function showSRLoadingOverlay() {
     removeSROverlay();
     const overlay = document.createElement('div');
@@ -186,148 +189,88 @@ function showSRLoadingOverlay() {
     document.body.classList.add('sr-checkout-open');
 }
 
-function showSRCheckoutWrapper() {
+function showSRBackdrop() {
+    // Remove loading spinner
     const loading = document.getElementById('srLoadingOverlay');
     if (loading) loading.remove();
-    if (document.getElementById('srCheckoutWrapper')) return;
+    
+    // Don't add duplicate
+    if (document.getElementById('srBackdrop')) return;
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'shiprocket-checkout-wrapper';
-    wrapper.id = 'srCheckoutWrapper';
-    wrapper.innerHTML = `<button class="sr-close-btn" onclick="removeSROverlay()" title="Close Checkout">✕</button>`;
-    wrapper.addEventListener('click', (e) => {
-        if (e.target === wrapper) {
-            if (confirm('Are you sure you want to close the checkout?')) {
-                removeSROverlay();
-            }
+    // Create a solid WHITE fullscreen backdrop that covers ALL page content
+    const backdrop = document.createElement('div');
+    backdrop.id = 'srBackdrop';
+    backdrop.style.cssText = `
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        height: 100dvh;
+        background: #ffffff;
+        z-index: 99990;
+        display: block;
+    `;
+    
+    // Close button on top
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'srCloseBtn';
+    closeBtn.innerHTML = '✕ Close';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px; left: 12px;
+        z-index: 100001;
+        padding: 8px 16px;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: 'Inter', system-ui, sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    `;
+    closeBtn.onclick = () => {
+        if (confirm('Checkout close karna hai?')) {
+            removeSROverlay();
         }
-    });
-    document.body.appendChild(wrapper);
+    };
+    
+    document.body.appendChild(backdrop);
+    document.body.appendChild(closeBtn);
     document.body.style.overflow = 'hidden';
     document.body.classList.add('sr-checkout-open');
 }
 
 function removeSROverlay() {
     document.getElementById('srLoadingOverlay')?.remove();
+    document.getElementById('srBackdrop')?.remove();
+    document.getElementById('srCloseBtn')?.remove();
     document.getElementById('srCheckoutWrapper')?.remove();
     document.body.style.overflow = '';
     document.body.classList.remove('sr-checkout-open');
-    document.querySelectorAll('iframe[src*="shiprocket"]').forEach(iframe => {
-        iframe.remove();
-    });
-    // Also remove any Shiprocket SDK containers
-    document.querySelectorAll('div[id*="shiprocket"], div[class*="headless-checkout"]').forEach(el => {
-        el.remove();
-    });
-}
-
-function forceIframeFullscreen(iframe) {
-    const isMobile = window.innerWidth <= 768;
     
-    if (isMobile) {
-        // Force fullscreen on mobile
-        iframe.style.cssText = `
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-            min-width: 100vw !important;
-            min-height: 100vh !important;
-            max-width: none !important;
-            max-height: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            border-radius: 0 !important;
-            transform: none !important;
-            z-index: 100000 !important;
-            background: #fff !important;
-            box-shadow: none !important;
-        `;
-    } else {
-        // Centered modal on desktop
-        iframe.style.cssText = `
-            position: fixed !important;
-            top: 2vh !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            width: min(480px, 90vw) !important;
-            height: 96vh !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            border-radius: 20px !important;
-            z-index: 100000 !important;
-            background: #fff !important;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important;
-        `;
-    }
-
-    // Also force parent containers to not restrict the iframe
-    let parent = iframe.parentElement;
-    while (parent && parent !== document.body) {
-        if (parent.style.position || parent.style.width || parent.style.height) {
-            parent.style.cssText = `
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                z-index: 99999 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: visible !important;
-            `;
-        }
-        parent = parent.parentElement;
-    }
+    // Remove all Shiprocket iframes and SDK containers
+    document.querySelectorAll('iframe[src*="shiprocket"]').forEach(el => el.remove());
+    document.querySelectorAll('div[id*="shiprocket"], div[class*="headless-checkout"]').forEach(el => el.remove());
 }
 
 function watchForSRIframe() {
     let attempts = 0;
     
-    // Use MutationObserver to catch iframe the moment it's added
-    const observer = new MutationObserver((mutations) => {
-        const iframe = document.querySelector('iframe[src*="shiprocket"]');
-        if (iframe) {
-            forceIframeFullscreen(iframe);
-            showSRCheckoutWrapper();
-            
-            // Keep re-enforcing styles in case SDK overrides them
-            let enforceCount = 0;
-            const enforcer = setInterval(() => {
-                enforceCount++;
-                const el = document.querySelector('iframe[src*="shiprocket"]');
-                if (el) {
-                    forceIframeFullscreen(el);
-                } else {
-                    clearInterval(enforcer);
-                }
-                // Stop after 30 seconds
-                if (enforceCount > 60) clearInterval(enforcer);
-            }, 500);
-        }
-    });
-    
-    observer.observe(document.body, { childList: true, subtree: true });
-    
-    // Fallback polling in case MutationObserver misses it
     const watcher = setInterval(() => {
         attempts++;
-        const iframe = document.querySelector('iframe[src*="shiprocket"]');
+        // Check for any iframe added by SDK
+        const iframe = document.querySelector('iframe[src*="shiprocket"], iframe[src*="checkout"]');
         if (iframe) {
             clearInterval(watcher);
-            observer.disconnect();
-            forceIframeFullscreen(iframe);
-            setTimeout(() => showSRCheckoutWrapper(), 300);
+            // Show white backdrop behind checkout
+            showSRBackdrop();
         }
         if (attempts > 30) {
             clearInterval(watcher);
-            observer.disconnect();
             const loading = document.getElementById('srLoadingOverlay');
             if (loading) {
                 loading.querySelector('.shiprocket-loading-text').textContent = 'Checkout loaded — complete your payment';
