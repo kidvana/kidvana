@@ -257,17 +257,96 @@ function removeSROverlay() {
     document.querySelectorAll('div[id*="shiprocket"], div[class*="headless-checkout"]').forEach(el => el.remove());
 }
 
+function forceCenter(el) {
+    const isMobile = window.innerWidth <= 768;
+    const s = el.style;
+    s.setProperty('position', 'fixed', 'important');
+    s.setProperty('top', '50%', 'important');
+    s.setProperty('left', '50%', 'important');
+    s.setProperty('transform', 'translate(-50%, -50%)', 'important');
+    s.setProperty('z-index', '100000', 'important');
+    s.setProperty('border', 'none', 'important');
+    s.setProperty('margin', '0', 'important');
+    s.setProperty('padding', '0', 'important');
+    s.setProperty('background', '#fff', 'important');
+    
+    if (isMobile) {
+        s.setProperty('width', '100vw', 'important');
+        s.setProperty('height', '100vh', 'important');
+        s.setProperty('max-width', '100vw', 'important');
+        s.setProperty('max-height', '100vh', 'important');
+        s.setProperty('min-width', '100vw', 'important');
+        s.setProperty('min-height', '100vh', 'important');
+        s.setProperty('border-radius', '0', 'important');
+        s.setProperty('box-shadow', 'none', 'important');
+    } else {
+        s.setProperty('width', 'min(460px, 92vw)', 'important');
+        s.setProperty('height', '94vh', 'important');
+        s.setProperty('border-radius', '16px', 'important');
+        s.setProperty('box-shadow', '0 20px 60px rgba(0,0,0,0.3)', 'important');
+    }
+    
+    // Force all parent containers too
+    let parent = el.parentElement;
+    while (parent && parent !== document.body && parent !== document.documentElement) {
+        const ps = parent.style;
+        ps.setProperty('position', 'fixed', 'important');
+        ps.setProperty('top', '0', 'important');
+        ps.setProperty('left', '0', 'important');
+        ps.setProperty('width', '100vw', 'important');
+        ps.setProperty('height', '100vh', 'important');
+        ps.setProperty('z-index', '99999', 'important');
+        ps.setProperty('overflow', 'visible', 'important');
+        ps.setProperty('margin', '0', 'important');
+        ps.setProperty('padding', '0', 'important');
+        ps.setProperty('background', 'transparent', 'important');
+        parent = parent.parentElement;
+    }
+}
+
+// Snapshot iframes before checkout to detect new ones
+let _iframesBefore = new Set();
+function snapshotIframes() {
+    _iframesBefore = new Set(document.querySelectorAll('iframe'));
+}
+
+function findNewIframe() {
+    const all = document.querySelectorAll('iframe');
+    for (const iframe of all) {
+        if (!_iframesBefore.has(iframe)) return iframe;
+    }
+    return null;
+}
+
 function watchForSRIframe() {
     let attempts = 0;
+    let found = false;
     
     const watcher = setInterval(() => {
         attempts++;
-        // Check for any iframe added by SDK
-        const iframe = document.querySelector('iframe[src*="shiprocket"], iframe[src*="checkout"]');
-        if (iframe) {
+        const newIframe = findNewIframe();
+        if (newIframe && !found) {
+            found = true;
             clearInterval(watcher);
-            // Show white backdrop behind checkout
+            
+            // Show backdrop
             showSRBackdrop();
+            
+            // Force center immediately
+            forceCenter(newIframe);
+            
+            // Keep enforcing every 200ms for 30 sec (SDK keeps re-styling)
+            let enforceCount = 0;
+            const enforcer = setInterval(() => {
+                enforceCount++;
+                const iframe = findNewIframe();
+                if (iframe) {
+                    forceCenter(iframe);
+                } else {
+                    clearInterval(enforcer);
+                }
+                if (enforceCount > 150) clearInterval(enforcer); // 30 sec
+            }, 200);
         }
         if (attempts > 30) {
             clearInterval(watcher);
@@ -277,12 +356,15 @@ function watchForSRIframe() {
                 setTimeout(() => loading.remove(), 3000);
             }
         }
-    }, 500);
+    }, 300);
 }
 
 async function buyNow(event, productId) {
     event?.preventDefault?.();
     event?.stopPropagation?.();
+
+    // Snapshot existing iframes so we can detect the new one from SDK
+    snapshotIframes();
 
     const product = getProductById(productId);
     if (!product) return;
