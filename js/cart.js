@@ -171,6 +171,69 @@ async function createShiprocketAccessToken(payload) {
     return parseApiResponse(response);
 }
 
+// ── Shiprocket Checkout Overlay Helpers (shared) ──
+function showSRLoadingOverlay() {
+    removeSROverlay();
+    const overlay = document.createElement('div');
+    overlay.className = 'shiprocket-loading-overlay';
+    overlay.id = 'srLoadingOverlay';
+    overlay.innerHTML = `
+        <div class="shiprocket-loading-spinner"></div>
+        <div class="shiprocket-loading-text">Opening Secure Checkout...</div>
+    `;
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+}
+
+function showSRCheckoutWrapper() {
+    const loading = document.getElementById('srLoadingOverlay');
+    if (loading) loading.remove();
+    if (document.getElementById('srCheckoutWrapper')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'shiprocket-checkout-wrapper';
+    wrapper.id = 'srCheckoutWrapper';
+    wrapper.innerHTML = `<button class="sr-close-btn" onclick="removeSROverlay()" title="Close Checkout">✕</button>`;
+    wrapper.addEventListener('click', (e) => {
+        if (e.target === wrapper) {
+            if (confirm('Are you sure you want to close the checkout?')) {
+                removeSROverlay();
+            }
+        }
+    });
+    document.body.appendChild(wrapper);
+    document.body.style.overflow = 'hidden';
+}
+
+function removeSROverlay() {
+    document.getElementById('srLoadingOverlay')?.remove();
+    document.getElementById('srCheckoutWrapper')?.remove();
+    document.body.style.overflow = '';
+    document.querySelectorAll('iframe[src*="checkout-ui.shiprocket.com"], iframe[src*="checkout.shiprocket.com"]').forEach(iframe => {
+        iframe.remove();
+    });
+}
+
+function watchForSRIframe() {
+    let attempts = 0;
+    const watcher = setInterval(() => {
+        attempts++;
+        const iframe = document.querySelector('iframe[src*="checkout-ui.shiprocket.com"], iframe[src*="checkout.shiprocket.com"]');
+        if (iframe) {
+            clearInterval(watcher);
+            setTimeout(() => showSRCheckoutWrapper(), 500);
+        }
+        if (attempts > 30) {
+            clearInterval(watcher);
+            const loading = document.getElementById('srLoadingOverlay');
+            if (loading) {
+                loading.querySelector('.shiprocket-loading-text').textContent = 'Checkout loaded — complete your payment';
+                setTimeout(() => loading.remove(), 3000);
+            }
+        }
+    }, 500);
+}
+
 async function buyNow(event, productId) {
     event?.preventDefault?.();
     event?.stopPropagation?.();
@@ -184,6 +247,10 @@ async function buyNow(event, productId) {
 
     try {
         ensureShiprocketSellerDomain();
+        
+        // Show loading overlay
+        showSRLoadingOverlay();
+        
         await ensureShiprocketCheckoutAssets();
 
         const shiprocketResponse = await createShiprocketAccessToken({
@@ -221,8 +288,12 @@ async function buyNow(event, productId) {
         window.HeadlessCheckout.addToCart(event || window.event, shiprocketResponse.token, {
             fallbackUrl: redirectUrl
         });
+
+        // Watch for iframe to appear
+        watchForSRIframe();
     } catch (err) {
         console.error(err);
+        removeSROverlay();
         showToast(err.message || 'Failed to launch Shiprocket checkout.', 'error');
     }
 }

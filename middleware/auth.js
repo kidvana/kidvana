@@ -1,6 +1,14 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'kidvana_dev_secret_change_me';
+// ── CRITICAL: JWT_SECRET must be set in environment variables ──
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('FATAL: JWT_SECRET environment variable is required. Set it in .env file.');
+    if (process.env.NODE_ENV === 'production') {
+        process.exit(1);
+    }
+}
+const EFFECTIVE_SECRET = JWT_SECRET || 'dev_only_unsafe_secret_' + Date.now();
 
 function signUserToken(user) {
     return jwt.sign(
@@ -9,7 +17,7 @@ function signUserToken(user) {
             phone: user.phone,
             name: user.name
         },
-        JWT_SECRET,
+        EFFECTIVE_SECRET,
         { expiresIn: '7d' }
     );
 }
@@ -19,15 +27,13 @@ function requireAuth(req, res, next) {
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 
     if (!token) {
-        console.warn(`[Auth] No token provided for ${req.originalUrl}`);
         return res.status(401).json({ message: 'Authentication required' });
     }
 
     try {
-        req.auth = jwt.verify(token, JWT_SECRET);
+        req.auth = jwt.verify(token, EFFECTIVE_SECRET);
         next();
     } catch (err) {
-        console.error(`[Auth] JWT Verification failed for ${req.originalUrl}:`, err.message);
         return res.status(401).json({ message: 'Session expired. Please login again.' });
     }
 }

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /models/
+Disallow: /routes/
+Disallow: /middleware/
+Disallow: /node_modules/
+
+Sitemap: https://kidvana.in/sitemap.xml

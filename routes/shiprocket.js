@@ -425,71 +425,8 @@ async function upsertShiprocketOrder(orderPayload, req) {
     return newOrder;
 }
 
-router.get('/config', (req, res) => {
-    res.json({
-        configured: isShiprocketConfigured(),
-        sellerDomain: getOrigin(req),
-        apiKey: SHIPROCKET_API_KEY ? `${SHIPROCKET_API_KEY.slice(0,4)}****` : 'MISSING',
-        secretKey: SHIPROCKET_SECRET_KEY ? `${SHIPROCKET_SECRET_KEY.slice(0,4)}****` : 'MISSING'
-    });
-});
-
-// Debug endpoint — tests actual Shiprocket API call without auth
-router.get('/debug-checkout', async (req, res) => {
-    const origin = getOrigin(req);
-    const timestamp = Math.floor(Date.now() / 1000);
-
-    const normalizedOrigin = normalizeSellerDomain(origin, req);
-
-    const testPayload = {
-        cart_data: {
-            items: [{
-                variant_id: 274443330,
-                quantity: 1,
-                price: 1299,
-                title: 'Classic Ethnic Wear Set',
-                sku: '69f83282b0d95cc83f5ccb94',
-                image_url: `${origin}/assets/kids-fashion/K01.jpeg`
-            }]
-        },
-        redirect_url: `${origin}/order-success.html?checkout=shiprocket&ref=debug`,
-        timestamp,
-        seller_domain: normalizedOrigin
-    };
-
-    const hexSig = buildSignature(testPayload, 'hex');
-    const base64Sig = buildSignature(testPayload, 'base64');
-
-    try {
-        const response = await axios.post(
-            `${SHIPROCKET_BASE_URL}/api/v1/access-token/checkout`,
-            testPayload,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Api-Key': SHIPROCKET_API_KEY,
-                    'X-Api-HMAC-SHA256': base64Sig
-                },
-                timeout: 15000
-            }
-        );
-        return res.json({ success: true, data: response.data, signatureUsed: 'base64' });
-    } catch (err) {
-        return res.json({
-            success: false,
-            status: err.response?.status,
-            error: err.response?.data || err.message,
-            debugInfo: {
-                apiKey: SHIPROCKET_API_KEY ? `${SHIPROCKET_API_KEY.slice(0,4)}****` : 'MISSING',
-                secretKeyFirst4: SHIPROCKET_SECRET_KEY ? SHIPROCKET_SECRET_KEY.slice(0,4) : 'MISSING',
-                baseUrl: SHIPROCKET_BASE_URL,
-                hexSignature: hexSig.slice(0, 16) + '...',
-                base64Signature: base64Sig.slice(0, 16) + '...',
-                payloadSent: testPayload
-            }
-        });
-    }
-});
+// /config and /debug-checkout endpoints REMOVED for production security
+// These leaked API key prefixes and internal configuration
 
 router.get('/products', async (req, res) => {
     try {
@@ -636,29 +573,19 @@ router.post('/access-token/checkout', async (req, res) => {
             raw: data
         });
     } catch (err) {
-        let message = 'Failed to generate Shiprocket checkout token.';
+        console.error('[Shiprocket] checkout token error:', err.response?.status, err.message);
+        let message = 'Failed to generate checkout token. Please try again.';
         if (err.response?.status === 401) {
-            message = 'Shiprocket Authentication failed. Please verify your API Key and Secret Key in .env.';
-        } else if (
-            err.response?.status === 500 &&
-            err.response?.data?.error?.message === 'Something went wrong! Please try again later.'
-        ) {
-            message = 'Shiprocket checkout API is rejecting this account or checkout configuration. API login and product sync work, so Shiprocket support needs to verify checkout enablement on their side.';
-        } else if (err.response?.data?.message || err.response?.data?.error?.message) {
-            message = err.response.data.message || err.response.data.error.message;
-        } else {
-            message = err.message;
+            message = 'Payment gateway authentication failed. Please contact support.';
         }
 
-        return res.status(err.response?.status || 500).json({
-            message,
-            error: err.message,
-            raw: err.response?.data || null
-        });
+        return res.status(err.response?.status || 500).json({ message });
     }
 });
 
 router.post('/orders/complete', async (req, res) => {
+    // Shiprocket checkout doesn't require our JWT — uses its own auth
+    // But we still validate the data
     const shiprocketOrderId = String(req.body.orderId || '').trim();
     const orderInfo = req.body.orderInfo || {};
     const guestPhone = String(orderInfo.address?.phone || orderInfo.phone || '').trim();
@@ -666,6 +593,11 @@ router.post('/orders/complete', async (req, res) => {
 
     if (!shiprocketOrderId) {
         return res.status(400).json({ message: 'orderId is required.' });
+    }
+
+    // Validate phone number format
+    if (guestPhone && !/^\d{10}$/.test(guestPhone)) {
+        return res.status(400).json({ message: 'Invalid phone number.' });
     }
 
     try {
@@ -759,8 +691,9 @@ router.post('/order-details', async (req, res) => {
 router.post('/webhooks/order', async (req, res) => {
     const webhookSecret = String(req.headers['x-shiprocket-webhook-secret'] || '');
 
-    if (SHIPROCKET_WEBHOOK_SECRET && webhookSecret !== SHIPROCKET_WEBHOOK_SECRET) {
-        return res.status(401).json({ message: 'Invalid webhook secret.' });
+    // FAIL CLOSED: If secret is not configured OR doesn't match, reject
+    if (!SHIPROCKET_WEBHOOK_SECRET || webhookSecret !== SHIPROCKET_WEBHOOK_SECRET) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const payload = req.body || {};

@@ -2,16 +2,111 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use('/uploads', express.static('uploads'));
-app.use(express.static(__dirname));
-app.use(express.static(__dirname));
+// ── Security Headers (helmet.js) ──
+let helmet;
+try {
+    helmet = require('helmet');
+    app.use(helmet({
+        contentSecurityPolicy: false, // Allow inline scripts for now
+        crossOriginEmbedderPolicy: false
+    }));
+} catch (e) {
+    console.warn('[Security] helmet not installed — run: npm install helmet');
+}
 
+// ── Rate Limiting ──
+let rateLimit;
+try {
+    rateLimit = require('express-rate-limit');
+
+    // General API rate limit
+    app.use('/api', rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 200,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: { message: 'Too many requests. Please try again later.' }
+    }));
+
+    // Strict rate limit on auth
+    app.use('/api/auth', rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 20,
+        message: { message: 'Too many login attempts. Please try again later.' }
+    }));
+
+    // Strict rate limit on order creation
+    app.use('/api/orders', rateLimit({
+        windowMs: 15 * 60 * 1000,
+        max: 30,
+        message: { message: 'Too many requests. Please try again later.' }
+    }));
+} catch (e) {
+    console.warn('[Security] express-rate-limit not installed — run: npm install express-rate-limit');
+}
+
+// ── CORS — Whitelist specific origins ──
+const ALLOWED_ORIGINS = [
+    'https://kidvana.in',
+    'https://www.kidvana.in',
+    'http://localhost:5000',
+    'http://localhost:3000',
+    'http://127.0.0.1:5000'
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, server-to-server)
+        if (!origin) return callback(null, true);
+        if (ALLOWED_ORIGINS.includes(origin)) {
+            return callback(null, true);
+        }
+        // In production, block unknown origins
+        if (process.env.NODE_ENV === 'production') {
+            return callback(new Error('Not allowed by CORS'));
+        }
+        // In development, allow all
+        return callback(null, true);
+    },
+    credentials: true
+}));
+
+// ── Body Parser with size limit ──
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+// ── Static Files — ONLY serve specific public directories ──
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Serve HTML files from root (only .html files, not source code)
+const staticHtmlOptions = {
+    extensions: ['html'],
+    index: 'index.html',
+    dotfiles: 'deny'
+};
+app.use(express.static(__dirname, {
+    ...staticHtmlOptions,
+    setHeaders: (res, filePath) => {
+        // Only allow serving .html, .ico, .png, .xml, .txt files from root
+        const ext = path.extname(filePath).toLowerCase();
+        const allowedRootExts = ['.html', '.ico', '.png', '.xml', '.txt', '.webmanifest'];
+        if (!allowedRootExts.includes(ext)) {
+            // Check if file is in an allowed subdirectory
+            const relative = path.relative(__dirname, filePath);
+            if (!relative.startsWith('css') && !relative.startsWith('js') && !relative.startsWith('assets')) {
+                res.status(403);
+            }
+        }
+    }
+}));
+
+// ── MongoDB Connection ──
 let isConnected = false;
 mongoose.set('bufferCommands', false);
 let mongoConnectionPromise = null;
@@ -27,8 +122,8 @@ function ensureMongoConnection() {
 
     if (!mongoConnectionPromise) {
         mongoConnectionPromise = mongoose.connect(mongoUri, {
-            serverSelectionTimeoutMS: 2000,
-            connectTimeoutMS: 5000
+            serverSelectionTimeoutMS: 5000,
+            connectTimeoutMS: 10000
         })
             .then(() => {
                 console.log('MongoDB connected successfully to:', maskedUri);
@@ -38,7 +133,6 @@ function ensureMongoConnection() {
                 console.error('MongoDB connection failed!');
                 console.error('URI:', maskedUri);
                 console.error('Error:', err.message);
-                console.warn('Using comprehensive mock data fallback for frontend display.');
                 isConnected = false;
             })
             .finally(() => {
@@ -52,6 +146,7 @@ function ensureMongoConnection() {
 ensureMongoConnection();
 
 // NOTE: _id values below are the REAL MongoDB IDs — so URLs and Shiprocket lookups work even without DB
+// IMPORTANT: Mock data is ONLY used in development mode. In production, if DB is down, API returns 503.
 
 const MOCK_PRODUCTS = [
     {
@@ -253,15 +348,74 @@ const authRoutes = require('./routes/auth');
 const orderRoutes = require('./routes/orders');
 const shiprocketRoutes = require('./routes/shiprocket');
 
+// ── Middleware: Inject DB status and mock data ──
 app.use((req, res, next) => {
     req.isConnected = isConnected;
     req.mockProducts = MOCK_PRODUCTS;
     next();
 });
 
+// ── Health Check Endpoint ──
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: isConnected ? 'healthy' : 'degraded',
+        db: isConnected ? 'connected' : 'disconnected',
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString()
+    });
+});
+
+// ── API Routes ──
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/shiprocket', shiprocketRoutes);
+
+// ── Block access to source code files ──
+app.use(['/models', '/routes', '/middleware', '/api'], (req, res, next) => {
+    // If it reaches here as a static file request (not API), block it
+    if (!req.path.startsWith('/api') && req.method === 'GET') {
+        return res.status(403).json({ message: 'Access denied' });
+    }
+    next();
+});
+
+// ── 404 Handler ──
+app.use((req, res) => {
+    // For API requests, return JSON
+    if (req.path.startsWith('/api')) {
+        return res.status(404).json({ message: 'Endpoint not found' });
+    }
+    // For HTML requests, serve 404 page
+    res.status(404).sendFile(path.join(__dirname, '404.html'), (err) => {
+        if (err) {
+            res.status(404).send('<h1>Page Not Found</h1><p><a href="/">Go Home</a></p>');
+        }
+    });
+});
+
+// ── Global Error Handler — NEVER leak internal errors ──
+app.use((err, req, res, next) => {
+    console.error('[Error]', err.stack || err.message || err);
+
+    // CORS errors
+    if (err.message === 'Not allowed by CORS') {
+        return res.status(403).json({ message: 'Origin not allowed' });
+    }
+
+    // Body parser errors (payload too large, malformed JSON)
+    if (err.type === 'entity.too.large') {
+        return res.status(413).json({ message: 'Request payload too large' });
+    }
+    if (err.type === 'entity.parse.failed') {
+        return res.status(400).json({ message: 'Invalid JSON in request body' });
+    }
+
+    res.status(err.status || 500).json({
+        message: process.env.NODE_ENV === 'production'
+            ? 'An internal error occurred. Please try again.'
+            : err.message
+    });
+});
 
 module.exports = app;

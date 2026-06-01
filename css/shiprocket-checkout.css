@@ -1,0 +1,126 @@
+/* ═══════════════════════════════════════════════
+   SHIPROCKET CHECKOUT — Professional Overlay CSS
+   Shared across checkout.html, product.html, cart.html
+   ═══════════════════════════════════════════════ */
+
+/* Loading overlay shown while Shiprocket initializes */
+.shiprocket-loading-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    animation: srFadeIn 0.3s ease forwards;
+}
+.shiprocket-loading-spinner {
+    width: 48px; height: 48px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    animation: srSpin 0.8s linear infinite;
+}
+.shiprocket-loading-text {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+@keyframes srSpin {
+    to { transform: rotate(360deg); }
+}
+@keyframes srFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Shiprocket Checkout iframe wrapper (backdrop) */
+.shiprocket-checkout-wrapper {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 99999;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: srFadeIn 0.3s ease forwards;
+}
+
+/* Close button */
+.shiprocket-checkout-wrapper .sr-close-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100001;
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.shiprocket-checkout-wrapper .sr-close-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.1);
+}
+
+/* Style the actual Shiprocket iframe */
+iframe[src*="checkout-ui.shiprocket.com"],
+iframe[src*="checkout.shiprocket.com"],
+iframe[data-shiprocket-checkout] {
+    position: fixed !important;
+    z-index: 100000 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important;
+    background: #fff !important;
+}
+
+/* Desktop: Centered modal with rounded corners */
+@media (min-width: 769px) {
+    iframe[src*="checkout-ui.shiprocket.com"],
+    iframe[src*="checkout.shiprocket.com"],
+    iframe[data-shiprocket-checkout] {
+        top: 2vh !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: min(480px, 90vw) !important;
+        height: 96vh !important;
+        border-radius: 20px !important;
+        box-shadow: 
+            0 25px 50px -12px rgba(0,0,0,0.5),
+            0 0 0 1px rgba(255,255,255,0.1) !important;
+    }
+}
+
+/* Mobile: Full screen */
+@media (max-width: 768px) {
+    iframe[src*="checkout-ui.shiprocket.com"],
+    iframe[src*="checkout.shiprocket.com"],
+    iframe[data-shiprocket-checkout] {
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        border-radius: 0 !important;
+    }
+    .shiprocket-checkout-wrapper .sr-close-btn {
+        top: 8px;
+        right: 8px;
+    }
+}

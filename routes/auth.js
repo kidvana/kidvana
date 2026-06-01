@@ -16,8 +16,13 @@ function sanitizeUser(user) {
     };
 }
 
+// Mask phone number for logging (show only last 4 digits)
+function maskPhone(phone) {
+    const p = String(phone || '');
+    return p.length >= 4 ? '****' + p.slice(-4) : '****';
+}
+
 router.post('/login', async (req, res) => {
-    console.log('[Auth] Login attempt for phone:', req.body.phone);
     const phone = String(req.body.phone || '').trim();
     const name = String(req.body.name || '').trim();
 
@@ -27,6 +32,10 @@ router.post('/login', async (req, res) => {
 
     try {
         if (!req.isConnected) {
+            // In production, don't issue mock tokens if DB is down
+            if (process.env.NODE_ENV === 'production') {
+                return res.status(503).json({ message: 'Service temporarily unavailable. Please try again.' });
+            }
             const mockUser = { _id: 'mock_user_id', phone, name: name || 'Kidvana User', email: '' };
             return res.json({ user: mockUser, token: signUserToken(mockUser) });
         }
@@ -35,11 +44,13 @@ router.post('/login', async (req, res) => {
         if (!user) {
             user = new User({ phone, name: name || 'Kidvana User' });
             await user.save();
+            console.log('[Auth] New user registered:', maskPhone(phone));
         }
 
         res.json({ user: sanitizeUser(user), token: signUserToken(user) });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('[Auth] Login error:', err.message);
+        res.status(500).json({ message: 'Login failed. Please try again.' });
     }
 });
 
@@ -59,7 +70,8 @@ router.get('/profile', requireAuth, async (req, res) => {
 
         return res.status(404).json({ message: 'User not found' });
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('[Auth] Profile error:', err.message);
+        return res.status(500).json({ message: 'Failed to fetch profile.' });
     }
 });
 
@@ -83,7 +95,8 @@ router.get('/profile/:phone', requireAuth, async (req, res) => {
 
         return res.status(404).json({ message: 'User not found' });
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('[Auth] Profile lookup error:', err.message);
+        return res.status(500).json({ message: 'Failed to fetch profile.' });
     }
 });
 
@@ -93,6 +106,11 @@ router.put('/profile', requireAuth, async (req, res) => {
 
     if (!name) {
         return res.status(400).json({ message: 'Name is required' });
+    }
+
+    // Basic email validation if provided
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: 'Please enter a valid email address.' });
     }
 
     try {
@@ -113,7 +131,8 @@ router.put('/profile', requireAuth, async (req, res) => {
 
         return res.json(sanitizeUser(user));
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('[Auth] Profile update error:', err.message);
+        return res.status(500).json({ message: 'Failed to update profile.' });
     }
 });
 

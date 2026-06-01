@@ -291,13 +291,96 @@ async function createShiprocketAccessToken(payload) {
     return parseApiResponse(response);
 }
 
+function showShiprocketLoadingOverlay() {
+    // Remove any existing overlays
+    removeShiprocketOverlay();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'shiprocket-loading-overlay';
+    overlay.id = 'srLoadingOverlay';
+    overlay.innerHTML = `
+        <div class="shiprocket-loading-spinner"></div>
+        <div class="shiprocket-loading-text">Opening Secure Checkout...</div>
+    `;
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+}
+
+function showShiprocketCheckoutWrapper() {
+    // Replace loading overlay with checkout wrapper
+    const loading = document.getElementById('srLoadingOverlay');
+    if (loading) loading.remove();
+
+    // Check if wrapper already exists
+    if (document.getElementById('srCheckoutWrapper')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'shiprocket-checkout-wrapper';
+    wrapper.id = 'srCheckoutWrapper';
+    wrapper.innerHTML = `
+        <button class="sr-close-btn" onclick="removeShiprocketOverlay()" title="Close Checkout">✕</button>
+    `;
+    // Close on backdrop click
+    wrapper.addEventListener('click', (e) => {
+        if (e.target === wrapper) {
+            if (confirm('Are you sure you want to close the checkout?')) {
+                removeShiprocketOverlay();
+            }
+        }
+    });
+    document.body.appendChild(wrapper);
+    document.body.style.overflow = 'hidden';
+}
+
+function removeShiprocketOverlay() {
+    document.getElementById('srLoadingOverlay')?.remove();
+    document.getElementById('srCheckoutWrapper')?.remove();
+    document.body.style.overflow = '';
+
+    // Also remove any orphaned Shiprocket iframes
+    document.querySelectorAll('iframe[src*="checkout-ui.shiprocket.com"], iframe[src*="checkout.shiprocket.com"]').forEach(iframe => {
+        iframe.remove();
+    });
+
+    setCheckoutBusy(false);
+}
+
 function launchShiprocketCheckout(event, token, redirectUrl) {
     const checkoutLauncher = window.HeadlessCheckout;
     if (!checkoutLauncher || typeof checkoutLauncher.addToCart !== 'function') {
+        removeShiprocketOverlay();
         throw new Error('Shiprocket checkout script failed to load.');
     }
 
+    // Show loading overlay first
+    showShiprocketLoadingOverlay();
+
+    // Launch Shiprocket checkout
     checkoutLauncher.addToCart(event, token, { fallbackUrl: redirectUrl });
+
+    // Watch for the iframe to appear and add the wrapper
+    let attempts = 0;
+    const iframeWatcher = setInterval(() => {
+        attempts++;
+        const iframe = document.querySelector('iframe[src*="checkout-ui.shiprocket.com"], iframe[src*="checkout.shiprocket.com"]');
+        if (iframe) {
+            clearInterval(iframeWatcher);
+            // Give iframe a moment to render, then show wrapper
+            setTimeout(() => {
+                showShiprocketCheckoutWrapper();
+            }, 500);
+        }
+        // Stop watching after 15 seconds
+        if (attempts > 30) {
+            clearInterval(iframeWatcher);
+            // Remove loading overlay if iframe never appeared
+            const loading = document.getElementById('srLoadingOverlay');
+            if (loading) {
+                loading.querySelector('.shiprocket-loading-text').textContent = 'Checkout loaded — complete your payment in the popup';
+                setTimeout(() => loading.remove(), 3000);
+            }
+        }
+    }, 500);
 }
 
 async function placeOrder(event) {
