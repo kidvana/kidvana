@@ -221,17 +221,113 @@ function removeSROverlay() {
     });
 }
 
+function forceIframeFullscreen(iframe) {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // Force fullscreen on mobile
+        iframe.style.cssText = `
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            min-width: 100vw !important;
+            min-height: 100vh !important;
+            max-width: none !important;
+            max-height: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            transform: none !important;
+            z-index: 100000 !important;
+            background: #fff !important;
+            box-shadow: none !important;
+        `;
+    } else {
+        // Centered modal on desktop
+        iframe.style.cssText = `
+            position: fixed !important;
+            top: 2vh !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: min(480px, 90vw) !important;
+            height: 96vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            border-radius: 20px !important;
+            z-index: 100000 !important;
+            background: #fff !important;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important;
+        `;
+    }
+
+    // Also force parent containers to not restrict the iframe
+    let parent = iframe.parentElement;
+    while (parent && parent !== document.body) {
+        if (parent.style.position || parent.style.width || parent.style.height) {
+            parent.style.cssText = `
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                z-index: 99999 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            `;
+        }
+        parent = parent.parentElement;
+    }
+}
+
 function watchForSRIframe() {
     let attempts = 0;
+    
+    // Use MutationObserver to catch iframe the moment it's added
+    const observer = new MutationObserver((mutations) => {
+        const iframe = document.querySelector('iframe[src*="shiprocket"]');
+        if (iframe) {
+            forceIframeFullscreen(iframe);
+            showSRCheckoutWrapper();
+            
+            // Keep re-enforcing styles in case SDK overrides them
+            let enforceCount = 0;
+            const enforcer = setInterval(() => {
+                enforceCount++;
+                const el = document.querySelector('iframe[src*="shiprocket"]');
+                if (el) {
+                    forceIframeFullscreen(el);
+                } else {
+                    clearInterval(enforcer);
+                }
+                // Stop after 30 seconds
+                if (enforceCount > 60) clearInterval(enforcer);
+            }, 500);
+        }
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Fallback polling in case MutationObserver misses it
     const watcher = setInterval(() => {
         attempts++;
-        const iframe = document.querySelector('iframe[src*="checkout-ui.shiprocket.com"], iframe[src*="checkout.shiprocket.com"]');
+        const iframe = document.querySelector('iframe[src*="shiprocket"]');
         if (iframe) {
             clearInterval(watcher);
-            setTimeout(() => showSRCheckoutWrapper(), 500);
+            observer.disconnect();
+            forceIframeFullscreen(iframe);
+            setTimeout(() => showSRCheckoutWrapper(), 300);
         }
         if (attempts > 30) {
             clearInterval(watcher);
+            observer.disconnect();
             const loading = document.getElementById('srLoadingOverlay');
             if (loading) {
                 loading.querySelector('.shiprocket-loading-text').textContent = 'Checkout loaded — complete your payment';
