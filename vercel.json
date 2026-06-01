@@ -8,33 +8,14 @@
     {
       "src": "api/[...path].js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "css/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "js/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "robots.txt",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "sitemap.xml",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/(models|routes|middleware|seed\\.js|app\\.js|server\\.js|\\.env)(.*)",
+      "status": 403,
+      "dest": "/404.html"
+    },
     {
       "src": "/api",
       "dest": "/api/index.js"
@@ -42,11 +23,6 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/[...path].js"
-    },
-    {
-      "src": "/(models|routes|middleware|seed\\.js|app\\.js|server\\.js|\\.env|package\\.json|package-lock\\.json)(.*)",
-      "status": 403,
-      "dest": "/404.html"
     },
     {
       "handle": "filesystem"
