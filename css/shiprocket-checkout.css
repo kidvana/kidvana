@@ -1,9 +1,8 @@
 /* ═══════════════════════════════════════════════
    SHIPROCKET CHECKOUT — Professional Overlay CSS
-   Shared across checkout.html, product.html, cart.html
    ═══════════════════════════════════════════════ */
 
-/* Loading overlay shown while Shiprocket initializes */
+/* Loading overlay */
 .shiprocket-loading-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -33,148 +32,60 @@
     font-weight: 600;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
-@keyframes srSpin {
-    to { transform: rotate(360deg); }
-}
-@keyframes srFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+@keyframes srSpin { to { transform: rotate(360deg); } }
+@keyframes srFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Shiprocket Checkout iframe wrapper (backdrop) */
-.shiprocket-checkout-wrapper {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100%; height: 100%;
-    z-index: 99999;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: srFadeIn 0.3s ease forwards;
-}
+/* ═══ FORCE CENTER the Shiprocket iframe ═══ */
 
-/* Close button */
-.shiprocket-checkout-wrapper .sr-close-btn {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 100002;
-    width: 40px; height: 40px;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 50%;
-    color: #fff;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.shiprocket-checkout-wrapper .sr-close-btn:hover {
-    background: rgba(255,255,255,0.3);
-    transform: scale(1.1);
-}
-
-/* ═══ FORCE Shiprocket iframe styles ═══ */
-/* Target ALL possible Shiprocket iframes aggressively */
+/* Target ALL Shiprocket iframes — CENTER them */
 iframe[src*="shiprocket"],
-iframe[src*="checkout-ui.shiprocket.com"],
-iframe[src*="checkout.shiprocket.com"],
-iframe[data-shiprocket-checkout],
-div[id*="shiprocket"] iframe,
-div[class*="shiprocket"] iframe {
+iframe[src*="checkout-ui"],
+iframe[src*="fastrr"] {
     position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     z-index: 100000 !important;
     border: none !important;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5) !important;
     background: #fff !important;
     margin: 0 !important;
     padding: 0 !important;
 }
 
-/* Desktop: Centered modal with rounded corners */
-@media (min-width: 769px) {
+/* Mobile: Centered, nearly fullscreen */
+@media (max-width: 768px) {
     iframe[src*="shiprocket"],
-    iframe[src*="checkout-ui.shiprocket.com"],
-    iframe[src*="checkout.shiprocket.com"],
-    iframe[data-shiprocket-checkout],
-    div[id*="shiprocket"] iframe,
-    div[class*="shiprocket"] iframe {
-        top: 2vh !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: min(480px, 90vw) !important;
-        height: 96vh !important;
-        border-radius: 20px !important;
-        box-shadow: 
-            0 25px 50px -12px rgba(0,0,0,0.5),
-            0 0 0 1px rgba(255,255,255,0.1) !important;
+    iframe[src*="checkout-ui"],
+    iframe[src*="fastrr"] {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
     }
 }
 
-/* Mobile: ABSOLUTE full screen — no gaps */
-@media (max-width: 768px) {
+/* Desktop: Centered modal */
+@media (min-width: 769px) {
     iframe[src*="shiprocket"],
-    iframe[src*="checkout-ui.shiprocket.com"],
-    iframe[src*="checkout.shiprocket.com"],
-    iframe[data-shiprocket-checkout],
-    div[id*="shiprocket"] iframe,
-    div[class*="shiprocket"] iframe {
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        width: 100vw !important;
-        width: 100dvw !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        min-height: 100vh !important;
-        min-height: 100dvh !important;
-        max-width: 100vw !important;
-        max-height: none !important;
-        border-radius: 0 !important;
-        transform: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-shadow: none !important;
+    iframe[src*="checkout-ui"],
+    iframe[src*="fastrr"] {
+        width: min(460px, 92vw) !important;
+        height: 94vh !important;
+        border-radius: 16px !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
     }
+}
 
-    /* Also force the wrapper container from Shiprocket SDK */
-    div[id*="shiprocket"],
-    div[class*="shiprocket"],
-    div[class*="Shiprocket"],
-    div[id*="headless-checkout"],
-    div[class*="headless-checkout"] {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        z-index: 100000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-    }
-
-    .shiprocket-checkout-wrapper .sr-close-btn {
-        top: 8px;
-        right: 8px;
-        z-index: 100002;
-    }
-
-    /* Hide scrollbar on body when checkout is open */
-    body.sr-checkout-open {
-        overflow: hidden !important;
-        position: fixed !important;
-        width: 100% !important;
-        height: 100% !important;
-    }
+/* Lock body scroll when checkout is open */
+body.sr-checkout-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
 }
