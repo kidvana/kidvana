@@ -84,26 +84,13 @@ app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// Serve HTML files from root (only .html files, not source code)
-const staticHtmlOptions = {
+// Serve HTML files and public root files (robots.txt, sitemap.xml, etc.)
+// On Vercel, static files are served by Vercel's CDN directly.
+// This is only active for local development.
+app.use(express.static(__dirname, {
     extensions: ['html'],
     index: 'index.html',
     dotfiles: 'deny'
-};
-app.use(express.static(__dirname, {
-    ...staticHtmlOptions,
-    setHeaders: (res, filePath) => {
-        // Only allow serving .html, .ico, .png, .xml, .txt files from root
-        const ext = path.extname(filePath).toLowerCase();
-        const allowedRootExts = ['.html', '.ico', '.png', '.xml', '.txt', '.webmanifest'];
-        if (!allowedRootExts.includes(ext)) {
-            // Check if file is in an allowed subdirectory
-            const relative = path.relative(__dirname, filePath);
-            if (!relative.startsWith('css') && !relative.startsWith('js') && !relative.startsWith('assets')) {
-                res.status(403);
-            }
-        }
-    }
 }));
 
 // ── MongoDB Connection ──
